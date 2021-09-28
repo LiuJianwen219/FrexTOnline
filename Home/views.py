@@ -134,10 +134,11 @@ def course(request):
             'courseId': template.course.uid,
             'templateId': template.uid,
             'templateName': template.name,
-            'templateExp': expDict[str(template.uid)]
+            # 'templateExp': [expDict[i] for i in template.course_set.values_list('uid', falt=True)],
         }
         for template in course_templates
     ]
+
 
     templateDict = {course.uid: [] for course in courses}
     for templateItem in templateItems:

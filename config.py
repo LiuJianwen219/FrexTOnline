@@ -3,6 +3,7 @@
 # component config
 file_server_url = "http://frext-file-svc:8010/"
 experiment_API = "experiment"
+online_BIT_API = "online_bits"
 
 
 c_userId = "userId"

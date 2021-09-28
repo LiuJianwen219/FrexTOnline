@@ -126,16 +126,16 @@ def upload_bit(request):
         ff.type = file_src
         ff.file_name = f_obj.name
         ff.file_path = "/tmp/"+f_obj.name
-        with open(ff.file_path, "r") as tf:
-            ff.content = tf.read()
+        # with open(ff.file_path, "r") as tf:
+        #     ff.content = tf.read()
         ff.save()
 
         with open(ff.file_path, 'rb') as f:
-            if fh.post_experiment({
+            if fh.post_bit({
                 config.c_userId: str(user.uid),
                 config.c_experimentType: experiment.type,
                 config.c_experimentId: str(experiment.uid),
-                config.c_fileName: f_obj.name,
+                config.c_compileId: f_obj.name.split('.')[0],
             }, f) == config.request_failed:
                 req = {"state": "ERROR", 'info': "保存自由实验上传的作业文件失败"}
                 return HttpResponse(json.dumps(req), content_type='application/json')

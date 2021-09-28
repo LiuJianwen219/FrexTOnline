@@ -216,10 +216,10 @@ def course(request):
 
     context["classContent"] = [
         {
-            'classTypeId': course.uid,
+            'classTypeId': str(course.uid),
             'classType': course.name,
-            'classTemplate': templateDict[course.uid],
-            'classList': theClassDict[course.uid]
+            'classTemplate': templateDict[str(course.uid)],
+            'classList': theClassDict[str(course.uid)]
         }
         for course in courses
     ]

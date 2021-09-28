@@ -229,7 +229,7 @@ def course(request):
 
     for tem in templateItem:
         for cou in courseItem:
-            if tem['courseId'] == cou['courseId']:
+            if tem['courseId'] == cou['classTypeId']:
                 cou['classTemplate'].append(tem)
 
     context["classContent"] = courseItem

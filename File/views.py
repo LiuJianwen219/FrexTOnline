@@ -36,13 +36,13 @@ def upload_free_file(request):
                 req = {"state": "ERROR", "info": "文件名超出限定长度 100"}
                 return HttpResponse(json.dumps(req), content_type='application/json')
 
-            handle_uploaded_file("tmp\\file\\"+f_obj.name, f_obj)
+            handle_uploaded_file("/tmp/"+f_obj.name, f_obj)
             ff = File()
             ff.user = user
             ff.experiment = experiment
             ff.type = file_src
             ff.file_name = f_obj.name
-            ff.file_path = "tmp/file/"+f_obj.name
+            ff.file_path = "/tmp/"+f_obj.name
             with open(ff.file_path, "r", encoding='gbk') as tf:
                 ff.content = tf.read()
             ff.save()

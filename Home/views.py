@@ -6,6 +6,8 @@ from datetime import date, datetime
 from Class.models import ClassStudent, ClassHomework
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Class.models import TheClass
+
+
 # Create your views here.
 
 def home(request):
@@ -23,8 +25,8 @@ def experiment(request):
     theClasses = ClassStudent.objects.filter(user=user)
     # theClasses = user.classes.all().only('id', 'course').select_related('course')
     course_temp_exp = ClassHomework.objects.filter(the_class__in=theClasses.values_list('the_class'),
-                                            start_time__lte=date.today(),
-                                            end_time__gte=date.today())
+                                                   start_time__lte=date.today(),
+                                                   end_time__gte=date.today())
 
     print(course_temp_exp)
 
@@ -72,7 +74,7 @@ def getFreeExpDrawer(user: User):
     # 按用户名获得自由实验信息
     freeExps = Experiment.objects.filter(user=user, type=experiment_free)
     # 一次取回了所有实验文件
-    freeExpFiles = File.objects.filter(experiment__in=freeExps)#.only('id', 'file_name', 'free_exp')
+    freeExpFiles = File.objects.filter(experiment__in=freeExps)  # .only('id', 'file_name', 'free_exp')
     # 建立一个字典，键依次为所有的自由实验id，值为一个列表，列表中是储存各个文件信息的字典。扫描刚刚的文件列表以分类存放
     # 之后对作业文件、作业也是类似的操作
     freeExpFilesDict = {freeExp.uid: [] for freeExp in freeExps}
@@ -97,7 +99,7 @@ def course(request):
 
     courses = Course.objects.filter(user=user)
     course_templates = CourseTemplate.objects.filter(course__in=courses)
-    course_template_exp = CourseTemplateExperiment.objects.filter(course_template__in=course_templates)#.distinct()
+    course_template_exp = CourseTemplateExperiment.objects.filter(course_template__in=course_templates)  # .distinct()
     c_t_e_files = CourseFile.objects.filter(course_template_experiment__in=course_template_exp)
 
     the_classes = TheClass.objects.filter(course__in=courses)
@@ -109,34 +111,34 @@ def course(request):
     # students = User2.objects.filter(classes__in=theClasses).distinct()
 
     # 实验部分
-
-    expDict = {}
+    expItem = []
     for exp in course_template_exp:
-        if str(exp.uid) not in expDict.keys():
-            expDict[str(exp.uid)] = {
-                'templateId': str(exp.course_template.uid),
-                'templateExpId': str(exp.uid),
-                'expName': exp.name,
-                'expFile': [],
-            }
+        expItem.append({
+            'templateId': str(exp.course_template.uid),
+            'templateExpId': str(exp.uid),
+            'expName': exp.name,
+            'expFile': [],
+        })
 
     for file in c_t_e_files:
-        expDict[str(file.experiment.uid)]['expFile'].append(file)
+        for exp in expItem:
+            if str(file.uid) == exp['templateExpId']:
+                exp['expFile'].append(file)
+                break
 
-    templateDict = {}
+    templateItem = []
     for template in course_templates:
-        if str(template.uid) not in templateDict.keys():
-            templateDict[str(template.uid)] = {
-                'courseId': str(template.course.uid),
-                'templateId': str(template.uid),
-                'templateName': template.name,
-                'templateExp': [],
-            }
+        templateItem.append({
+            'courseId': str(template.course.uid),
+            'templateId': str(template.uid),
+            'templateName': template.name,
+            'templateExp': [],
+        })
 
-    for k, v in expDict.items():
-        for k2, v2 in templateDict.items():
-            if str(k) == v2['templateId']:
-                templateDict[str(k2)]['templateExp'].append(v)
+    for exp in expItem:
+        for tem in templateItem:
+            if exp['templateId'] == tem['templateId']:
+                tem['templateExp'].append(exp)
                 break
 
     # templateItems = {}
@@ -150,7 +152,6 @@ def course(request):
     #             'templateName': template.name,
     #             'templateExp': [template],
     #         }
-
 
     # expFileDict = {exp.uid: [] for exp in course_template_exp}
     # for file in c_t_e_files:
@@ -196,7 +197,7 @@ def course(request):
         courseItem.append({
             'classTypeId': str(c.uid),
             'classType': c.name,
-            'classTemplate': templateDict[str(c.uid)],
+            'classTemplate': [],
             'classList': [],
         })
 
@@ -247,7 +248,6 @@ def course(request):
     #     }
     #     for theClass in the_classes
     # ]
-
 
     # theClassDict = {course.uid: [] for course in courses}
     # for theClassItem in theClassItems:

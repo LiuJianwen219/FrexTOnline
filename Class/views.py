@@ -40,7 +40,7 @@ def add_student(request):
         try:
             user = User.objects.get(name=n)
         except User.DoesNotExist:
-            data = {"state": "ERROR", "info": "学生{n}不存在！"}
+            data = {"state": "ERROR", "info": "学生{0}不存在！".format(n)}
             return HttpResponse(json.dumps(data), content_type='application/json')
         else:
             cs = ClassStudent(user=user, the_class=theClass)

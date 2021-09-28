@@ -118,7 +118,7 @@ def course(request):
             'templateId': exp.course_template.uid,
             'templateExpId': exp.uid,
             'expName': exp.name,
-            'expFile': expFileDict[exp.uid]
+            'expFile': expFileDict[str(exp.uid)]
         }
         for exp in course_template_exp
     ]
@@ -134,7 +134,7 @@ def course(request):
             'courseId': template.course.uid,
             'templateId': template.uid,
             'templateName': template.name,
-            'templateExp': [expDict[i] for i in template.uid]
+            'templateExp': expDict[str(template.uid)]
         }
         for template in course_templates
     ]

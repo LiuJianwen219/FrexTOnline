@@ -24,16 +24,16 @@ def experiment(request):
     user = User.objects.get(uid=request.session["u_uid"])
     context = {"freeExperiment": getFreeExpDrawer(user)}
     # 用户 -> 课程实验作业 -> 文件
-    theClasses = ClassStudent.objects.filter(user=user)
+    class_student = ClassStudent.objects.filter(user=user)
     # theClasses = user.classes.all().only('id', 'course').select_related('course')
-    class_homework = ClassHomework.objects.filter(the_class__in=theClasses.values_list('the_class'),
+    class_homework = ClassHomework.objects.filter(the_class__in=class_student.values_list('the_class'),
                                                    start_time__lte=date.today(),
                                                    end_time__gte=date.today())
     course_file = CourseFile.objects.filter(course_template_experiment__in=class_homework.values_list('course_template_experiment'))
     userExpHomeworkFiles = HomeworkFile.objects.filter(class_homework__in=class_homework)
 
-    print("theClass")
-    for c in theClasses:
+    print("class_student")
+    for c in class_student:
         print(c.uid)
 
     print("class_homework")
@@ -73,9 +73,9 @@ def experiment(request):
                 break
 
     classItem = []
-    for the_class in theClasses:
+    for the_class in class_student:
         classItem.append({
-            "id": str(the_class.uid),
+            "id": str(the_class.the_class.uid),
             "expType": the_class.the_class.course.name,
             "expItems": []
         })

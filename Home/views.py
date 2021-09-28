@@ -227,6 +227,11 @@ def course(request):
                 cou['classList'].append(cla)
                 break
 
+    for tem in templateItem:
+        for cou in courseItem:
+            if tem['courseId'] == cou['courseId']:
+                cou['classTemplate'].append(tem)
+
     context["classContent"] = courseItem
 
     # studentDict = {theClass.uid: [] for theClass in the_classes}

@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from Login.models import User
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
+from File.models import CourseFile
+from Experiment.models import Experiment
 # Create your views here.
 
 
@@ -29,3 +31,4 @@ def create_experiment(request):
 
     data = {"state": "OK"}
     return HttpResponse(json.dumps(data), content_type='application/json')
+

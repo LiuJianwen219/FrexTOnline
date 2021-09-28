@@ -46,6 +46,27 @@ def post_bit(values, file):
     return config.request_success
 
 
+def post_course(values, file):
+    logger.info("Try to post online COURSE with values: " + json.dumps(values))
+
+    url = config.file_server_url + config.COURSE_API + "/"
+    values = {
+        config.c_userId: values[config.c_userId],
+        config.c_courseId: values[config.c_courseId],
+        config.c_courseTemplateId: values[config.c_courseTemplateId],
+        config.c_courseTemplateExperimentId: values[config.c_courseTemplateExperimentId],
+        config.c_fileName: values[config.c_fileName],
+    }
+    print(values)
+
+    files = {'file': file}
+    r = requests.post(url, files=files, data=values)
+    if r.status_code.__str__() != "200":
+        logger.error("Post Experiment failed: request status not health: " + r.headers.__str__())
+        return config.request_failed
+    return config.request_success
+
+
 def delete_experiment(values):
     logger.info("Try to delete EXPERIMENT with values: " + json.dumps(values))
 

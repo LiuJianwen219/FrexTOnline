@@ -4,8 +4,9 @@ from django.http import HttpResponse, FileResponse
 from django.shortcuts import render
 
 import config
+from Course.models import Course
 from Experiment.models import Experiment
-from File.models import File, file_src
+from File.models import File, file_src, CourseFile
 import File.utils as fh
 
 
@@ -146,3 +147,45 @@ def upload_bit(request):
     req = {"state": "ERROR", 'info': "非法请求"}
     return HttpResponse(json.dumps(req), content_type='application/json')
 
+
+def upload_course(request):
+    if request.method == "POST":
+        print(request.POST["courseId"])
+        print(request.POST["templateId"])
+        print(request.POST['templateExpId'])
+
+        f_obj = request.FILES.get('upBitFile')  # 暂时考虑只能上传一个文件
+        user = User.objects.get(uid=request.session["u_uid"])
+        course = Course.objects.get(uid=request.POST["courseId"])
+        courseTemplate = Course.objects.get(uid=request.POST["templateId"])
+        courseTemplateExperiment = Experiment.objects.get(uid=request.POST['templateExpId'])
+
+        if len(f_obj.name) > 100 or len(f_obj.name) <= 0:
+            req = {"state": "ERROR", "info": "文件名超出限定长度 100"}
+            return HttpResponse(json.dumps(req), content_type='application/json')
+
+        handle_uploaded_file("/tmp/"+f_obj.name, f_obj)
+        ff = CourseFile()
+        ff.course_template_experiment = courseTemplateExperiment
+        ff.file_name = f_obj.name
+        ff.file_path = "/tmp/"+f_obj.name
+        # with open(ff.file_path, "r") as tf:
+        #     ff.content = tf.read()
+        ff.save()
+
+        with open(ff.file_path, 'rb') as f:
+            if fh.post_course({
+                config.c_userId: str(user.uid),
+                config.c_courseId: str(course.uid),
+                config.c_courseTemplateId: str(courseTemplate.uid),
+                config.c_courseTemplateExperimentId: str(courseTemplateExperiment.uid),
+                config.c_fileName: f_obj.name,
+            }, f) == config.request_failed:
+                req = {"state": "ERROR", 'info': "保存课件失败"}
+                return HttpResponse(json.dumps(req), content_type='application/json')
+
+        req = {"state": "OK", "trueFileName": f_obj.name, "fileId": ff.uid.__str__()}
+        return HttpResponse(json.dumps(req), content_type='application/json')
+
+    req = {"state": "ERROR", 'info': "非法请求"}
+    return HttpResponse(json.dumps(req), content_type='application/json')

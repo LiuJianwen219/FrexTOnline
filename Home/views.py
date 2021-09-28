@@ -109,44 +109,87 @@ def course(request):
     # students = User2.objects.filter(classes__in=theClasses).distinct()
 
     # 实验部分
-    expFileDict = {exp.uid: [] for exp in course_template_exp}
-    for file in c_t_e_files:
-        expFileDict[str(file.experiment.uid)].append({"fileId": str(file.uid), "fileName": file.file_name})
-    expItems = [
-        {
-            # 'templateId': list(exp.templatecontent_set.values_list('id', flat=True)),
-            'templateId': exp.course_template.uid,
-            'templateExpId': exp.uid,
-            'expName': exp.name,
-            'expFile': expFileDict[str(exp.uid)]
-        }
-        for exp in course_template_exp
-    ]
 
     expDict = {}
-    for expItem in expItems:
-        for id in expItem['templateId']:
-            expDict[id] = expItem
+    for exp in course_template_exp:
+        if str(exp.uid) not in expDict.keys():
+            expDict[str(exp.uid)] = {
+                'templateId': str(exp.course_template.uid),
+                'templateExpId': str(exp.uid),
+                'expName': exp.name,
+                'expFile': [],
+            }
 
-    templateItems = [
-        {
-            # 'courseId': list(template.courses.values_list('id', flat=True)),
-            'courseId': template.course.uid,
-            'templateId': template.uid,
-            'templateName': template.name,
-            # 'templateExp': [expDict[i] for i in template.course_set.values_list('uid', falt=True)],
-        }
-        for template in course_templates
-    ]
+    for file in c_t_e_files:
+        expDict[str(file.experiment.uid)]['expFile'].append(file)
+
+    templateDict = {}
+    for template in course_templates:
+        if str(template.uid) not in templateDict.keys():
+            templateDict[str(template.uid)] = {
+                'courseId': str(template.course.uid),
+                'templateId': str(template.uid),
+                'templateName': template.name,
+                'templateExp': [],
+            }
+
+    for k, v in expDict.items():
+        for k2, v2 in templateDict.items():
+            if str(k) == v2['templateId']:
+                templateDict[str(k2)]['templateExp'].append(v)
+
+    # templateItems = {}
+    # for template in course_templates:
+    #     if str(template.course.uid) in templateItems.keys():
+    #         templateItems[str(template.course.uid)]['templateExp'].append(template)
+    #     else:
+    #         templateItems[str(template.course.uid)] = {
+    #             'courseId': template.course.uid,
+    #             'templateId': template.uid,
+    #             'templateName': template.name,
+    #             'templateExp': [template],
+    #         }
 
 
-    templateDict = {course.uid: [] for course in courses}
-    for templateItem in templateItems:
-        for id in templateItem['courseId']:
-            if id in templateDict.keys():
-                templateDict[id].append(templateItem)
+    # expFileDict = {exp.uid: [] for exp in course_template_exp}
+    # for file in c_t_e_files:
+    #     expFileDict[str(file.experiment.uid)].append({"fileId": str(file.uid), "fileName": file.file_name})
+    # expItems = [
+    #     {
+    #         # 'templateId': list(exp.templatecontent_set.values_list('id', flat=True)),
+    #         'templateId': exp.course_template.uid,
+    #         'templateExpId': exp.uid,
+    #         'expName': exp.name,
+    #         'expFile': expFileDict[str(exp.uid)]
+    #     }
+    #     for exp in course_template_exp
+    # ]
+
+    # expDict = {}
+    # for expItem in expItems:
+    #     for id in expItem['templateId']:
+    #         expDict[id] = expItem
+
+    # templateItems = [
+    #     {
+    #         # 'courseId': list(template.courses.values_list('id', flat=True)),
+    #         'courseId': template.course.uid,
+    #         'templateId': template.uid,
+    #         'templateName': template.name,
+    #         # 'templateExp': [expDict[i] for i in template.course_set.values_list('uid', falt=True)],
+    #     }
+    #     for template in course_templates
+    # ]
+    #
+    #
+    # templateDict = {course.uid: [] for course in courses}
+    # for templateItem in templateItems:
+    #     for id in templateItem['courseId']:
+    #         if id in templateDict.keys():
+    #             templateDict[id].append(templateItem)
 
     # 班级部分
+
     studentDict = {theClass.uid: [] for theClass in the_classes}
     for student in students:
         for theClass in student.classes.all():

@@ -3,6 +3,7 @@ from django.db import models
 from Login.models import User
 from Experiment.models import Experiment
 from Course.models import CourseTemplateExperiment
+from Class.models import ClassHomework
 
 # Create your models here.
 
@@ -44,7 +45,7 @@ class CourseFile(models.Model):
 class HomeworkFile(models.Model):
     uid = models.UUIDField(primary_key=True, default=uuid.uuid1, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    course_template_experiment = models.ForeignKey(CourseTemplateExperiment, on_delete=models.CASCADE)
+    class_homework = models.ForeignKey(ClassHomework, on_delete=models.CASCADE, null=False)
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     file_name = models.CharField(max_length=256)

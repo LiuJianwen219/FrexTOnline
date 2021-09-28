@@ -27,46 +27,87 @@ def experiment(request):
     course_temp_exp = ClassHomework.objects.filter(the_class__in=theClasses.values_list('the_class'),
                                                    start_time__lte=date.today(),
                                                    end_time__gte=date.today())
-
-    print(course_temp_exp)
-
-    classExpHomeworkFiles = HomeworkFile.objects.filter(
+    course_file = CourseFile.objects.filter(course_template_experiment__in=course_temp_exp)
+    userExpHomeworkFiles = HomeworkFile.objects.filter(
         course_template_experiment__in=course_temp_exp.values_list('course_template_experiment'))
 
-    classExpHomeworkFileDict = {homework.uid: [] for homework in course_temp_exp}
-    for file in classExpHomeworkFiles:
-        classExpHomeworkFileDict[file.homework_id].append({"fileId": file.uid, "fileName": file.file_name})
 
-    classExpFileDict = {
-        homework.id: [
-            {"fileId": file.uid, "fileName": file.file_name}
-            for file in homework.exp.fileclassexp_set.all()
-        ] for homework in course_temp_exp
-    }
+    classHomeworkItem = []
+    for c_t_experiment in course_temp_exp:
+        cou_file = []
+        for c_file in course_file:
+            if str(c_file.course_template_experiment.uid) == str(c_t_experiment.uid):
+                cou_file.append({
+                    "fileId": c_file.uid,
+                    "fileName": c_file.file_name,
+                })
+        classHomeworkItem.append({
+            "theClass": str(c_t_experiment.the_class.uid),
+            "expId": str(c_t_experiment.uid),
+            "expName": c_t_experiment.name,
+            "fileList": cou_file,
+            "expCourseware": [],
+        })
 
-    homeworkItems = [
-        {
-            "theClass": homework.the_class_uid,
-            "expId": homework.uid,
-            "expName": homework.exp.name,
-            "fileList": classExpHomeworkFileDict[homework.uid],
-            "expCourseware": classExpFileDict[homework.uid]
-        }
-        for homework in course_temp_exp
-    ]
+    for f in userExpHomeworkFiles:
+        for c in classHomeworkItem:
+            if str(f.class_homewor.uid) == c['expId']:
+                c['fileList'].append({
+                    "fileId": f.uid,
+                    "fileName": f.file_name,
+                })
+                break
 
-    classExpHomeworkDict = {theClass.uid: [] for theClass in theClasses}
-    for homeworkItem in homeworkItems:
-        classExpHomeworkDict[homeworkItem['theClass']].append(homeworkItem)
-    theClassItems = [
-        {
-            "id": theClass.uid,
-            "expType": theClass.course.name,
-            "expItems": classExpHomeworkDict[theClass.uid]
-        }
-        for theClass in theClasses
-    ]
-    context["classExperiment"] = theClassItems
+    classItem = []
+    for the_class in theClasses:
+        classItem.append({
+            "id": str(the_class.uid),
+            "expType": the_class.course.name,
+            "expItems": []
+        })
+
+    for c_h_i in classHomeworkItem:
+        for c_i in classItem:
+            if c_h_i['theClass'] == c_i['id']:
+                c_i['expItems'].append(c_h_i)
+                break
+
+    # classExpHomeworkFileDict = {homework.uid: [] for homework in course_temp_exp}
+    # for file in userExpHomeworkFiles:
+    #     classExpHomeworkFileDict[str(file.class_homework.uid)].append({"fileId": file.uid, "fileName": file.file_name})
+    #
+    # classExpFileDict = {
+    #     homework.id: [
+    #         {"fileId": file.uid, "fileName": file.file_name}
+    #         for file in homework.course_template_experiment.fileclassexp_set.all()
+    #     ] for homework in course_temp_exp
+    # }
+    #
+    # homeworkItems = [
+    #     {
+    #         "theClass": homework.the_class_uid,
+    #         "expId": homework.uid,
+    #         "expName": homework.exp.name,
+    #         "fileList": classExpHomeworkFileDict[homework.uid],
+    #         "expCourseware": classExpFileDict[homework.uid]
+    #     }
+    #     for homework in course_temp_exp
+    # ]
+    #
+
+
+    # classExpHomeworkDict = {theClass.uid: [] for theClass in theClasses}
+    # for homeworkItem in homeworkItems:
+    #     classExpHomeworkDict[homeworkItem['theClass']].append(homeworkItem)
+    # theClassItems = [
+    #     {
+    #         "id": theClass.uid,
+    #         "expType": theClass.the_class.course.name,
+    #         "expItems": classExpHomeworkDict[theClass.uid]
+    #     }
+    #     for theClass in theClasses
+    # ]
+    context["classExperiment"] = classItem
     return render(request, "Home/studentHome.html", context=context)
 
 

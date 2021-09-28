@@ -45,7 +45,7 @@ class CourseFile(models.Model):
 class HomeworkFile(models.Model):
     uid = models.UUIDField(primary_key=True, default=uuid.uuid1, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    class_homework = models.ForeignKey(ClassHomework, on_delete=models.CASCADE, null=False)
+    class_homework = models.ForeignKey(ClassHomework, on_delete=models.CASCADE)
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     file_name = models.CharField(max_length=256)

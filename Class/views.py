@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from Class.models import TheClass
+from Class.models import TheClass, ClassStudent
 from Course.models import Course, CourseTemplate
 from Login.models import User
 
@@ -43,7 +43,8 @@ def add_student(request):
             data = {"state": "ERROR", "info": "学生{n}不存在！"}
             return HttpResponse(json.dumps(data), content_type='application/json')
         else:
-            theClass.students.add(user)
+            cs = ClassStudent(user=user, the_class=theClass)
+            cs.save()
 
     data = {"state": "OK"}
     return HttpResponse(json.dumps(data), content_type='application/json')

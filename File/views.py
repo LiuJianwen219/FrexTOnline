@@ -4,7 +4,7 @@ from django.http import HttpResponse, FileResponse
 from django.shortcuts import render
 
 import config
-from Course.models import Course
+from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Experiment.models import Experiment
 from File.models import File, file_src, CourseFile
 import File.utils as fh
@@ -157,8 +157,8 @@ def upload_course(request):
         f_obj = request.FILES.get('upBitFile')  # 暂时考虑只能上传一个文件
         user = User.objects.get(uid=request.session["u_uid"])
         course = Course.objects.get(uid=request.POST["courseId"])
-        courseTemplate = Course.objects.get(uid=request.POST["templateId"])
-        courseTemplateExperiment = Experiment.objects.get(uid=request.POST['templateExpId'])
+        courseTemplate = CourseTemplate.objects.get(uid=request.POST["templateId"])
+        courseTemplateExperiment = CourseTemplateExperiment.objects.get(uid=request.POST['templateExpId'])
 
         if len(f_obj.name) > 100 or len(f_obj.name) <= 0:
             req = {"state": "ERROR", "info": "文件名超出限定长度 100"}

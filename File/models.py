@@ -39,7 +39,6 @@ class CourseFile(models.Model):
     file_path = models.CharField(max_length=512)  # 临时存放位置
     content = models.TextField()
     upload_time = models.DateTimeField(auto_now_add=True)
-    delete_time = models.DateTimeField()
 
 
 class HomeworkFile(models.Model):

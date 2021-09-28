@@ -174,8 +174,8 @@ def course(request):
         {
             'classTypeId': course.uid,
             'classType': course.name,
-            'classTemplate': templateDict[course.id],
-            'classList': theClassDict[course.id]
+            'classTemplate': templateDict[course.uid],
+            'classList': theClassDict[course.uid]
         }
         for course in courses
     ]

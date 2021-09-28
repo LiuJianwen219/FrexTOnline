@@ -28,5 +28,5 @@ class ClassHomework(models.Model):
     the_class = models.ForeignKey(TheClass, on_delete=models.CASCADE)
     course_template_experiment = models.ForeignKey(CourseTemplateExperiment, on_delete=models.CASCADE)
     name = models.CharField(max_length=512)  # 作业名字，目前可以等于课程模板实验名字
-    start_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField()
     end_time = models.DateTimeField()

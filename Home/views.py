@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 from Login.models import User
 from Experiment.models import Experiment, experiment_free, experiment_course
@@ -59,6 +61,8 @@ def experiment(request):
             "expCourseware": [],
         })
 
+    print(json.dumps(classHomeworkItem))
+
     for f in userExpHomeworkFiles:
         for c in classHomeworkItem:
             if str(f.class_homewor.uid) == c['expId']:
@@ -81,6 +85,8 @@ def experiment(request):
             if c_h_i['theClass'] == c_i['id']:
                 c_i['expItems'].append(c_h_i)
                 break
+
+    print(json.dumps(classItem))
 
     # classExpHomeworkFileDict = {homework.uid: [] for homework in course_temp_exp}
     # for file in userExpHomeworkFiles:

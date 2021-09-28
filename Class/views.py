@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from Class.models import TheClass
 from Course.models import Course, CourseTemplate
+from Login.models import User
 
 
 # Create your views here.
@@ -27,3 +28,23 @@ def create_class(request):
 
     data = {"state": "OK"}
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def add_student(request):
+    print(request.POST)
+    print(request.POST["classId"])
+    print(request.POST["studentNumbers"])
+    theClass = TheClass.objects.get(uid=request.POST['classId'])
+    numbers = request.POST["studentNumbers"].split(",")
+    for n in numbers:
+        try:
+            user = User.objects.get(name=n)
+        except User.DoesNotExist:
+            data = {"state": "ERROR", "info": "学生{n}不存在！"}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            theClass.students.add(user)
+
+    data = {"state": "OK"}
+    return HttpResponse(json.dumps(data), content_type='application/json')
+

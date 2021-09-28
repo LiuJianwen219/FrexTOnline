@@ -5,5 +5,6 @@ from Class import views
 
 urlpatterns = [
     path('create_class/', views.create_class),
+    path('add_student/', views.add_student)
 ]
 

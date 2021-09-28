@@ -209,7 +209,7 @@ def course(request):
         classItem.append({
             'courseId': str(the.course.uid),
             'classId': str(the.uid),
-            'classNumber': "99999",
+            'classNumber': the.name,
             'className': the.name,
             'templateId': str(the.course_template.uid),
             'templateName': the.course_template.name,

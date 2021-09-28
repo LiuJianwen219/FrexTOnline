@@ -62,7 +62,7 @@ def experiment(request):
     for the_class in theClasses:
         classItem.append({
             "id": str(the_class.uid),
-            "expType": the_class.course.name,
+            "expType": the_class.the_class.course.name,
             "expItems": []
         })
 

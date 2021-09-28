@@ -24,16 +24,16 @@ def experiment(request):
     # 用户 -> 课程实验作业 -> 文件
     theClasses = ClassStudent.objects.filter(user=user)
     # theClasses = user.classes.all().only('id', 'course').select_related('course')
-    course_temp_exp = ClassHomework.objects.filter(the_class__in=theClasses.values_list('the_class'),
+    class_homework = ClassHomework.objects.filter(the_class__in=theClasses.values_list('the_class'),
                                                    start_time__lte=date.today(),
                                                    end_time__gte=date.today())
-    course_file = CourseFile.objects.filter(course_template_experiment__in=course_temp_exp)
+    course_file = CourseFile.objects.filter(course_template_experiment__in=class_homework.values_list('course_template_experiment'))
     userExpHomeworkFiles = HomeworkFile.objects.filter(
-        course_template_experiment__in=course_temp_exp.values_list('course_template_experiment'))
+        course_template_experiment__in=class_homework.values_list('course_template_experiment'))
 
 
     classHomeworkItem = []
-    for c_t_experiment in course_temp_exp:
+    for c_t_experiment in class_homework:
         cou_file = []
         for c_file in course_file:
             if str(c_file.course_template_experiment.uid) == str(c_t_experiment.uid):

@@ -154,7 +154,7 @@ def upload_course(request):
         print(request.POST["templateId"])
         print(request.POST['templateExpId'])
 
-        f_obj = request.FILES.get('upBitFile')  # 暂时考虑只能上传一个文件
+        f_obj = request.FILES.getlist('courseFiles')[0]  # 暂时考虑只能上传一个文件
         user = User.objects.get(uid=request.session["u_uid"])
         course = Course.objects.get(uid=request.POST["courseId"])
         courseTemplate = CourseTemplate.objects.get(uid=request.POST["templateId"])

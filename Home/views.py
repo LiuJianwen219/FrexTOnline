@@ -132,24 +132,24 @@ def course(request):
         {
             # 'courseId': list(template.courses.values_list('id', flat=True)),
             'courseId': template.course.uid,
-            'templateId': template.id,
+            'templateId': template.uid,
             'templateName': template.name,
             'templateExp': [expDict[i] for i in template.templatecontent_set.values_list('id', flat=True)]
         }
         for template in course_templates
     ]
 
-    templateDict = {course.id: [] for course in courses}
+    templateDict = {course.uid: [] for course in courses}
     for templateItem in templateItems:
         for id in templateItem['courseId']:
             if id in templateDict.keys():
                 templateDict[id].append(templateItem)
 
     # 班级部分
-    studentDict = {theClass.id: [] for theClass in the_classes}
+    studentDict = {theClass.uid: [] for theClass in the_classes}
     for student in students:
         for theClass in student.classes.all():
-            studentDict[theClass.id].append(student.name)
+            studentDict[theClass.uid].append(student.name)
     theClassItems = [
         {
             'courseId': theClass.course.uid,

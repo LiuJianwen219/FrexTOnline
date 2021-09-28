@@ -122,7 +122,7 @@ def course(request):
 
     for file in c_t_e_files:
         for exp in expItem:
-            if str(file.uid) == exp['templateExpId']:
+            if str(file.course_template_experiment.uid) == exp['templateExpId']:
                 exp['expFile'].append(file)
                 break
 
@@ -217,7 +217,7 @@ def course(request):
 
     for stu in students:
         for cla in classItem:
-            if stu.the_class.uid == cla['classId']:
+            if str(stu.the_class.uid) == cla['classId']:
                 cla["classStudent"].append(stu)
                 break
 

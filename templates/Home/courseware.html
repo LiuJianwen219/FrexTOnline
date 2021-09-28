@@ -463,7 +463,7 @@
         data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
 
         $.ajax({
-            url: '/home/teacherhome/uploadcoursefile/',
+            url: '/file/upload_course/',
             type: 'POST',
             data: data,
             cache: false,                                               //上传文件无需缓存

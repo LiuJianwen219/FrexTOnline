@@ -22,7 +22,7 @@ def create_class(request):
     start = datetime.strptime(request.POST["newClassStartTime"], '%Y-%m-%d')
     end = datetime.strptime(request.POST["newClassEndTime"], '%Y-%m-%d')
     the_class = TheClass(course=course, course_template=courseTemplate, name=request.POST["newClassName"],
-                         start_date=start, end_date=end)
+                         start_time=start, end_time=end)
     the_class.save()
 
     data = {"state": "OK"}

@@ -111,7 +111,7 @@ def course(request):
     # 实验部分
     expFileDict = {exp.uid: [] for exp in course_template_exp}
     for file in c_t_e_files:
-        expFileDict[file.class_exp_id].append({"fileId": file.uid, "fileName": file.file_name})
+        expFileDict[str(file.experiment.uid)].append({"fileId": str(file.uid), "fileName": file.file_name})
     expItems = [
         {
             # 'templateId': list(exp.templatecontent_set.values_list('id', flat=True)),
@@ -134,7 +134,7 @@ def course(request):
             'courseId': template.course.uid,
             'templateId': template.uid,
             'templateName': template.name,
-            'templateExp': [expDict[i] for i in template.templatecontent_set.values_list('id', flat=True)]
+            'templateExp': [expDict[i] for i in template.uid]
         }
         for template in course_templates
     ]

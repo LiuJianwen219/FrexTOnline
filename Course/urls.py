@@ -1,9 +1,9 @@
 from django.conf.urls import url
 from django.urls import path
 
-from Experiment import views
+from Course import views
 
 urlpatterns = [
-    path('newFreeExpProject/', views.create_free_project),
+    path('create_template/', views.create_template),
 ]
 

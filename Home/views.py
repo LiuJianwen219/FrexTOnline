@@ -166,13 +166,13 @@ def course(request):
     ]
 
 
-    theClassDict = {course.id: [] for course in courses}
+    theClassDict = {course.uid: [] for course in courses}
     for theClassItem in theClassItems:
         theClassDict[theClassItem['courseId']].append(theClassItem)
 
     context["classContent"] = [
         {
-            'classTypeId': course.id,
+            'classTypeId': course.uid,
             'classType': course.name,
             'classTemplate': templateDict[course.id],
             'classList': theClassDict[course.id]

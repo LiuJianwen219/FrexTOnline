@@ -162,7 +162,7 @@ function newCourseTemplate(courseId, doc) {
     data.append('templateName', $("#"+doc).val())
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
     $.ajax({
-        url: '/home/teacherhome/createtemplate/',
+        url: '/course/create_template/',
         type: 'POST',
         data: data,
         cache: false,                                               //上传文件无需缓存

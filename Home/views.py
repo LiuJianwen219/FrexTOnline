@@ -221,7 +221,7 @@ def course(request):
     for stu in students:
         for cla in classItem:
             if str(stu.the_class.uid) == cla['classId']:
-                cla["classStudent"].append(stu.name)
+                cla["classStudent"].append(stu.user.name)
                 break
 
     for cla in classItem:

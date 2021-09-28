@@ -189,3 +189,37 @@ def upload_course(request):
 
     req = {"state": "ERROR", 'info': "非法请求"}
     return HttpResponse(json.dumps(req), content_type='application/json')
+
+
+def delete_course(request):
+    if request.method == "POST":
+        print(request.POST["courseId"])
+        print(request.POST["templateId"])
+        print(request.POST['templateExpId'])
+        print(request.POST["fileId"])
+
+        user = User.objects.get(uid=request.session["u_uid"])
+        course = Course.objects.get(uid=request.POST["courseId"])
+        courseTemplate = CourseTemplate.objects.get(uid=request.POST["templateId"])
+        courseTemplateExperiment = CourseTemplateExperiment.objects.get(uid=request.POST['templateExpId'])
+        courseFile = CourseFile.objects.get(uid=request.POST["fileId"])
+
+        try:
+            courseFile.delete()
+            if fh.delete_course({
+                config.c_userId: str(user.uid),
+                config.c_courseId: str(course.uid),
+                config.c_courseTemplateId: str(courseTemplate.uid),
+                config.c_courseTemplateExperimentId: str(courseTemplateExperiment.uid),
+                config.c_fileName: courseFile.file_name,
+            }) == config.request_failed:
+                req = {"state": "ERROR", 'info': "删除文件失败"}
+                return HttpResponse(json.dumps(req), content_type='application/json')
+        except Exception as e:
+            data = {"state": "ERROR", "info": e}
+        else:
+            data = {"state": "OK"}
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
+    data = {"state": "ERROR", 'info': "未知的错误，请尝试刷新"}
+    return HttpResponse(json.dumps(data), content_type='application/json')

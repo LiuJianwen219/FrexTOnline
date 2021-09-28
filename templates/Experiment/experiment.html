@@ -516,7 +516,7 @@
         success: function (req) {
           if(req.state !== "ERROR") {
             alert("文件已经上传成功");
-            isUpLoad = true;
+            isUpLoad = true; // now it's nothing
             changeBitFile(req.trueFileName);
           } else {
             alert(req.info)
@@ -528,6 +528,7 @@
 
   function changeBitFile(fileName) {
     bitFileName = fileName;
+    isUpLoad = false;
     document.getElementById('currentBit').innerHTML = fileName
     document.getElementById('burnState').innerHTML = "未烧录"
   }

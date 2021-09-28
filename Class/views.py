@@ -1,10 +1,10 @@
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from Class.models import TheClass, ClassStudent
-from Course.models import Course, CourseTemplate
+from Class.models import TheClass, ClassStudent, ClassHomework
+from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Login.models import User
 
 
@@ -49,3 +49,42 @@ def add_student(request):
     data = {"state": "OK"}
     return HttpResponse(json.dumps(data), content_type='application/json')
 
+
+def get_template_class(request):
+    print(request.POST)
+    print(request.POST["templateId"])
+
+    template = CourseTemplate.objects.get(uid=request.POST["templateId"])
+    theClass = TheClass.objects.filter(course_template=template,
+                                       end_time__gte=date.today()).distinct()
+
+    classesName = []
+    classesId = []
+    for c in theClass:
+        classesName.append(c.name)
+        classesId.append(str(c.uid))
+
+    data = {'state': "OK", 'classesId': classesId, 'classesName': classesName}
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def dispatch_experiment(request):
+    print(request.POST)
+    print(request.POST["courseId"])
+    print(request.POST["templateId"])
+    print(request.POST["templateExpId"])
+    print(request.POST["classId"])
+    print(request.POST["startTime"])
+    print(request.POST["endTime"])
+
+    theClass = TheClass.objects.get(uid=request.POST["classId"])
+    classExp = CourseTemplateExperiment.objects.get(uid=request.POST["templateExpId"])
+    start = datetime.strptime(request.POST["startTime"], '%Y-%m-%d')
+    end = datetime.strptime(request.POST["endTime"], '%Y-%m-%d')
+
+    classExpHomework = ClassHomework(the_class=theClass, course_template_experiment=classExp,
+                                     start_time=start, end_time=end)
+    classExpHomework.save()
+
+    data = {"state": "OK"}
+    return HttpResponse(json.dumps(data), content_type='application/json')

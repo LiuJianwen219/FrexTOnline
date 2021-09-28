@@ -268,7 +268,7 @@
 
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
     $.ajax({
-      url: '/home/teacherhome/dispatchhoework/',
+      url: '/class/dispatch_experiment/',
       type: 'POST',
       data: data,
       cache: false,                                               //上传文件无需缓存
@@ -289,7 +289,7 @@
     data.append('templateId', templateId);
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
     $.ajax({
-      url: '/home/teacherhome/gettemplateclass/',
+      url: '/class/get_template_class/',
       type: 'POST',
       data: data,
       cache: false,                                               //上传文件无需缓存

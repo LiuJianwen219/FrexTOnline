@@ -126,7 +126,7 @@ def upload_bit(request):
         ff.type = file_src
         ff.file_name = f_obj.name
         ff.file_path = "/tmp/"+f_obj.name
-        with open(ff.file_path, "rb") as tf:
+        with open(ff.file_path, "r") as tf:
             ff.content = tf.read()
         ff.save()
 

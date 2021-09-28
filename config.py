@@ -1,7 +1,7 @@
 
 # -----------------------
 # component config
-file_server_url = "http://192.168.80.150:30010/"
+file_server_url = "http://frext-file-svc:8010/"
 experiment_API = "experiment"
 
 

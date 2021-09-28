@@ -247,7 +247,7 @@ ledState = [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 def experiment(request):
-    # type = request.GET.get('type')
+    type = request.GET.get('type') # 有用
     expId = request.GET.get('expId')
 
     # print(request.session['user_name'])
@@ -303,3 +303,4 @@ def experiment(request):
     }
     print(request)
     return render(request, "Experiment/experiment.html", context=context)
+

@@ -310,7 +310,7 @@
               init_SW_BT()
               changeBitFile("未选择")
           }, 30)
-        }, 30)
+        }, 3000) // 延迟，为了能够准确得到device_id
       }, 30)
     }, 30)
   }, 30)
@@ -336,7 +336,7 @@
      if (flvjs.isSupported()) {//检查flvjs能否正常使用
         var videoElement = document.getElementById('videoBox');//使用id选择器找到第二步设置的dom元素
         console.log('diviceid in function is'+deviceid);
-        var flv_url = 'http://10.14.30.15:8080/live/device'+deviceid+'.flv';
+        var flv_url = 'http://47.96.95.218:8080/live/device'+deviceid+'.flv';
         // 增加config参数
         // let player = flv.createPlayer(mediaDataSource: MediaDataSource, config?: Config);
         flvPlayer = flvjs.createPlayer({//创建一个新的flv播放器对象
@@ -503,6 +503,7 @@
       {#file_reader.readAsDataURL(f_obj)#}
 
       data.append('upBitFile', f_obj)
+      data.append('expId', '{{ expId }}')
       data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val()); //在formdata对象中添加(封装)文件对象
 
       $.ajax({
@@ -514,7 +515,7 @@
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
           if(req.state !== "ERROR") {
-            alert("文件已经上传成功，点击确定刷新页面");
+            alert("文件已经上传成功");
             isUpLoad = true;
             changeBitFile(req.trueFileName);
           } else {

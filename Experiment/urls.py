@@ -8,6 +8,6 @@ urlpatterns = [
     path('deleteFreeExpProject/', views.delete_free_project),
     path('freecompile/', views.free_compile),
     path('compile_result/', views.compile_result),
-    path('experiment/', views.experiment)
+    path('experiment/', views.experiment),
 ]
 

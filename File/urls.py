@@ -8,5 +8,6 @@ urlpatterns = [
     path('uploadfreeexpfile/', views.upload_free_file),
     path('deletefreefile/', views.delete_free_file),
     url(r'downloadfreefile/(?P<f_uid>.+)/', views.download_free_file),
+    path('upload_bit/', views.upload_bit),
 ]
 

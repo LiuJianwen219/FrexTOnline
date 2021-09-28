@@ -137,6 +137,7 @@ def course(request):
         for k2, v2 in templateDict.items():
             if str(k) == v2['templateId']:
                 templateDict[str(k2)]['templateExp'].append(v)
+                break
 
     # templateItems = {}
     # for template in course_templates:
@@ -190,39 +191,77 @@ def course(request):
 
     # 班级部分
 
-    studentDict = {theClass.uid: [] for theClass in the_classes}
-    for student in students:
-        for theClass in student.classes.all():
-            studentDict[theClass.uid].append(student.name)
-    theClassItems = [
-        {
-            'courseId': theClass.course.uid,
-            'classId': theClass.uid,
+    courseItem = []
+    for c in courses:
+        courseItem.append({
+            'classTypeId': str(c.uid),
+            'classType': c.name,
+            'classTemplate': templateDict[str(c.uid)],
+            'classList': [],
+        })
+
+    classItem = []
+    for the in the_classes:
+        classItem.append({
+            'courseId': str(the.course.uid),
+            'classId': str(the.uid),
             'classNumber': "99999",
-            'className': theClass.name,
-            'templateId': theClass.course_template.uid,
-            'templateName': theClass.course_template.name,
-            'classStudent': studentDict[theClass.uid],
-            'classStartTime': theClass.start_time,
-            'classEndTime': theClass.end_time,
-        }
-        for theClass in the_classes
-    ]
+            'className': the.name,
+            'templateId': str(the.course_template.uid),
+            'templateName': the.course_template.name,
+            'classStudent': [],
+            'classStartTime': the.start_time,
+            'classEndTime': the.end_time,
+        })
+
+    for stu in students:
+        for cla in classItem:
+            if stu.the_class.uid == cla['classId']:
+                cla["classStudent"].append(stu)
+                break
+
+    for cla in classItem:
+        for cou in courseItem:
+            if cla['courseId'] == cou['classTypeId']:
+                cou['classList'].append(cla)
+                break
+
+    context["classContent"] = courseItem
+
+    # studentDict = {theClass.uid: [] for theClass in the_classes}
+    # for student in students:
+    #     for theClass in student.classes.all():
+    #         studentDict[theClass.uid].append(student.name)
+
+    # theClassItems = [
+    #     {
+    #         'courseId': theClass.course.uid,
+    #         'classId': theClass.uid,
+    #         'classNumber': "99999",
+    #         'className': theClass.name,
+    #         'templateId': theClass.course_template.uid,
+    #         'templateName': theClass.course_template.name,
+    #         'classStudent': studentDict[theClass.uid],
+    #         'classStartTime': theClass.start_time,
+    #         'classEndTime': theClass.end_time,
+    #     }
+    #     for theClass in the_classes
+    # ]
 
 
-    theClassDict = {course.uid: [] for course in courses}
-    for theClassItem in theClassItems:
-        theClassDict[theClassItem['courseId']].append(theClassItem)
+    # theClassDict = {course.uid: [] for course in courses}
+    # for theClassItem in theClassItems:
+    #     theClassDict[theClassItem['courseId']].append(theClassItem)
 
-    context["classContent"] = [
-        {
-            'classTypeId': str(course.uid),
-            'classType': course.name,
-            'classTemplate': templateDict[str(course.uid)],
-            'classList': theClassDict[str(course.uid)]
-        }
-        for course in courses
-    ]
+    # context["classContent"] = [
+    #     {
+    #         'classTypeId': str(course.uid),
+    #         'classType': course.name,
+    #         'classTemplate': templateDict[str(course.uid)],
+    #         'classList': theClassDict[str(course.uid)]
+    #     }
+    #     for course in courses
+    # ]
     context["role"] = user.role
     print(user.role)
     return render(request, "Home/teacherHome.html", context=context)

@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from Login.models import User
 from Experiment.models import Experiment, experiment_free, experiment_course
-from File.models import File, HomeworkFile
+from File.models import File, HomeworkFile, CourseFile
 from datetime import date, datetime
 from Class.models import ClassStudent, ClassHomework
-
+from Course.models import Course, CourseTemplate, CourseTemplateExperiment
+from Class.models import TheClass
 # Create your views here.
 
 def home(request):
@@ -87,3 +88,97 @@ def getFreeExpDrawer(user: User):
     ]
     print(expItems)
     return {"id": "0", "expType": "自由实验", "expItems": expItems}
+
+
+def course(request):
+    user = User.objects.get(uid=request.session["u_uid"])
+
+    context = {"experiments": getFreeExpDrawer(user)}
+
+    courses = Course.objects.filter(user=user)
+    course_templates = CourseTemplate.objects.filter(course__in=courses)
+    course_template_exp = CourseTemplateExperiment.objects.filter(course_template__in=course_templates)#.distinct()
+    c_t_e_files = CourseFile.objects.filter(course_template_experiment__in=course_template_exp)
+
+    the_classes = TheClass.objects.filter(course__in=courses)
+    students = ClassStudent.objects.filter(the_class__in=the_classes)
+
+    # exps = ClassExp.objects.filter(templatecontent__in=templateContents).distinct()
+    # expFiles = FileClassExp.objects.filter(class_exp__in=exps)
+    # theClasses = TheClass.objects.filter(course__in=courses)
+    # students = User2.objects.filter(classes__in=theClasses).distinct()
+
+    # 实验部分
+    expFileDict = {exp.uid: [] for exp in course_template_exp}
+    for file in c_t_e_files:
+        expFileDict[file.class_exp_id].append({"fileId": file.uid, "fileName": file.file_name})
+    expItems = [
+        {
+            # 'templateId': list(exp.templatecontent_set.values_list('id', flat=True)),
+            'templateId': exp.course_template.uid,
+            'templateExpId': exp.uid,
+            'expName': exp.name,
+            'expFile': expFileDict[exp.uid]
+        }
+        for exp in course_template_exp
+    ]
+
+    expDict = {}
+    for expItem in expItems:
+        for id in expItem['templateId']:
+            expDict[id] = expItem
+
+    templateItems = [
+        {
+            # 'courseId': list(template.courses.values_list('id', flat=True)),
+            'courseId': template.course.uid,
+            'templateId': template.id,
+            'templateName': template.name,
+            'templateExp': [expDict[i] for i in template.templatecontent_set.values_list('id', flat=True)]
+        }
+        for template in course_templates
+    ]
+
+    templateDict = {course.id: [] for course in courses}
+    for templateItem in templateItems:
+        for id in templateItem['courseId']:
+            if id in templateDict.keys():
+                templateDict[id].append(templateItem)
+
+    # 班级部分
+    studentDict = {theClass.id: [] for theClass in the_classes}
+    for student in students:
+        for theClass in student.classes.all():
+            studentDict[theClass.id].append(student.name)
+    theClassItems = [
+        {
+            'courseId': theClass.course.uid,
+            'classId': theClass.uid,
+            'classNumber': "99999",
+            'className': theClass.name,
+            'templateId': theClass.course_template.uid,
+            'templateName': theClass.course_template.name,
+            'classStudent': studentDict[theClass.uid],
+            'classStartTime': theClass.start_time,
+            'classEndTime': theClass.end_time,
+        }
+        for theClass in the_classes
+    ]
+
+
+    theClassDict = {course.id: [] for course in courses}
+    for theClassItem in theClassItems:
+        theClassDict[theClassItem['courseId']].append(theClassItem)
+
+    context["classContent"] = [
+        {
+            'classTypeId': course.id,
+            'classType': course.name,
+            'classTemplate': templateDict[course.id],
+            'classList': theClassDict[course.id]
+        }
+        for course in courses
+    ]
+    context["role"] = user.role
+    print(user.role)
+    return render(request, "Home/teacherHome.html", context=context)

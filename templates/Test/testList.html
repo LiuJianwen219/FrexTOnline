@@ -1,0 +1,88 @@
+{% extends 'base.html' %}{% load static %}
+{% block pageStyle %}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="{% static "css/github-markdown.css" %}" rel="stylesheet" type="text/css">
+  <link href="{% static "css/testHome.css" %}" rel="stylesheet" type="text/css">
+  <script src="../../../static/js/testHome.js" type="text/javascript"></script>
+
+
+{% endblock %}
+
+{% block content %}
+  <section id="testHome">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+          {% include 'topNav.html' %}
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-2 col-md-2 col-lg-2">
+          <ul class="nav nav-pill nav-stacked">
+            <li><a href="">返回题目集</a></li>
+            <li><a href="">题目列表</a></li>
+            <li><a href="">提交列表</a></li>
+            <li><a href="">排名</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-10 col-md-10 col-lg-10">
+          <p>Exotic测试系统：C级题目列表</p>
+          <p>公告：本系统处于测试阶段，如有问题欢迎咨询（admin@admin.cn）</p>
+
+          <table class="table">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">标号</th>
+                <th scope="col">标题</th>
+                <th scope="col">类型</th>
+                <th scope="col">分数</th>
+                <th scope="col">通过数</th>
+                <th scope="col">提交数</th>
+                <th scope="col">通过率</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for T in testList %}
+                <tr class="testDatas">
+                  <td>通过</td>
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td><a href="../../testhome/{{ T.id }}/">{{ T.title }}</a></td>
+                  <td>{{ T.type }}</td>
+                  <td>{{ T.grade }}</td>
+                  <td>{{ T.passNum }}</td>
+                  <td>{{ T.upNum }}</td>
+                  <td>0.0</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <script>
+    var testDatas = document.getElementsByClassName("testDatas");
+    {#console.log(testDatas)#}
+    for(let i = 0; i<testDatas.length; i++){
+        console.log(testDatas[i].children[7].innerHTML);
+        console.log(testDatas[i].children[5].innerHTML);
+        console.log(testDatas[i].children[6].innerHTML);
+        testDatas[i].children[7].innerHTML =
+            parseFloat(testDatas[i].children[5].innerHTML)
+            /parseFloat(testDatas[i].children[6].innerHTML).toFixed(2);
+        if(testDatas[i].children[3].innerHTML === "1"){
+            testDatas[i].children[3].innerHTML = "组合电路";
+        } else if(testDatas[i].children[3].innerHTML === "2"){
+            testDatas[i].children[3].innerHTML = "时序电路";
+        } else if(testDatas[i].children[3].innerHTML === "3"){
+            testDatas[i].children[3].innerHTML = "系统综合";
+        }
+    }
+  </script>
+{% endblock %}

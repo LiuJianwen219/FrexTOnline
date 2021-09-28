@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- 上述 meta标签 *必须* 放在最前面，任何其他内容都 *必须* 跟随其后！ -->
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!--优化移动端-->
+  <meta name="keywords" content="Remote Experiment System">
+  <meta name="description" content="Remote Experiment System for FPGA">
+  <meta name="author" content="ZJU Ljw">
+
+  <title>{% block title %}Exotic{% endblock %}</title>
+
+  <!--fonts-->
+  <link href="{% static 'css/font.css' %}" rel='stylesheet' type='text/css' />
+  <!--fonts-->
+
+  <!--css-->
+{#  <link href="{% static 'css/bootstrap.min.css' %}" rel='stylesheet' type='text/css' />#}
+{#  <link href="{% static 'css/prism.css' %}" rel='stylesheet' type='text/css' />#}
+{#  <link href="{% static 'css/style.css' %}" rel='stylesheet' type='text/css' />#}
+
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+  <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.js"></script>
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  {% block pageStyle %} {% endblock %}
+  <!--css-->
+
+
+</head>
+<body>
+  <div class="exotic-root">
+{#    {% ifnotequal request.path '/' %}#}
+{#    <!-- sider -->#}
+{#    {% include 'src/_sider.html' %}#}
+{#    <!-- sider -->#}
+{#    {% endifnotequal %}#}
+{#    <div id="arc-wrapper" class="arc-wrapper">#}
+{#      {% block content %} {% endblock %}#}
+{#      {% include 'src/_footer.html' %}#}
+{#    </div>#}
+    <!-- sider -->
+{#    {% include '' %}#}
+    <!-- sider -->
+    {% block content %} {% endblock %}
+  </div>
+{#  <!-- script -->#}
+{#  <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>#}
+{#  <script src="{% static 'js/popper.min.js' %}"></script>#}
+{#  <script src="{% static 'js/bootstrap.min.js' %}"></script>#}
+{#  <script src="{% static 'js/prism.js' %}"></script>#}
+{#  <script src="{% static 'js/clamp.js' %}"></script>#}
+{#  <script>#}
+{#    const menuItems = $('#arc-sider .arc-menu-container .arc-menu-item.nav-link');#}
+{#    const menuBorder = $('#arc-sider .arc-menu-container .arc-menu-border');#}
+{#    const menuSpandIcon = $('#arc-menu-spand-icon');#}
+{#    const toogleMenu = (e) => {#}
+{#      if (menuBorder.hasClass('faded')) {#}
+{#        menuSpandIcon.html('&#xe8ba;');#}
+{#      } else {#}
+{#        menuSpandIcon.html('&#xe60a;');#}
+{#      }#}
+{#      menuItems.toggleClass('faded');#}
+{#      menuBorder.toggleClass('faded');#}
+{#    }#}
+{#    const closeMenu = (e) => {#}
+{#      if (!menuBorder.hasClass('faded')) {#}
+{#        menuSpandIcon.html('&#xe60a;');#}
+{#        menuItems.addClass('faded');#}
+{#        menuBorder.addClass('faded');#}
+{#      }#}
+{#    }#}
+{#    $('#arc-sider .arc-menu-btn-container .arc-menu-btn-line .toggle-menu-btn').click(toogleMenu);#}
+{#    $('#arc-sider .arc-menu-btn-container .arc-menu-btn-line .close-menu-btn').click(closeMenu);#}
+{#  </script>#}
+{#  {% block pageJs %} {% endblock %}#}
+{#  <!-- script -->#}
+</body>
+</html>

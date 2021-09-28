@@ -1,0 +1,57 @@
+
+header{
+  position: fixed;
+  width: 100%;
+  height: 50px;
+  z-index: 9;
+}
+
+#studentHome{
+  display: flex;
+}
+
+#studentSlide{
+  position: absolute;
+  top: 50px;
+  width: 20%;
+  background: gainsboro;
+}
+
+#studentMiddle{
+  margin-top: 50px;
+  margin-left: 20%;
+  margin-right: 20%;
+  padding: 10px;
+  flex: 1;
+}
+
+#defaultStudentHome{
+  padding: 100px 50px;
+  font-style: normal;
+  font-size: 30px;
+}
+
+#studentRright{
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 20%;
+  background: gainsboro;
+}
+
+.lineInfo{
+  text-align: center;
+}
+
+
+#startExp{
+
+}
+
+footer{
+  background: white;
+  position: fixed;
+  width: 100%;
+  height: 0;
+  bottom: 0;
+}

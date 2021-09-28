@@ -1,0 +1,48 @@
+
+header{
+  position: fixed;
+  width: 100%;
+  height: 50px;
+  z-index: 9;
+}
+
+#teacherHome{
+  display: flex;
+}
+
+#teacherSlide{
+  position: absolute;
+  top: 50px;
+  width: 20%;
+  background: gainsboro;
+}
+
+#middle{
+  margin-top: 50px;
+  margin-left: 20%;
+  margin-right: 20%;
+  padding: 10px;
+  flex: 1;
+}
+
+#teacherDefaultInfo{
+  padding: 100px 50px;
+  font-style: normal;
+  font-size: 30px;
+}
+
+#right{
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 20%;
+  background: gainsboro;
+}
+
+footer{
+  background: white;
+  position: fixed;
+  width: 100%;
+  height: 0;
+  bottom: 0;
+}

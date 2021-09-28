@@ -1,0 +1,71 @@
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav_{{ class.classType }}" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">{{ class.classType }}</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="nav_{{ class.classType }}">
+        <ul class="nav navbar-nav">
+          {% for templateItem in class.classTemplate %}
+            <li onclick="showTemplateInfo('{{ templateItem.templateId }}')">
+              <a href="#">{{ templateItem.templateName }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" data-toggle="modal" data-target="#newCourseTemplate{{ class.classTypeId }}">
+            新建模板
+          </a></li>
+        </ul>
+        <div class="modal fade" id="newCourseTemplate{{ class.classTypeId }}" tabindex="-1" role="dialog"
+             aria-labelledby="myUpLoadFile" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myUpLoadFile">新建课程模板</h4>
+              </div>
+              <div class="modal-body">
+                {% csrf_token %}
+                <label>输入模板名称（[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*）</label>
+                <input type="text" class="form-control" id="newCourseTemplateName{{ class.classTypeId }}"
+                  placeholder="new template" required pattern="[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="submit" name="uploadFile_id" value="{{i.id}}" class="btn btn-primary"
+                        onclick="newCourseTemplate('{{ class.classTypeId }}', 'newCourseTemplateName{{ class.classTypeId }}')">
+                  创建模板
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+  <div class="templateContent">
+    <div id="templateOverview" style="display: none">
+      本门课程中您<br>
+      有 0 个模板<br>
+      有 0 个班级<br>
+      有 0 个学生<br>
+    </div>
+
+    {% for templateItem in class.classTemplate %}
+      <div class="templateExpList" id="{{ templateItem.templateId }}" style="display: none">
+        {% include 'Home/courseware.html' with template=templateItem courseId=class.classTypeId %}
+      </div>
+    {% endfor %}
+
+  </div>

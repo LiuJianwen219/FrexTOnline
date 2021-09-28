@@ -1,0 +1,20 @@
+#expNavLogo{
+    font-size: 30px;
+}
+
+#expNavExpName{
+    margin-left: 50px;
+    font-size: 18px;
+}
+
+#expNav{
+    height: 100%;
+}
+
+.expNavInfo{
+    text-align: center;
+}
+
+.expNavItem{
+    background: aliceblue;
+}

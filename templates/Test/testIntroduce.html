@@ -1,0 +1,37 @@
+{% extends 'base.html' %} {% load static %}
+{% block pageStyle %}
+<link href="{% static "/css/home.css" %}" rel='stylesheet' type='text/css' />
+{% endblock %}
+
+{% block content %}
+  {% include 'topNav.html' %}
+  <div>
+    <div>
+      <div>
+        <div>
+          <div class="introduceTitle">
+            <h2>远程FPGA测试平台</h2>
+          </div>
+          <div class="introduceDescription">
+            <p>远程FPGA测试平台，计算机硬件设计能力评测。包含三个类型的等级：</p>
+            <p>A级：偏难级</p>
+            <p>B级：一般级</p>
+            <p><a href="../testList/C/">C级：基础级</a></p>
+          </div>
+          <div>
+            {% if request.session.is_login == True %}
+              <div>
+                欢迎您：{{ request.session.user_name }}
+              </div>
+            {% else %}
+              <div>
+                欢迎您，请先登录
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

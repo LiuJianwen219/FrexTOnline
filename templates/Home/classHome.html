@@ -1,0 +1,162 @@
+<div id="studentClassTop">
+  <div class="studentClassControlNav" id="{{ item.expId }}" style="display: block;">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-sub" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">{{ item.expName }}</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-sub">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/home/studenthome/downloadcourse/{{ item.expId }}">
+                下载课件</a>
+            </li>
+            <li><a href="#" data-toggle="modal" data-target="#uploadClassFile{{ item.expId }}">
+              上传</a>
+            </li>
+            <li style="display:none;"><a href="#" data-toggle="modal" data-target="#newClassFile{{ item.expId }}">
+              创建</a>
+            </li>
+{#            <li><a onclick="classCompile('{{ item.expId }}', 'classFileList{{ item.expId }}')" href="#">#}
+{#              编译</a>#}
+{#            </li>#}
+            <li><a href="#" data-toggle="modal" data-target="#compileClassFile_{{ item.expId }}">
+              编译</a>
+            </li>
+            <li><a data-target="#startExp" onclick="startToExp('class', '{{ item.expId }}', 'startExpButton')"
+                   href="#" data-toggle="modal">
+              开始实验</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div>
+      <div class="modal fade" id="newClassFile{{ item.expId }}" tabindex="-1" role="dialog"
+         aria-labelledby="newExpFileLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="newExpFileLabel">创建</h4>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              <input type="hidden" name="expType" value="class">
+              <input type="hidden" name="expId" value="{{ item.expId }}">
+              <label>创建文件（[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*）</label>
+              <input type="text" class="form-control" id="newClassFileName{{ item.expId }}"
+                     placeholder="new file" required pattern="[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+              </button>
+              <button type="submit" name="update_id" value="{{i.id}}" class="btn btn-primary"
+                    onclick="createExpFile('{{ item.expId }}', 'class', 'classFileList{{ item.expId }}')">
+                创建
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="newClassFile{{ item.expId }}" tabindex="-1" role="dialog"
+           aria-labelledby="newExpFileLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="newExpFileLabel">创建</h4>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              <input type="hidden" name="expType" value="class">
+              <input type="hidden" name="expId" value="{{ item.expId }}">
+              <label>创建文件（[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*）</label>
+              <input type="text" class="form-control" id="newClassFileName{{ item.expId }}"
+                     placeholder="new file" required pattern="[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+              </button>
+              <button type="submit" name="update_id" value="{{i.id}}" class="btn btn-primary"
+                    onclick="createExpFile('{{ item.expId }}', 'class', 'classFileList{{ item.expId }}')">
+                创建
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="compileClassFile_{{ item.expId }}" tabindex="-1" role="dialog"
+           aria-labelledby="myStartClassCompile" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myStartClassCompile">编译</h4>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              <label>输入顶层模块的名称（注意不是顶层文件名，并区分大小写，无多余空格）</label>
+              <input type="text" class="form-control" id="classTopModule_{{ item.expId }}"
+                     placeholder="top module name" required pattern="[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+              </button>
+              <button type="submit" name="classCompileSubmit" class="btn btn-primary"
+                      onclick="classCompile('{{ item.expId }}',
+                              'classTopModule_{{ item.expId }}',
+                              'classFileList{{ item.expId }}')">
+                编译
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="classFileGroup" style="display:block;" id="{{ item.expId }}">
+      <h2>{{ item.expName }}</h2>
+      <hr/>
+      {% if not item.expCourseware is None %}
+        <h3>课件</h3>
+        {% for courseware in item.expCourseware %}
+          <div class="input-group">
+            <span id="lineInfo">{{ courseware.fileName }}</span>
+          </div>
+        {% endfor %}
+        <hr/>
+      {% endif %}
+
+      <h3>学生文件</h3>
+      <div id="classFileList{{ item.expId }}">
+        {% for file in item.fileList %}
+          <div class="input-group" id="classFile_{{ file.fileName }}">
+            <span id="lineInfo">{{ file.fileName }}</span>
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default">
+                <a href="/home/downloadclassfile/{{ file.fileId }}">
+                下载</a>
+              </button>
+              <button type="button" class="btn btn-default"
+                      onclick="deleteClassFile('{{ item.expId }}', '{{ file.fileId }}',
+                              'classFile_{{ file.fileName }}')">
+                删除
+              </button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <hr/>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,112 @@
+<div class="studentGroupSub" style="display: block;">
+  <h2>班级编号：{{ classItem.classNumber }}</h2>
+  <h3>应用的模板：{{ classItem.templateName }}</h3>
+  <h4>班级起始时间：{{ classItem.classStartTime }}</h4>
+  <h4>班级结束时间：{{ classItem.classEndTime }}</h4>
+  <button data-toggle="modal" data-target="#deleteClass_{{ classItem.classId }}">
+    删除班级
+  </button>
+  <div class="modal fade" id="deleteClass_{{ classItem.classId }}" tabindex="-1" role="dialog"
+       aria-labelledby="myUpLoadFile" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">删除该班级</h4>
+        </div>
+        <div class="modal-body">
+          <label>确定要删除该班级吗？此操作不可恢复！</label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+          </button>
+          <button name="uploadFile_id" class="btn btn-primary"
+                  onclick="deleteClass('{{ classItem.classId }}')">
+            删除
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button data-toggle="modal" data-target="#addStudent_{{ classItem.classId }}">
+    导入学生
+  </button>
+  <div class="modal fade" id="addStudent_{{ classItem.classId }}" tabindex="-1" role="dialog"
+       aria-labelledby="myUpLoadFile" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">向班级中导入学生学号</h4>
+        </div>
+        <div class="modal-body">
+          {% csrf_token %}
+          <label>学生学号（用英文的,分隔）：</label>
+          <input type="text" class="form-control" id="addStudentNumber_{{ classItem.classId }}"
+            placeholder="new template" required pattern="[0-9,]*[0-9]*">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+          </button>
+          <button name="uploadFile_id" class="btn btn-primary"
+                  onclick="addStudentNumber('{{ classItem.classId }}',
+                          'addStudentNumber_{{ classItem.classId }}')">
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% for student in classItem.classStudent %}
+    <p>{{ student }}</p>
+  {% endfor %}
+</div>
+
+<script>
+  function addStudentNumber(classId, doc) {
+    let data = new FormData();
+    data.append('classId', classId);
+    data.append('studentNumbers', $('#'+doc).val())
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/home/teacherhome/addclassstudent/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("学生导入成功，点击确定刷新页面");
+                location.reload();
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+  
+  function deleteClass(classId) {
+    let data = new FormData();
+    data.append('classId', classId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/home/teacherhome/deleteclass/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("班级删除成功，点击确定刷新页面");
+                location.reload();
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+</script>

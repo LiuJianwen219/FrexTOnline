@@ -1,0 +1,159 @@
+{#用于备份和测试使用#}
+{#测试使用方法：访问localhost:8000/test/#}
+
+
+{% extends 'base.html' %} {% load static %}
+{% block pageStyle %}
+<link href="{% static 'css/studentHome.css' %}" rel='stylesheet' type='text/css' />
+<script src="../../static/js/studentHome.js" type="text/javascript"></script>
+  <script src="../../static/js/socket.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+  <section id="studentHome">
+    <header>{% include 'topNav.html' %}</header>
+
+    <nav id="studentSlide">
+      <ul class="nav nav-pills nav-stacked">
+
+{#！！！！自由实验索引必须是第一个！！！！#}
+        <li role="presentation" onclick="show('{{ freeExperiment.id }}')">
+          <a href="#">自由实验</a>
+        </li>
+        <ul class="fileList" id={{ freeExperiment.id }} style="display:none;">
+          {% for item in freeExperiment.expItems %}
+            <li role="presentation" onclick="showFile2('{{ item.expId }}')">
+              <a href="#">{{ item.expName }}</a>
+            </li>
+          {% endfor %}
+            <li role="presentation" id="addFreeExpLi">
+              <a href="#" data-toggle="modal" data-target="#addFreeExp">添加实验</a>
+              <div class="modal fade" id="addFreeExp" aria-describedby="addFreeExpLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="addFreeExpLabel">
+                          上传文件
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                      <label>自由实验名称（非空，字母开头，后接字母数字）
+                        <input type="text" class="form-control" id="newFreeExpName"
+                               placeholder="new project" required pattern="[a-zA-Z][a-zA-Z0-9]*"/>
+                      </label>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                      <button type="submit" name="update_id" value="{{i.id}}" class="btn btn-primary"
+                              onclick="createFreeExpProj()">
+                        添加
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+        </ul>
+
+{#        课程实验索引#}
+        {% for exp in classExperiment %}
+          <li role="presentation" onclick="show('{{ exp.id }}')">
+            <a href="#">{{ exp.expType }}</a>
+          </li>
+          <ul class="fileList" id={{ exp.id }} style="display:none;">
+            {% for item in exp.expItems %}
+              <li role="presentation" onclick="showFile('{{ item.expId }}', 'class')">
+                <a href="#">{{ item.expName }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <div id="studentMiddle">
+      {% for item in freeExperiment.expItems %}
+        <div class="studentMiddleSub" id="{{ item.expId }}" style="display: none">
+          {% include 'Home/freeHome.html' with item=item %}
+        </div>
+      {% endfor %}
+
+      <div id="studentContent" style="display: none">
+
+        <div id="studentFiles">
+          {% for item in freeExperiment.expItems %}
+            <div class="freeFileGroup" style="display:none;" id="{{ item.expId }}">
+              <h2>{{ item.expName }}</h2>
+              <hr/>
+
+              <h3>学生文件</h3>
+              <div id="freeFileList{{ item.expId }}">
+                {% for file in item.fileList %}
+                  <div class="input-group" id="file{{file.fileName}}">
+                    <span id="lineInfo">{{ file.fileName }}</span>
+                    <div class="input-group-btn">
+                      <button type="button" class="btn btn-default"
+                              onclick="modifyFile('{{ item.expId }}', '{{ file.fileId }}', 'free')">修改</button>
+                      <button type="button" class="btn btn-default"
+                              onclick="deleteFile('{{ item.expId }}', '{{ file.fileId }}', 'free')">删除</button>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+
+            </div>
+            {% endfor %}
+          {% for classExp in classExperiment %}
+            {% for item in classExp.expItems %}
+              <div class="classFileGroup" style="display:none;" id="{{ item.expId }}">
+                <h2>{{ item.expName }}</h2>
+                <hr/>
+                {% if not item.expCourseware is None %}
+                  <h3>课件</h3>
+                  {% for courseware in item.expCourseware %}
+                    <div class="input-group">
+                      <span id="lineInfo">{{ courseware }}</span>
+                      <div class="input-group-btn">
+                        <button type="button" class="btn btn-default">下载</button>
+                      </div>
+                    </div>
+                  {% endfor %}
+                  <hr/>
+                {% endif %}
+
+                <h3>学生文件</h3>
+                <div id="classFileList{{ item.expId }}">
+                  {% for file in item.fileList %}
+                    <div class="input-group" id="file{{ file.fileName }}">
+                      <span id="lineInfo">{{ file.fileName }}</span>
+                      <div class="input-group-btn">
+                        <button type="button" class="btn btn-default"
+                                onclick="modifyFile('{{ item.expId }}', '{{ file.fileId }}', 'class')">修改</button>
+                        <button type="button" class="btn btn-default"
+                                onclick="deleteFile('{{ item.expId }}', '{{ file.fileId }}', 'class')">删除</button>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+                <hr/>
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div id="studentRright">
+      <button id="startExp" class="btn btn-default">
+        开始实验
+      </button>
+      <p>
+        你好
+      </p>
+
+    </div>
+
+    <footer>暂时没有使用，底部版权同头部 position: fixed;z-index: 9;</footer>
+  </section>
+{% endblock %}

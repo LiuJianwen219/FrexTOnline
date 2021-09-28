@@ -1,0 +1,19 @@
+{% extends 'base.html' %} {% load static %}
+{% block pageStyle %}
+<link href="{% static "/css/home.css" %}" rel='stylesheet' type='text/css' />
+{% endblock %}
+
+{% block content %}
+  {% include 'topNav.html' with role=request.session.role %}
+  <div>
+    <div>
+      <div>
+        <div>
+          <div class="introduceTitle">
+            <h2>页面在建......</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

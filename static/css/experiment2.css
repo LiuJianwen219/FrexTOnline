@@ -1,0 +1,88 @@
+/* about switch */
+.swBoard{
+  position: static;
+  height: 80px;
+  width: 30px;
+  background: white;
+}
+.swBack{
+  position: absolute;
+  height: 60px;
+  width: 20px;
+  background: black;
+}
+.swTop{
+  position: absolute;
+  height: 60px;
+  width: 20px;
+  background: black;
+  cursor: pointer;
+  z-index: 5;
+}
+.swOn{
+  position: absolute;
+  left: -2px;
+  height: 30px;
+  width: 24px;
+  background: grey;
+}
+.swOff{
+  position: absolute;
+  top: 30px;
+  left: -2px;
+  height: 30px;
+  width: 24px;
+  background: grey;
+}
+.swName{
+  position: absolute;
+  top: 60px;
+  left: 12px;
+  font-size: 12px;
+}
+
+/* about btn */
+.btnBoard{
+  position: static;
+  height: 45px;
+  width: 30px;
+  background: white;
+}
+.btnBack{
+  position: absolute;
+  height: 25px;
+  width: 25px;
+  background: black;
+}
+.btnTop{
+  position: absolute;
+  height: 25px;
+  width: 25px;
+  background: black;
+  cursor: pointer;
+  z-index: 5;
+}
+.btnOn{
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 20px;
+  width: 20px;
+  background: red;
+  border-radius: 8px;
+}
+.btnOff{
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 20px;
+  width: 20px;
+  background: grey;
+  border-radius: 8px;
+}
+.btnName{
+  position: absolute;
+  top: 25px;
+  left: 18px;
+  font-size: 12px;
+}

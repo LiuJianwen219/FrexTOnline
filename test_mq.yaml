@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frext-online-mq-test
+  labels:
+    app:  frext-online-mq-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frext-online-mq-test
+  template:
+    metadata:
+      labels:
+        app: frext-online-mq-test
+    spec:
+      serviceAccountName:
+        frext
+      containers:
+      - name: frext-online-mq-test
+        image: wxwd14388/frext-testing-test:v0.0.9
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo hello; sleep 4;done"]
+        volumeMounts:
+        - mountPath: /tmp/FrexT
+          name: frext-job
+      volumes:
+        - name: frext-job
+          hostPath:
+            path: /mnt/hgfs/0Web
+            type: Directory

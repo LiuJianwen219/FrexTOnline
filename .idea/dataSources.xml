@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="frext_online" uuid="d3ce5424-d029-4cb6-ac3d-6bb8c254e8da">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://rm-bp1fx85st221svg1r0o.mysql.rds.aliyuncs.com:3306/frext_online</jdbc-url>
+    </data-source>
+  </component>
+</project>

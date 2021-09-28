@@ -1,0 +1,497 @@
+<div class="panel-group" id="{{ template.templateId }}">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav_{{ template.templateId }}" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">{{ template.templateName }}</a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="nav_{{ template.templateId }}">
+        <ul class="nav navbar-nav">
+          <li><a href="#" data-toggle="modal" data-target="#createClass_{{ courseId }}_{{ template.templateId }}">
+            创建班级
+          </a></li>
+          <li><a href="#" data-toggle="modal" data-target="#createExpCourse{{ courseId }}_{{ template.templateId }}">
+            添加实验
+          </a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" data-toggle="modal" data-target="#deleteTemplate_{{ courseId }}_{{ template.templateId }}">
+            删除模板
+          </a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+  <div>
+    <div class="modal fade" id="deleteTemplate_{{ courseId }}_{{ template.templateId }}" tabindex="-1" role="dialog"
+           aria-labelledby="myUpLoadFile" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">删除模板</h4>
+            </div>
+            <div class="modal-body">
+              <label>确定要删除该模板吗？此操作不可恢复！</label>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+              </button>
+              <button name="uploadFile_id" class="btn btn-primary"
+                      onclick="deleteTemplate('{{ courseId }}', '{{ template.templateId }}')">
+                删除
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="modal fade" id="createClass_{{ courseId }}_{{ template.templateId }}" tabindex="-1" role="dialog"
+           aria-labelledby="myUpLoadFile" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">创建班级，并应用此模板</h4>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              <label>输入班级名称：</label>
+              <input type="text" class="form-control" id="newClassWithTemplateName_{{ courseId }}_{{ template.templateId }}"
+                placeholder="new class name" required pattern="[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*">
+              <label for="classStart_{{ courseId }}_{{ template.templateId }}">班级开始：</label>
+              <input id="classStart_{{ courseId }}_{{ template.templateId }}"
+                     data-provide="datepicker" data-date-format="yyyy-mm-dd" type="text" class="form-control">
+              <label for="classEnd_{{ courseId }}_{{ template.templateId }}">班级结束：</label>
+              <input id="classEnd_{{ courseId }}_{{ template.templateId }}"
+                     data-provide="datepicker" data-date-format="yyyy-mm-dd" type="text" class="form-control">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+              </button>
+              <button name="uploadFile_id" class="btn btn-primary"
+                      onclick="createClass('{{ courseId }}', '{{ template.templateId }}',
+                              'newClassWithTemplateName_{{ courseId }}_{{ template.templateId }}',
+                              'classStart_{{ courseId }}_{{ template.templateId }}',
+                              'classEnd_{{ courseId }}_{{ template.templateId }}')">
+                创建
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="modal fade" id="createExpCourse{{ courseId }}_{{ template.templateId }}" tabindex="-1" role="dialog"
+           aria-labelledby="myUpLoadFile" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">添加实验</h4>
+            </div>
+            <div class="modal-body">
+              <label>创建实验（[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*）</label>
+              <input type="text" class="form-control" id="newCourseExp{{ template.templateId }}"
+                     placeholder="new exp" required pattern="[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+              <button class="btn btn-primary"
+                      onclick="createExpCourse('{{ courseId }}', '{{ template.templateId }}', 'newCourseExp{{ template.templateId }}')">
+                创建
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  {% for tempExp in template.templateExp %}
+
+    <div class="panel panel-default" id="courseExpItem_{{ courseId }}_{{ template.templateId }}_{{ tempExp.templateExpId }}">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <div>
+            <div style="float: left;">
+              <a data-toggle="collapse"{# data-parent="#{{ template.templateId }}" #}
+                 href="#courseware_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}">
+                {{ tempExp.expName }}
+              </a>
+            </div>
+            <div style="float: right">
+                <a href="" data-toggle="modal" onclick="getTemplateClass('{{ template.templateId }}',
+                        'dispatchHomeworkClass_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}',
+                        'dispatchHomeworkStart_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}',
+                        'dispatchHomeworkEnd_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}')"
+                   data-target="#dispatchHomework_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}">
+                  发布作业
+                </a>
+                <div class="modal fade" id="dispatchHomework_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}" tabindex="-1" role="dialog"
+                     aria-labelledby="myUpLoadFile" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">发布作业</h4>
+                      </div>
+                      <div class="modal-body">
+                        {% csrf_token %}
+                        <label for="dispatchHomeworkClass_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}">选择班级名称：</label>
+                        <select id="dispatchHomeworkClass_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}"
+                                class="form-control"><option>数据出错</option></select>
+                        <label for="dispatchHomeworkStart_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}">开始时间：</label>
+                        <input id="dispatchHomeworkStart_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}"
+                               data-provide="datepicker" data-date-format="yyyy-mm-dd" type="text" class="form-control">
+                        <label for="dispatchHomeworkEnd_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}">结束时间：</label>
+                        <input id="dispatchHomeworkEnd_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}"
+                               data-provide="datepicker" data-date-format="yyyy-mm-dd" type="text" class="form-control">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button name="uploadFile_id" class="btn btn-primary"
+                                onclick="dispatchHomework('{{ courseId }}', '{{ tempExp.expName }}', '{{ tempExp.templateExpId }}',
+                                    'dispatchHomeworkClass_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}',
+                                    'dispatchHomeworkStart_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}',
+                                    'dispatchHomeworkEnd_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}')">
+                          发布
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a href="" data-toggle="modal" data-target="#deleteExpCourse_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}">
+                  删除实验
+                </a>
+                <div class="modal fade" id="deleteExpCourse_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}" tabindex="-1" role="dialog"
+                     aria-labelledby="myUpLoadFile" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">删除实验</h4>
+                      </div>
+                      <div class="modal-body">
+                        <label>确定要删除本实验吗？此操作不可恢复！</label>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button name="uploadFile_id" class="btn btn-primary"
+                                onclick="deleteExpCourse('{{ courseId }}', '{{ template.templateId }}', '{{ tempExp.templateExpId }}')">
+                          删除
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a href="" data-toggle="modal" data-target="#uploadCourseFile_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}">
+                  添加文件
+                </a>
+                <div class="modal fade" id="uploadCourseFile_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}" tabindex="-1" role="dialog"
+                     aria-labelledby="myUpLoadFile" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">上传文件</h4>
+                      </div>
+                      <div class="modal-body">
+                        <input id="uploadCourseFileBox_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}" type="file"  multiple="multiple" >
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button name="uploadFile_id" class="btn btn-primary"
+                                onclick="uploadCourseFile('{{ courseId }}', '{{ template.templateId }}', '{{ tempExp.templateExpId }}',
+                                        'uploadCourseFileBox_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}',
+                                        'courseware_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}')">
+                          上传
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+          </div>
+        </div>
+      </div>
+      <div id="courseware_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}" class="panel-collapse collapse">
+        <div class="panel-body">
+          {% for tempExpFile in tempExp.expFile %}
+            <div id="{{ tempExpFile.fileName }}">
+              <div style="float: left">
+                <div>{{ tempExpFile.fileName }}</div>
+              </div>
+              <div style="float: right">
+                <button onclick="deleteCourseFile('{{ courseId }}', '{{ template.templateId }}', '{{ tempExp.templateExpId }}',
+                                        '{{ tempExpFile.fileId }}',
+                                        'courseware_{{ courseId }}_{{ tempExp.expName }}_{{ tempExp.templateExpId }}',
+                                        '{{ tempExpFile.fileName }}')">
+                  删除文件
+                </button>
+              </div>
+              <div style="clear: both"></div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  {% endfor %}
+</div>
+
+<script>
+
+
+  function dispatchHomework(courseId, templateId, templateExpId, docClassId, docStart, docEnd) {
+    let data = new FormData();
+    data.append('courseId', courseId);
+    data.append('templateId', templateId);
+    data.append('templateExpId', templateExpId);
+
+    {#console.log($('#'+docClassId).val());#}
+    data.append('classId', $('#'+docClassId).val());
+
+    {#console.log($('#'+docStart).val())#}
+    data.append('startTime', $('#'+docStart).val());
+
+    {#console.log($('#'+docEnd).val())#}
+    data.append('endTime', $('#'+docEnd).val());
+
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+      url: '/home/teacherhome/dispatchhoework/',
+      type: 'POST',
+      data: data,
+      cache: false,                                               //上传文件无需缓存
+      processData: false,                                          //不对数据做序列化操作
+      contentType: false,                                          //不定义特殊连接类型
+      success: function (req) {
+        if(req.state !== "ERROR") {
+          alert("作业发布成功");
+        } else {
+          alert(req.info);
+        }
+      }
+    })
+  }
+  
+  function getTemplateClass(templateId, docChangeId, docStart, docEnd) {
+    let data = new FormData();
+    data.append('templateId', templateId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+      url: '/home/teacherhome/gettemplateclass/',
+      type: 'POST',
+      data: data,
+      cache: false,                                               //上传文件无需缓存
+      processData: false,                                          //不对数据做序列化操作
+      contentType: false,                                          //不定义特殊连接类型
+      success: function (req) {
+        if(req.state !== "ERROR") {
+          $("#" + docChangeId).empty();
+          for(let i=0; i<req.classesName.length; i=i+1) {
+              console.log(req.classesName[i])
+              let text2 = "<option value=\'"+ req.classesId[i] +"\'>"+ req.classesName[i] +"</option>"
+              $("#" + docChangeId).append(text2);
+          }
+        } else {
+          alert(req.info);
+        }
+      }
+    })
+  }
+  
+  function createClass(courseId, templateId, doc, docStart, docEnd) {
+    let data = new FormData();
+    data.append('courseId', courseId);
+    data.append('templateId', templateId);
+    data.append('newClassName', $("#"+doc).val());
+    data.append('newClassStartTime', $("#"+docStart).val());
+    data.append('newClassEndTime', $("#"+docEnd).val());
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/home/teacherhome/createclass/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("实验创建成功，点击确定刷新页面");
+                location.reload();
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+  
+  function deleteTemplate(courseId, templateId) {
+    let data = new FormData();
+    data.append('courseId', courseId);
+    data.append('templateId', templateId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/home/teacherhome/deletetemplate/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                if(req.state === "THINK_TWICE"){
+                  alert("还有班级正在使用此模板，请先删除班级！");
+                }
+                else {
+                  alert("模板删除成功，点击确定刷新页面");
+                  location.reload();
+                }
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+
+  function createExpCourse(courseId, templateId, doc) {
+    let data = new FormData();
+    data.append('courseId', courseId);
+    data.append('templateId', templateId);
+    data.append('templateExpName', $("#"+doc).val());
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/home/teacherhome/createcourseexp/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("实验创建成功，点击确定刷新页面");
+                location.reload();
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+
+  function deleteExpCourse(courseId, templateId, templateExpId) {
+    let data = new FormData();
+    data.append('courseId', courseId);
+    data.append('templateId', templateId);
+    data.append('templateExpId', templateExpId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/home/teacherhome/deletecourseexp/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("实验删除成功，点击确定刷新页面");
+                location.reload();
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+
+  function deleteCourseFile(courseId, templateId, templateExpId, fileId, docChangeId, tag) {
+    let data = new FormData();
+    data.append('courseId', courseId);
+    data.append('templateId', templateId);
+    data.append('templateExpId', templateExpId);
+    data.append('fileId', fileId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/home/teacherhome/deletecoursefile/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("文件删除成功，点击确定刷新页面");
+                //location.reload();
+                let cs = document.getElementById(docChangeId).children[0]
+                console.log(cs.children)
+                for(let i=0; i<cs.children.length; i=i+1){
+                    if(cs.children[i].id === tag){
+                        cs.children[i].remove();
+                        break;
+                    }
+                }
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+
+  function uploadCourseFile(courseId, templateId, templateExpId, docId, docChangeId) {
+    let obj = $("#"+docId);
+    if (obj.get(0).files.length !== 0) {
+        let data = new FormData();                                      //创建formdata对象，便于将文件传输到后端
+        data.append('courseId', courseId);
+        data.append('templateId', templateId);
+        data.append('templateExpId', templateExpId);
+
+        for(let i = 0; i<obj.get(0).files.length; i+=1){
+          let f_obj = obj.get(0).files[i];                       //获取上传文件信息
+          console.log("文件对象：", f_obj);
+          console.log("文件名称是：", f_obj.name);
+          console.log("文件大小是：", f_obj.size);
+          data.append('courseFiles', f_obj);
+        }
+        data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+
+        $.ajax({
+            url: '/home/teacherhome/uploadcoursefile/',
+            type: 'POST',
+            data: data,
+            cache: false,                                               //上传文件无需缓存
+            processData: false,                                          //不对数据做序列化操作
+            contentType: false,                                          //不定义特殊连接类型
+            success: function (req) {
+                if(req.state !== "ERROR") {
+                    alert("文件已经上传成功，点击确定刷新页面");
+                    //location.reload();
+                    let text2 = "<div id=\'"+ req.fileName +"\'>\n" +
+                        "              <div style=\"float: left\">\n" +
+                        "                <div>"+ req.fileName +"</div>\n" +
+                        "              </div>\n" +
+                        "              <div style=\"float: right\">\n" +
+                        "                <button onclick=\"deleteCourseFile(\'"+ courseId +"\', \'"+ templateId +"\',\n" +
+                        "                                        ,\'"+ templateExpId +"\'," + "\'"+ docChangeId +"\',\n" +
+                        "                                        \'"+ req.fileName +"\')\">\n" +
+                        "                  删除文件\n" +
+                        "                </button>\n" +
+                        "              </div>\n" +
+                        "              <div style=\"clear: both\"></div>\n" +
+                        "            </div>"
+                    $("#" + docChangeId).children(0).append(text2);
+                } else {
+                    alert(req.info);
+                }
+            }
+        })
+    }
+  }
+</script>

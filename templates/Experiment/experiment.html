@@ -1,0 +1,717 @@
+{% extends 'base.html' %} {% load static %}
+{% block pageStyle %}
+{#<link href="{% static "/css/experiment.css" %}" rel='stylesheet' type='text/css' />#}
+<link href="{% static "/css/experiment2.css" %}" rel='stylesheet' type='text/css' />
+<script src="https://cdn.bootcss.com/flv.js/1.3.3/flv.min.js"></script>
+<script src="../../static/js/socket.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+  <section id="experimentHome">
+{#    <header>{% include 'expNav.html' %}</header>#}
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#" onclick="returnBack()">< 返回</a>
+        </div>
+        <div>
+          <ul class="nav navbar-nav">
+            <li class="active"><a>当前选用的bit文件是：</a></li>
+            <li class="active"><a id="currentBit">请稍等</a></li>
+            <li><a></a></li>
+            <li>
+              <a href="#"data-toggle="modal" data-target="#selectBitFile">
+                选用已有bit
+              </a>
+              <div class="modal fade" id="selectBitFile" tabindex="-1" role="dialog"
+                 aria-labelledby="myUpLoadBitFile" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myUpLoadBitFile">选择当前实验中已有的Bit文件</h4>
+                    </div>
+                    <div class="modal-body">
+                      {% csrf_token %}
+                        <label for="selectBitFileName_{{ userId }}_{{ type }}_{{ expId }}">选择bit名称：</label>
+                        <select id="selectBitFileName_{{ userId }}_{{ type }}_{{ expId }}"
+                                class="form-control">
+                          {% for bitFile in bitFileList %}
+                          <option>{{ bitFile }}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                      {% csrf_token %}
+                      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                      <button type="submit" class="btn btn-primary"
+                              onclick="selectExistBit('selectBitFileName_{{ userId }}_{{ type }}_{{ expId }}')">
+                        确定
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li><a></a></li>
+            <li>
+              <a href="#" data-toggle="modal" data-target="#uploadBitFile">
+                重新上传新的文件
+              </a>
+              <div class="modal fade" id="uploadBitFile" tabindex="-1" role="dialog"
+                 aria-labelledby="myUpLoadBitFile" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myUpLoadBitFile">上传Bit文件</h4>
+                    </div>
+                    <div class="modal-body">
+                      <input id="upBitFile" type="file" >
+                    </div>
+                    <div class="modal-footer">
+                      {% csrf_token %}
+                      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                      <button type="submit" class="btn btn-primary"
+                              onclick="upBitFile()">
+                        上传
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li><a></a></li>
+            <li>
+              <div>
+                <button type="button" onclick="burnBit3()" class="btn btn-default navbar-btn">
+                  烧录
+                </button>
+              </div>
+            </li>
+            <li><a id="burnState">未烧录</a></li>
+          </ul>
+        </div>
+
+
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-md-8 col-lg-8">
+{#            <video style="width: 100%; height: 100%" id="videoBox" controls>#}
+            <video muted style="width: 100%; height: 100%" id="videoBox" controls>
+            </video>
+            <div class="row">
+              <div class="col-sm-6 col-md-6 col-lg-6">
+                {% for seg in segMent %}
+                  <img style="width: 10%" class="expSegment" id="{{ forloop.counter0 }}" src="../../static/images/pic{{ seg }}.png" alt="..."/>
+                {% endfor %}
+              </div>
+              <div class="col-sm-6 col-md-6 col-lg-6">
+                {% for led in ledState %}
+                  <img style="width: 5%" class="expLed" src="../../static/images/led0.png" alt="..."/>
+                {% endfor %}
+              </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4 col-lg-4">
+            <!-- 显示开关 -->
+            <!-- 第一行 -->
+            <div class="row">
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+              {% for sw in SWState2 %}
+                {% if forloop.counter0 < 8 %}
+                <div class="col-sm-1 col-md-1 col-lg-1">
+                  <div class="swBoard center-block">
+                    <div class="swBack swTop">
+                      <div name="SWItem" class="swOff" onclick="changeSW2({{ forloop.counter0 }})">
+
+                      </div>
+                    </div>
+                    <div class="swName">
+                      sw{{ forloop.counter0 }}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              {% endfor %}
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+            </div>
+            <!-- 第二行 -->
+            <div class="row">
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+              {% for sw in SWState2 %}
+                {% if forloop.counter0 >= 8 %}
+                <div class="col-sm-1 col-md-1 col-lg-1">
+                  <div class="swBoard">
+                    <div class="swBack swTop">
+                      <div name="SWItem" class="swOff" onclick="changeSW2({{ forloop.counter0 }})">
+
+                      </div>
+                    </div>
+                    <div class="swName">
+                      sw{{ forloop.counter0 }}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              {% endfor %}
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+            </div>
+
+            <!-- 显示按钮 -->
+            <!-- 第一行 -->
+            <div class="row">
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+              {% for sw in SWState2 %}
+                {% if forloop.counter0 < 4 %}
+                <div class="col-sm-2 col-md-2 col-lg-2">
+                  <div class="btnBoard center-block">
+                    <div class="btnBack btnTop">
+                      <div name="BTNItem" class="btnOff"
+                        onmousedown="changeBTN2({{ forloop.counter0 }}, 'press')"
+                        onmouseup="changeBTN2({{ forloop.counter0 }}, 'release')">
+
+                      </div>
+                    </div>
+                    <div class="btnName">
+                      btn{{ forloop.counter0 }}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              {% endfor %}
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+            </div>
+            <!-- 第二行 -->
+            <div class="row">
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+              {% for sw in SWState2 %}
+                {% if forloop.counter0 >= 4 and forloop.counter0 < 8 %}
+                <div class="col-sm-2 col-md-2 col-lg-2">
+                  <div class="btnBoard center-block">
+                    <div class="btnBack btnTop">
+                      <div name="BTNItem" class="btnOff"
+                        onmousedown="changeBTN2({{ forloop.counter0 }}, 'press')"
+                        onmouseup="changeBTN2({{ forloop.counter0 }}, 'release')">
+
+                      </div>
+                    </div>
+                    <div class="btnName">
+                      btn{{ forloop.counter0 }}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              {% endfor %}
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+            </div>
+            <!-- 第三行 -->
+            <div class="row">
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+              {% for sw in SWState2 %}
+                {% if forloop.counter0 >= 8 and forloop.counter0 < 12 %}
+                <div class="col-sm-2 col-md-2 col-lg-2">
+                  <div class="btnBoard center-block">
+                    <div class="btnBack btnTop">
+                      <div name="BTNItem" class="btnOff"
+                        onmousedown="changeBTN2({{ forloop.counter0 }}, 'press')"
+                        onmouseup="changeBTN2({{ forloop.counter0 }}, 'release')">
+
+                      </div>
+                    </div>
+                    <div class="btnName">
+                      btn{{ forloop.counter0 }}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              {% endfor %}
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+            </div>
+            <!-- 第四行 -->
+            <div class="row">
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+              {% for sw in SWState2 %}
+                {% if forloop.counter0 >= 12 and forloop.counter0 < 16 %}
+                <div class="col-sm-2 col-md-2 col-lg-2">
+                  <div class="btnBoard center-block">
+                    <div class="btnBack btnTop">
+                      <div name="BTNItem" class="btnOff"
+                        onmousedown="changeBTN2({{ forloop.counter0 }}, 'press')"
+                        onmouseup="changeBTN2({{ forloop.counter0 }}, 'release')">
+
+                      </div>
+                    </div>
+                    <div class="btnName">
+                      btn{{ forloop.counter0 }}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              {% endfor %}
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+            </div>
+
+            <!-- 键盘输入 -->
+            <div class="row">
+              <div class="col-sm-2 col-md-2 col-lg-2"></div>
+              <div class="col-sm-6 col-md-6 col-lg-6">
+                <input class="expPS2Input" style="width: 100%" type="text" placeholder="输入键盘数据">
+              </div>
+              <div class="col-sm-4 col-md-4 col-lg-4">
+                <button onclick="inputPS2()">发送</button>
+              </div>
+            </div>
+{#            <div class="expPS2Group">#}
+{#              <input type="text" class="expPS2Input" placeholder="输入键盘数据">#}
+{#              <button class="expPS2Button" type="button" onclick="inputPS2()">发送</button>#}
+{#            </div>#}
+        </div>
+      </div>
+    </div>
+
+    <footer>暂时没有使用，底部版权同头部 position: fixed;z-index: 9;</footer>
+  </section>
+
+<script type="text/javascript">
+
+  debug = 1;
+  product = 1;
+  isUpLoad = null;
+
+  var n_SW = 16;
+  {#var SWState = ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"];#}
+  {#var SWState = [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1];#}
+  var SWState = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
+
+  var n_BTN = 16;
+  {#var BTNState = ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"];#}
+  var BTNState = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  var flvPlayer;
+
+  // TODO
+  // 这边的延迟执行，可能造成设备的非正常占用，例如我点进页面，
+  // 但是在1毫秒后立马退出页面，此时延时的函数还是会继续执行，从而非正常占用
+  setTimeout(function () {
+    testLJW();//建立连接
+    setTimeout(function () {
+      remote.sync();
+      setTimeout(function () {
+        remote.acquire();
+        setTimeout(function () {
+            //在acquire获得分配的设备后进行流媒体服务器的初始化
+            console.log(device_id);
+            init_flv_player(device_id);
+            setTimeout(function () {
+              init_SW_BT()
+              changeBitFile("未选择")
+          }, 30)
+        }, 30)
+      }, 30)
+    }, 30)
+  }, 30)
+
+  setInterval(() => { // 定时追帧
+    var videoElement = document.getElementById('videoBox');
+    if(videoElement.buffered.length != 0){
+        const end = videoElement.buffered.end(0);//获取缓冲区end
+        const current = videoElement.currentTime;//当前播放time
+        const diff = end - current;
+        console.log('diff='+diff);
+        if (diff > 0.8) { // 设定超过0.8秒以上就进行跳帧
+          videoElement.currentTime = end - 0.2
+          //设置到end前0.2s
+          //不跳到end，是因为如果buffer的增长速度相对较快的时候，可能会出现频繁追帧而导致明显的卡顿
+          if (videoElement.paused) flvPlayer.play()
+        }
+     }
+  }, 1000)
+
+  // 初始化视频流媒体播放器
+  function init_flv_player(deviceid) {
+     if (flvjs.isSupported()) {//检查flvjs能否正常使用
+        var videoElement = document.getElementById('videoBox');//使用id选择器找到第二步设置的dom元素
+        console.log('diviceid in function is'+deviceid);
+        var flv_url = 'http://10.14.30.15:8080/live/device'+deviceid+'.flv';
+        // 增加config参数
+        // let player = flv.createPlayer(mediaDataSource: MediaDataSource, config?: Config);
+        flvPlayer = flvjs.createPlayer({//创建一个新的flv播放器对象
+            type: 'flv',//类型flv
+            url: flv_url,//flv文件地址
+            isLive: true,
+            hasAudio: false
+        },{
+            isLive: true,
+            //stashInitialSize: 128, //设置首帧显示等待时长
+            autoCleanupSourceBuffer:true,
+            enableStashBuffer: false
+            //不使用缓冲区，且自动清空
+         });
+        flvPlayer.attachMediaElement(videoElement);//将flv视频装载进video元素内
+        flvPlayer.load();//载入视频
+        console.log('playing');
+        if (videoElement.paused) flvPlayer.play()//播放视频，如果不想要自动播放，去掉本行
+      }
+  }
+
+
+  // 初始化 SW和 BTN的状态
+  function init_SW_BT() {
+    remote.sync_SW_BTN()
+    {#upDateLED();#}
+    {#upDateSEG();#}
+    {#upDate_SEG_LED();#}
+  }
+
+  // 控制 开关
+  function showSW2() {
+    {#console.log("刘剑文222222")#}
+    let elements = document.getElementsByName("SWItem");
+    for(let i=0; i<n_SW && i<elements.length; i++){
+      if(SWState[i] === 1){
+        elements[i].className = "swOn";
+      } else{
+        elements[i].className = "swOff";
+      }
+    }
+}
+  function changeSW2(index) {
+    var start = new Date()
+    console.log("start: " + start.getTime())
+    let elements = document.getElementsByName("SWItem");
+    let changeTo = (elements[index].className === "swOff")?1:0;
+    if(changeTo === 1){
+        remote.openSwitch(index)
+    } else{
+        remote.closeSwitch(index)
+    }
+    var end = new Date()
+    console.log("end: " + end.getTime())
+    console.log((end-start)/1000 + " s")
+  }
+
+  // 控制 按钮
+  function showBTN2() {
+    let elements = document.getElementsByName("BTNItem");
+    for(let i=0; i<n_BTN && i<elements.length; i++){
+      if(BTNState[i] === 1){
+        elements[i].className = "btnOn";
+      } else{
+        elements[i].className = "btnOff";
+      }
+    }
+  }
+  function changeBTN2(index, operation) {
+    let elements = document.getElementsByName("BTNItem");
+    if(index >= elements.length || index < 0){ alert("BTN长度出错？"+ index); return null;}
+
+    let changeTo = 0;
+    if(operation === "press"){
+      console.log("press");
+      changeTo = 1;
+    } else if(operation === "release"){
+        console.log("release");
+      changeTo = 0;
+    } else if(operation === "duration"){
+        console.log("duration");
+      if(elements[index].className === "btnOff"){changeTo = 1;}
+      else {changeTo = 1;}
+    } else{
+        alert("BTN未知的操作??");
+        return null;
+    }
+
+    if(changeTo === 1){
+        remote.pressButton(index)
+    } else{
+        remote.releaseButton(index)
+    }
+  }
+
+  // 发送 PS2的控制信号
+  function inputPS2() {
+    let inputLine = document.getElementsByClassName("expPS2Input");
+    console.log(inputLine[0].value);
+    {#let result = sendPS2(inputLine[0].value);#}
+    remote.sendPS2(inputLine[0].value)
+    inputLine[0].value = "";
+  }
+
+  // 修改 seg 的显示
+  function upDateSEG() {
+    setTimeout(function(){remote.req_SEG();}, 1000);
+    {#setTimeout(function(){remote.req_SEG(); upDateSEG();}, 1000);#}
+  }
+  function changeSegMent(segData) {
+    let elements = document.getElementsByClassName("expSegment");
+    {#console.log(segData)#}
+    for(var i=0; i<elements.length; i++){
+        var data = segData[i];
+        elements[i].src = "../../static/images/pic"+data.toString()+".png";
+    }
+  }
+
+  // 修改 led 的显示
+  function upDateLED() {
+    setTimeout(function(){remote.req_LED();}, 1000);
+    {#setTimeout(function(){remote.req_LED(); upDateLED();}, 1000);#}
+  }
+  function changeLedState(ledState) {
+    let elements = document.getElementsByClassName("expLed");
+    {#console.log(ledState)#}
+    for(var i=0; i<elements.length; i++){
+        var data = ledState[i];
+        elements[i].src = "../../static/images/led"+data.toString()+".png";
+    }
+  }
+
+  function upDate_SEG_LED() {
+    setTimeout(function(){remote.req_SEG_LED();}, 2000);
+  }
+
+
+
+
+  // 保存用户选择的文件数据
+  var bitFileName = null;
+  {#var bitFileData = null;#}
+
+  function selectExistBit(doc) {
+    selectBitName = $('#'+doc).val();
+    isUpLoad = false;
+    changeBitFile(selectBitName)
+  }
+
+  // 上传文件到 web
+  function upBitFile() {
+    let obj = $("#upBitFile");
+    if (obj.get(0).files.length !== 0) {
+      let data = new FormData()                            //创建formdata对象，便于将文件传输到后端
+      let f_obj = obj.get(0).files[0]                      //获取上传文件信息
+      console.log("文件对象：", f_obj)
+      console.log("文件名称是：", f_obj.name)
+      console.log("文件大小是：", f_obj.size)
+
+      {#var file_reader = new FileReader();#}
+      {#file_reader.onload = function (e){#}
+      {#    bitFileData = e.target.result;#}
+      {# };#}
+      {#file_reader.readAsDataURL(f_obj)#}
+
+      data.append('upBitFile', f_obj)
+      data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val()); //在formdata对象中添加(封装)文件对象
+
+      $.ajax({
+        url: '/experiment/newBitFile/',
+        type: 'POST',
+        data: data,
+        cache: false,                                                //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+          if(req.state !== "ERROR") {
+            alert("文件已经上传成功，点击确定刷新页面");
+            isUpLoad = true;
+            changeBitFile(req.trueFileName);
+          } else {
+            alert(req.info)
+          }
+        }
+      })
+    }
+  }
+
+  function changeBitFile(fileName) {
+    bitFileName = fileName;
+    document.getElementById('currentBit').innerHTML = fileName
+    document.getElementById('burnState').innerHTML = "未烧录"
+  }
+
+  function burnBit3() {
+    if(isUpLoad != null){
+        remote.program('{{ userId }}', '{{ type }}', '{{ expId }}', isUpLoad, bitFileName)
+    }
+  }
+  function burnBit2_succ() {
+    {#alert("烧录成功")#}
+    document.getElementById('burnState').innerHTML = "烧录成功"
+  }
+
+  function returnBack() {
+    window.history.back(-1);
+  }
+
+
+
+
+
+
+
+
+
+  //------------未使用-------------------------
+  // 未使用
+  // 生成 socket对象 刷新 led 和 seg 的显示
+  //var socket = new WebSocket("ws:" + window.location.host + "/experiment/test_websocket/");
+  {#socket.onopen = function () {#}
+  {#  console.log('WebSocket open'); // 成功连接上Websocket#}
+  {# };#}
+  {#socket.onmessage = function (e) {#}
+    {#console.log('message: ' + JSON.parse(e.data).ledState); // 打印服务端返回的数据#}
+  {#  changeSegMent(JSON.parse(e.data).segData);#}
+  {#  changeLedState(JSON.parse(e.data).ledState);#}
+  {# };#}
+  {#socket.onclose=function(e){#}
+  {#  console.log(e);#}
+  {#  socket.close(); // 关闭TCP连接#}
+  {# };#}
+  {#if (socket.readyState === WebSocket.OPEN){#}
+  {#  socket.onopen();#}
+  {# }#}
+  // 未使用
+  function burnBit2() {
+    remote.program(userId, type, expId, bitFileName)
+  }
+  // 未使用
+  function burnBit() {
+      let data = new FormData()                            //创建formdata对象，便于将文件传输到后端
+      data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val()); //在formdata对象中添加(封装)文件对象
+
+      $.ajax({
+        url: '/experiment/burnBit/',
+        type: 'POST',
+        data: data,
+        cache: false,                                                //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+          if(req.state !== "ERROR") {
+            alert("烧录成功")
+            document.getElementById('burnState').innerHTML = "烧录成功"
+          } else {
+            alert(req.info)
+          }
+        }
+      })
+  }
+  //未使用
+  function sendPS2(PS2Data) {
+    let result = "ERROR";
+    $.ajax({
+        url: '/experiment/experimentPS2/',
+        type: 'POST',
+        tradition: true,
+        async: false,
+        data: {PS2Data: JSON.stringify(PS2Data),
+                csrfmiddlewaretoken: '{{ csrf_token }}'},
+        success: function (response) {
+          console.log(response);
+          if(response !== "ERROR")
+              result = "OK";
+        }
+    });
+    return result;
+  }
+  //未使用
+  function showSW() {
+    let elements = document.getElementsByName("SWItem");
+    for(let i=0; i<n_SW && i<elements.length; i++){
+      if(SWState[i] === "1"){
+        elements[i].className = "swOn";
+      } else{
+        elements[i].className = "swOff";
+      }
+    }
+  }
+  function changeSW(index) {
+      var start = new Date()
+      console.log("start: " + start.getTime())
+    let elements = document.getElementsByName("SWItem");
+    let changeTo = (elements[index].className === "swOff")?"1":"0";
+    var data = {"index": index, "newState": changeTo}
+    $.ajax({
+      url:'/experiment/experimentSW/',
+      type:'POST',
+      tradition:true,
+      async : false,
+      data:{data: JSON.stringify(data),
+            csrfmiddlewaretoken: '{{ csrf_token }}'},
+      success: function (response) {
+        console.log(response);
+        if(response.state === "SUCCESS" || response.state === "OK") {
+            n_SW = response.lengthOfSW;
+            for (let i = 0; i < n_SW; i += 1) {
+                if (SWState[i] !== response.SWState[i]) {
+                    SWState[i] = response.SWState[i];
+                }
+            }
+            var end = new Date()
+            console.log("end: " + end.getTime())
+            console.log((end-start)/1000 + " s")
+            showSW()
+        } else{
+            alert("开关SW操作失败："+response.info);
+        }
+      }
+    });
+  }
+  //未使用
+  function showBTN() {
+    let elements = document.getElementsByName("BTNItem");
+    for(let i=0; i<n_BTN && i<elements.length; i++){
+      if(BTNState[i] === "1"){
+        elements[i].className = "btnOn";
+      } else{
+        elements[i].className = "btnOff";
+      }
+    }
+  }
+  function changeBTN(index, operation) {
+    let elements = document.getElementsByName("BTNItem");
+    if(index >= elements.length || index < 0){ alert("BTN长度出错？"+ index); return null;}
+
+    let changeTo = "0";
+    if(operation === "press"){
+      console.log("press");
+      changeTo = "1";
+    } else if(operation === "release"){
+        console.log("release");
+      changeTo = "0";
+    } else if(operation === "duration"){
+        console.log("duration");
+      if(elements[index].className === "BTNOFF"){changeTo = "1";}
+      else {changeTo = "0";}
+    } else{
+        alert("BTN未知的操作??");
+        return null;
+    }
+
+    var data = {"index": index, "changeTo": changeTo}
+    $.ajax({
+      url:'/experiment/experimentBTN/',
+      type:'POST',
+      tradition:true,
+      async : false,
+      data:{data: JSON.stringify(data),
+            csrfmiddlewaretoken: '{{ csrf_token }}'},
+      success: function (response) {
+          console.log(response);
+          if(response.state === "SUCCESS" || response.state === "OK") {
+              n_BTN = response.BTNLength;
+              for(let i=0; i<n_BTN; i++){
+                if(BTNState[i] !== response.BTNState[i])
+                    BTNState[i] = response.BTNState[i];
+              }
+              showBTN();
+          }else{
+              alert("按键BTN操作失败："+response.info);
+          }
+      }
+    });
+  }
+</script>
+{% endblock %}

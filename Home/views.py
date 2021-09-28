@@ -30,6 +30,10 @@ def experiment(request):
     course_file = CourseFile.objects.filter(course_template_experiment__in=class_homework.values_list('course_template_experiment'))
     userExpHomeworkFiles = HomeworkFile.objects.filter(class_homework__in=class_homework)
 
+    print("theClass")
+    for c in theClasses:
+        print(c.uid)
+
     print("class_homework")
     for c in class_homework:
         print(c.uid)

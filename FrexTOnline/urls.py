@@ -25,8 +25,8 @@ urlpatterns = [
     path('login/', include('Login.urls')),
     path('experiment/', include('Experiment.urls')),
     path('file/', include('File.urls')),
+    path('course/', include('Course.urls')),
 
-    # path('course/', include('Course.urls')),
     # path('help/', include('Help.urls')),
     # path('resource/', include('Resource.urls')),
     # path('test/', include('Test.urls')),

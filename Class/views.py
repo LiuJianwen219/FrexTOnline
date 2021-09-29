@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from Class.models import TheClass, ClassStudent, ClassHomework
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
+from Experiment.models import Experiment, experiment_course
 from Login.models import User
 
 
@@ -81,10 +82,14 @@ def dispatch_experiment(request):
     classExp = CourseTemplateExperiment.objects.get(uid=request.POST["templateExpId"])
     start = datetime.strptime(request.POST["startTime"], '%Y-%m-%d')
     end = datetime.strptime(request.POST["endTime"], '%Y-%m-%d')
-
     classExpHomework = ClassHomework(the_class=theClass, course_template_experiment=classExp,
                                      start_time=start, end_time=end)
     classExpHomework.save()
+
+    class_students = ClassStudent.objects.filter(the_class=theClass)
+    for n in class_students:
+        experiment = Experiment(user=n.user, type=experiment_course, name=classExpHomework.name)
+        experiment.save()
 
     data = {"state": "OK"}
     return HttpResponse(json.dumps(data), content_type='application/json')

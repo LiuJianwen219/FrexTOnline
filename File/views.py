@@ -266,16 +266,17 @@ def upload_homework(request):
         print(request.POST.get('homeworkId'))
         f_objs = request.FILES.getlist('uploadFile')  # 暂时考虑只能上传一个文件
         user = User.objects.get(uid=request.session["u_uid"])
-        homework = ClassHomework.objects.get(uid=request.POST.get('homeworkId'))
-        homework_experiments = HomeworkExperiment.objects.filter(user=user, class_homework=homework)
-        if len(homework_experiments) == 0:
-            experiment = Experiment(user=user, name=homework.name, type=experiment_course)
-            experiment.save()
-            homework_experiment = HomeworkExperiment(user=user, class_homework=homework, experiment=experiment)
-            homework_experiment.save()
-        else:
-            homework_experiment = homework_experiments[0]
-            experiment = homework_experiment.experiment
+        experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
+        # homework = ClassHomework.objects.get(uid=request.POST.get('homeworkId'))
+        # homework_experiments = HomeworkExperiment.objects.filter(user=user, class_homework=homework)
+        # if len(homework_experiments) == 0:
+        #     experiment = Experiment(user=user, name=homework.name, type=experiment_course)
+        #     experiment.save()
+        #     homework_experiment = HomeworkExperiment(user=user, class_homework=homework, experiment=experiment)
+        #     homework_experiment.save()
+        # else:
+        #     homework_experiment = homework_experiments[0]
+        #     experiment = homework_experiment.experiment
 
         if len(f_objs) == 0:
             req = {"state": "OK", 'info': "没有文件上传，请检查"}

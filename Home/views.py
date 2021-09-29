@@ -73,9 +73,9 @@ def experiment(request):
             for c in classHomeworkItem:
                 print(str(f.experiment.uid), c['expId'])
                 if str(f.experiment.uid) == str(h.experiment.uid) and \
-                        str(h.class_homework.course_template_experiment.uid) == c['expId']:
+                        str(h.class_homework.uid) == c['expId']:
                     c['fileList'].append({
-                        "fileId": f.uid,
+                        "fileId": str(f.uid),
                         "fileName": f.file_name,
                     })
                     break

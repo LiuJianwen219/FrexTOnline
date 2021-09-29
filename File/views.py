@@ -290,7 +290,7 @@ def upload_homework(request):
 def delete_homework(request):
     if request.method == "POST":
         user = User.objects.get(uid=request.session["u_uid"])
-        experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
+        experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
         file = File.objects.get(uid=request.POST["classFileId"])
         try:
             file.delete()

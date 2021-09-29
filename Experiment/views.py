@@ -204,11 +204,6 @@ def compile_result(request):
         print(values)
         print(values["status"])
 
-        if values['status'] != "编译成功":  # from FrexTCompiler final result
-            data = {"state": "ERROR", 'trueFileName': "",
-                    'fileId': "", 'info': "编译失败"}
-            return HttpResponse(json.dumps(data), content_type='application/json')
-
         submit = CompileRecord.objects.get(uid=values["compileId"])
         submit.status = values["status"]
         submit.message = submit.message + values["message"] + "\n"
@@ -223,6 +218,20 @@ def compile_result(request):
         user = User.objects.get(uid=values['userId'])
         exp = Experiment.objects.get(uid=values["experimentId"])
 
+        logFile = File()
+        logFile.user = user
+        logFile.experiment = exp
+        logFile.type = file_log
+        logFile.file_name = values["compileId"] + ".log"
+        # logFile.content =
+        logFile.save()
+
+        if values['status'] != "编译成功":  # from FrexTCompiler final result
+            data = {"state": "ERROR", 'trueFileName': "",
+                    'fileId': "", 'info': "编译失败"}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+
+
         bitFile = File()
         bitFile.user = user
         bitFile.experiment = exp
@@ -230,14 +239,6 @@ def compile_result(request):
         bitFile.file_name = values["compileId"]+".bit"
         # bitFile.content =
         bitFile.save()
-
-        logFile = File()
-        logFile.user = user
-        logFile.experiment = exp
-        logFile.type = file_bit
-        logFile.file_name = values["compileId"] + ".log"
-        # logFile.content =
-        logFile.save()
 
         data = {"state": "OK", 'trueFileName': values["compileId"]+".bit",
                 'fileId': str(bitFile.uid), 'info': "编译成功"}

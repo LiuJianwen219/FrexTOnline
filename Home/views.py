@@ -61,6 +61,7 @@ def experiment(request):
                     "fileName": c_file.file_name,
                 })
         for t in homework_experiment:
+            print( str(t.class_homework.uid), str(c_t_experiment.uid))
             if str(t.class_homework.uid) == str(c_t_experiment.uid):
                 classHomeworkItem.append({
                     "theClass": str(c_t_experiment.the_class.uid),

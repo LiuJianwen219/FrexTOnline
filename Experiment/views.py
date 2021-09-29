@@ -85,7 +85,7 @@ def free_compile(request):
 
 
 def course_compile(request):
-    experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
+    experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
     return compile_all(request, experiment)
 
 

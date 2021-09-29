@@ -108,7 +108,7 @@ function classCompile(homeworkId, doc, docChange) {
     data.append("topModuleName", $("#"+doc).val())
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
     $.ajax({
-        url: '/home/studenthome/classcompile/',
+        url: '/experiment/course_compile/',
         type: 'POST',
         data: data,
         cache: false,                                               //上传文件无需缓存

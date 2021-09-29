@@ -309,3 +309,15 @@ def delete_homework(request):
         return HttpResponse(json.dumps(data), content_type='application/json')
     data = {"state": "ERROR", 'info': "未知的错误，请尝试刷新"}
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def download_homework_file(request, f_uid):
+    file = File.objects.get(uid=f_uid)
+    try:
+        response = FileResponse(file.content)
+        response['Content-Type'] = 'application/zip'
+        response['Content-Disposition'] = 'attachment;filename={0}'.format(file.file_name)
+        return response
+    except Exception:
+        data = {"state": "ERROR", 'info': "未知的错误1，请尝试刷新"}
+        return HttpResponse(json.dumps(data), content_type='application/json')

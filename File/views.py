@@ -117,7 +117,10 @@ def upload_bit(request):
     if request.method == "POST":
         f_obj = request.FILES.get('upBitFile')  # 暂时考虑只能上传一个文件
         user = User.objects.get(uid=request.session["u_uid"])
-        experiment = Experiment.objects.get(uid=request.POST.get('expId'))
+        try:
+            experiment = Experiment.objects.get(uid=request.POST.get('expId'))
+        except Experiment.DoesNotExist:
+            experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('expId')).experiment
 
         if len(f_obj.name) > 100 or len(f_obj.name) <= 0:
             req = {"state": "ERROR", "info": "文件名超出限定长度 100"}

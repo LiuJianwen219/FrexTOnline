@@ -271,11 +271,10 @@ def experiment(request):
     print(type)
     expId = request.GET.get('expId')
     print(expId)
-    if type == "free":
-        experiment = Experiment.objects.get(uid=expId)
-    else:
-        experiment = HomeworkExperiment.objects.get(class_homework_id=expId).experiment
-
+    try:
+        experiment = Experiment.objects.get(uid=request.POST.get('expId'))
+    except Experiment.DoesNotExist:
+        experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('expId')).experiment
 
     user = User.objects.get(uid=request.session['u_uid'])
 

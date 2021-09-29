@@ -6,9 +6,9 @@ from Experiment import views
 urlpatterns = [
     path('newFreeExpProject/', views.create_free_project),
     path('deleteFreeExpProject/', views.delete_free_project),
-    path('freecompile/', views.free_compile),
+    path('free_compile/', views.free_compile),
+    path('course_compile/', views.course_compile),
     path('compile_result/', views.compile_result),
     path('experiment/', views.experiment),
-    path('course_compile/', views.free_compile),
 ]
 

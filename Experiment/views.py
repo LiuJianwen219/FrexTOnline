@@ -20,7 +20,6 @@ from FrexTOnline.settings import Compile_MAX_Thread, Compile_MAX_Time, Judge_MAX
 # Create your views here.
 logger = logging.getLogger(__name__)
 
-
 compile_checker = None
 threadIndex = 0
 threadList = {}
@@ -30,6 +29,8 @@ threadList = {}
 # judgeThreadList = {}
 
 countCom = 0
+
+
 # countJud = 0
 
 
@@ -79,11 +80,21 @@ def delete_free_project(request):
 
 
 def free_compile(request):
+    experiment = Experiment.objects.get(uid=request.POST["freeExpId"])
+    return compile_all(request, experiment)
+
+
+def course_compile(request):
+    experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
+    return compile_all(request, experiment)
+
+
+def compile_all(request, experiment):
     if request.method == "POST":
         user = User.objects.get(uid=request.session["u_uid"])
         topModuleName = request.POST["topModuleName"]
         # experiment = Experiment.objects.get(uid=request.POST["freeExpId"])
-        experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
+        # experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
         files = File.objects.filter(experiment=experiment)
         compile = CompileRecord(user=user, experiment=experiment)
         compile.save()
@@ -191,15 +202,15 @@ def detect_compile():
 def compile_result(request):
     if request.method == "POST":
         values = {
-            "userId":       request.POST.get("userId", None),
-            "experimentType":       request.POST.get("experimentType", None),
-            "experimentId":         request.POST.get("experimentId", None),
-            "compileId":            request.POST.get("compileId", None),
-            "topModuleName":        request.POST.get("topModuleName", None),
-            "state":        request.POST.get("state", None),
-            "status":       request.POST.get("status", None),
-            "message":      request.POST.get("message", None),
-            "threadIndex":  request.POST.get("threadIndex", None),
+            "userId": request.POST.get("userId", None),
+            "experimentType": request.POST.get("experimentType", None),
+            "experimentId": request.POST.get("experimentId", None),
+            "compileId": request.POST.get("compileId", None),
+            "topModuleName": request.POST.get("topModuleName", None),
+            "state": request.POST.get("state", None),
+            "status": request.POST.get("status", None),
+            "message": request.POST.get("message", None),
+            "threadIndex": request.POST.get("threadIndex", None),
         }
         print(values)
         print(values["status"])
@@ -231,16 +242,15 @@ def compile_result(request):
                     'fileId': "", 'info': "编译失败"}
             return HttpResponse(json.dumps(data), content_type='application/json')
 
-
         bitFile = File()
         bitFile.user = user
         bitFile.experiment = exp
         bitFile.type = file_bit
-        bitFile.file_name = values["compileId"]+".bit"
+        bitFile.file_name = values["compileId"] + ".bit"
         # bitFile.content =
         bitFile.save()
 
-        data = {"state": "OK", 'trueFileName': values["compileId"]+".bit",
+        data = {"state": "OK", 'trueFileName': values["compileId"] + ".bit",
                 'fileId': str(bitFile.uid), 'info': "编译成功"}
         return HttpResponse(json.dumps(data), content_type='application/json')
 
@@ -257,28 +267,23 @@ ledState = [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 def experiment(request):
-    type = request.GET.get('type') # 有用
+    type = request.GET.get('type')  # 有用
+    print(type)
     expId = request.GET.get('expId')
+    print(expId)
+    if type == "free":
+        experiment = Experiment.objects.get(uid=expId)
+    else:
+        experiment = HomeworkExperiment.objects.get(class_homework_id=expId).experiment
 
-    # print(request.session['user_name'])
-    # userName = request.session['user_name']
-    # userName = "21921088"
+
     user = User.objects.get(uid=request.session['u_uid'])
-    experiment = Experiment.objects.get(uid=expId)
-    # bitFile = BitFile.objects.get(user=user, fileName=fileName)
-    # print(bitFile.file)
-    #
-    # with open(bitFile.file.path, 'rb') as file:
-    #     bitFile = file.read()
-        # bitFile = base64.b64encode(bitFile)
-    # bitFile = bitFile.decode()
 
     bitFileList = []
     files = File.objects.filter(experiment=experiment)
     for f in files:
         if f.file_name.split('.')[-1] == "bit":
             bitFileList.append(f.file_name)
-
 
     context = {
         "expName": experiment.name,
@@ -313,4 +318,3 @@ def experiment(request):
     }
     print(request)
     return render(request, "Experiment/experiment.html", context=context)
-

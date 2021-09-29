@@ -10,7 +10,7 @@ function freeCompile(freeExpId, doc, docChange) {
     data.append("topModuleName", $("#"+doc).val());
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
     $.ajax({
-        url: '/experiment/freecompile/',
+        url: '/experiment/free_compile/',
         type: 'POST',
         data: data,
         cache: false,                                               //上传文件无需缓存

@@ -45,6 +45,10 @@ def experiment(request):
     for c in course_file:
         print(c.uid)
 
+    print("userExpHomeworkFiles")
+    for c in userExpHomeworkFiles:
+        print(c.uid)
+
     classHomeworkItem = []
     for c_t_experiment in class_homework:
         cou_file = []
@@ -66,12 +70,15 @@ def experiment(request):
 
     for f in userExpHomeworkFiles:
         for c in classHomeworkItem:
+            print(str(f.experiment.uid), c['expId'])
             if str(f.experiment.uid) == c['expId']:
                 c['fileList'].append({
                     "fileId": f.uid,
                     "fileName": f.file_name,
                 })
                 break
+
+    print(json.dumps(classHomeworkItem))
 
     classItem = []
     for the_class in class_student:

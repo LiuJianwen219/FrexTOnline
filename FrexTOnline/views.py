@@ -21,5 +21,5 @@ def home(request):
 
 
 def resource(request):
-    with open("test_mq.yaml", "r") as f:
+    with open("resource.txt", "r") as f:
         return HttpResponse(f.read(), content_type="text/plain; charset=utf-8")

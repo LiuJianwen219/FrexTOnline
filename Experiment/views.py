@@ -272,9 +272,10 @@ def experiment(request):
     expId = request.GET.get('expId')
     print(expId)
     try:
-        experiment = Experiment.objects.get(uid=request.POST.get('expId'))
+        experiment = Experiment.objects.get(uid=expId)
     except Experiment.DoesNotExist:
-        experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('expId')).experiment
+        experiment = HomeworkExperiment.objects.get(class_homework_id=expId).experiment
+
 
     user = User.objects.get(uid=request.session['u_uid'])
 

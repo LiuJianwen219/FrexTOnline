@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frext-online-mq
+  labels:
+    app:  frext-online-mq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frext-online-mq
+  template:
+    metadata:
+      labels:
+        app: frext-online-mq
+    spec:
+      containers:
+      - name: frext-online-mq
+        image: wxwd14388/frext-testing-test:v0.1.0

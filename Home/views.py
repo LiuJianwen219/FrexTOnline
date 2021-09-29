@@ -54,6 +54,7 @@ def experiment(request):
         print(c_t_experiment.uid)
         cou_file = []
         for c_file in course_file:
+            print(str(c_file.course_template_experiment.uid), str(c_t_experiment.course_template_experiment.uid))
             if str(c_file.course_template_experiment.uid) == str(c_t_experiment.course_template_experiment.uid):
                 cou_file.append({
                     "fileId": str(c_file.uid),

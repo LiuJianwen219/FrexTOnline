@@ -27,6 +27,7 @@ urlpatterns = [
     path('file/', include('File.urls')),
     path('course/', include('Course.urls')),
     path('class/', include('Class.urls')),
+    path('resource/', views.resource),
 
     # path('help/', include('Help.urls')),
     # path('resource/', include('Resource.urls')),

@@ -1,4 +1,5 @@
 import json
+import os
 
 from django.http import HttpResponse, FileResponse, StreamingHttpResponse
 from django.shortcuts import render
@@ -247,7 +248,7 @@ def download_course(request, homeworkId):
                 config.c_fileName: f.file_name,
             }) == config.request_failed:
                 break
-            utilities.toZip(config.work_dir, f.file_name)
+            utilities.toZip(os.path.join(config.work_dir, f.file_name), "")
 
         response = StreamingHttpResponse(utilities.zip_file, content_type='application/zip')
         response['Content-Disposition'] = 'attachment;filename="{0}"'.format("下载.zip")

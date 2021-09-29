@@ -58,13 +58,16 @@ def experiment(request):
                     "fileId": str(c_file.uid),
                     "fileName": c_file.file_name,
                 })
-        classHomeworkItem.append({
-            "theClass": str(c_t_experiment.the_class.uid),
-            "expId": str(c_t_experiment.uid),
-            "expName": c_t_experiment.course_template_experiment.name,
-            "fileList": [],
-            "expCourseware": cou_file,
-        })
+        for t in homework_experiment:
+            if str(t.class_homework.uid) == str(c_t_experiment.uid):
+                classHomeworkItem.append({
+                    "theClass": str(c_t_experiment.the_class.uid),
+                    "expId": str(t.experiment.uid),
+                    "expName": c_t_experiment.course_template_experiment.name,
+                    "fileList": [],
+                    "expCourseware": cou_file,
+                })
+                break
 
     print(json.dumps(classHomeworkItem))
 

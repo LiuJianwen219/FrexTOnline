@@ -9,5 +9,6 @@ urlpatterns = [
     path('freecompile/', views.free_compile),
     path('compile_result/', views.compile_result),
     path('experiment/', views.experiment),
+    path('course_compile/', views.free_compile),
 ]
 

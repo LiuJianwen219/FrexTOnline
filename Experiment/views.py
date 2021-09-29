@@ -8,6 +8,8 @@ from django.http import FileResponse, HttpResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from apscheduler.schedulers.background import BackgroundScheduler
+
+from Class.models import ClassHomework, HomeworkExperiment
 from Compile.thread_handler import TaskHandlerThread, TimeCounter
 from Compile.compile_task import CompileTaskThread, send_task_to_rabbit_mq
 from File.models import File, file_bit, file_log
@@ -80,7 +82,8 @@ def free_compile(request):
     if request.method == "POST":
         user = User.objects.get(uid=request.session["u_uid"])
         topModuleName = request.POST["topModuleName"]
-        experiment = Experiment.objects.get(uid=request.POST["freeExpId"])
+        # experiment = Experiment.objects.get(uid=request.POST["freeExpId"])
+        experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
         files = File.objects.filter(experiment_id=experiment)
         compile = CompileRecord(user=user, experiment=experiment)
         compile.save()

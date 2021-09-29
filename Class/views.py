@@ -88,6 +88,7 @@ def dispatch_experiment(request):
 
     class_students = ClassStudent.objects.filter(the_class=theClass)
     for n in class_students:
+        # TODO 重复的情况
         experiment = Experiment(user=n.user, type=experiment_course, name=classExpHomework.name)
         experiment.save()
 

@@ -97,7 +97,7 @@ def free_compile(request):
             'experimentType': experiment.type,
             'experimentId': str(experiment.uid),
             'compileId': str(compile.uid),
-            'fileNames': json.dumps(fileNames),
+            'fileNames': fileNames,
             'topModuleName': topModuleName,
         }
         print("free_compile")

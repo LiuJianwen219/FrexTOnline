@@ -11,5 +11,7 @@ urlpatterns = [
     path('upload_bit/', views.upload_bit),
     path('upload_course/', views.upload_course),
     path('delete_course/', views.delete_course),
+    path('upload_homework/', views.upload_homework),
+    path('delete_homework/', views.delete_homework),
 ]
 

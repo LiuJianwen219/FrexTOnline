@@ -3,9 +3,9 @@ import json
 from django.shortcuts import render
 from Login.models import User
 from Experiment.models import Experiment, experiment_free, experiment_course
-from File.models import File, HomeworkFile, CourseFile
+from File.models import File, CourseFile
 from datetime import date, datetime
-from Class.models import ClassStudent, ClassHomework
+from Class.models import ClassStudent, ClassHomework, HomeworkExperiment
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Class.models import TheClass
 
@@ -30,7 +30,8 @@ def experiment(request):
                                                    start_time__lte=date.today(),
                                                    end_time__gte=date.today())
     course_file = CourseFile.objects.filter(course_template_experiment__in=class_homework.values_list('course_template_experiment'))
-    userExpHomeworkFiles = HomeworkFile.objects.filter(class_homework__in=class_homework)
+    homework_experiment = HomeworkExperiment.objects.filter(class_homework__in=class_homework)
+    userExpHomeworkFiles =File.objects.filter(experiment__in=homework_experiment.values_list('experiment'))
 
     print("class_student")
     for c in class_student:
@@ -48,24 +49,24 @@ def experiment(request):
     for c_t_experiment in class_homework:
         cou_file = []
         for c_file in course_file:
-            if str(c_file.course_template_experiment.uid) == str(c_t_experiment.uid):
+            if str(c_file.course_template_experiment.uid) == str(c_t_experiment.course_template_experiment.uid):
                 cou_file.append({
-                    "fileId": c_file.uid,
+                    "fileId": str(c_file.uid),
                     "fileName": c_file.file_name,
                 })
         classHomeworkItem.append({
             "theClass": str(c_t_experiment.the_class.uid),
             "expId": str(c_t_experiment.uid),
-            "expName": c_t_experiment.name,
-            "fileList": cou_file,
-            "expCourseware": [],
+            "expName": c_t_experiment.course_template_experiment.name,
+            "fileList": [],
+            "expCourseware": cou_file,
         })
 
     print(json.dumps(classHomeworkItem))
 
     for f in userExpHomeworkFiles:
         for c in classHomeworkItem:
-            if str(f.class_homewor.uid) == c['expId']:
+            if str(f.experiment.uid) == c['expId']:
                 c['fileList'].append({
                     "fileId": f.uid,
                     "fileName": f.file_name,

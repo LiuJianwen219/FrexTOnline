@@ -4,8 +4,9 @@ from django.http import HttpResponse, FileResponse
 from django.shortcuts import render
 
 import config
+from Class.models import ClassHomework, HomeworkExperiment
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
-from Experiment.models import Experiment
+from Experiment.models import Experiment, experiment_course
 from File.models import File, file_src, CourseFile
 import File.utils as fh
 
@@ -221,5 +222,90 @@ def delete_course(request):
             data = {"state": "OK"}
         return HttpResponse(json.dumps(data), content_type='application/json')
 
+    data = {"state": "ERROR", 'info': "未知的错误，请尝试刷新"}
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def upload_homework(request):
+    if request.method == "POST":
+        print(request.POST.get('homeworkId'))
+        f_objs = request.FILES.getlist('uploadFile')  # 暂时考虑只能上传一个文件
+        user = User.objects.get(uid=request.session["u_uid"])
+        homework = ClassHomework.objects.get(uid=request.POST.get('homeworkId'))
+        homework_experiments = HomeworkExperiment.objects.filter(user=user, class_homework=homework)
+        if len(homework_experiments) == 0:
+            experiment = Experiment(user=user, name=homework.name, type=experiment_course)
+            experiment.save()
+            homework_experiment = HomeworkExperiment(user=user, class_homework=homework, experiment=experiment)
+            homework_experiment.save()
+        else:
+            homework_experiment = homework_experiments[0]
+            experiment = homework_experiment.experiment
+
+        if len(f_objs) == 0:
+            req = {"state": "OK", 'info': "没有文件上传，请检查"}
+            return HttpResponse(json.dumps(req), content_type='application/json')
+
+        cnt = 0
+        for f_obj in f_objs:
+            if len(f_obj.name) > 100 or len(f_obj.name) <= 0:
+                req = {"state": "ERROR", "info": "文件名超出限定长度 100"}
+                return HttpResponse(json.dumps(req), content_type='application/json')
+
+            handle_uploaded_file("/tmp/" + f_obj.name, f_obj)
+            ff = File()
+            ff.user = user
+            ff.experiment = experiment
+            ff.type = file_src
+            ff.file_name = f_obj.name
+            ff.file_path = "/tmp/" + f_obj.name
+            with open(ff.file_path, "r", encoding='gbk') as tf:
+                ff.content = tf.read()
+            ff.save()
+
+            with open(ff.file_path, 'rb') as f:
+                if fh.post_experiment({
+                    config.c_userId: str(user.uid),
+                    config.c_experimentType: experiment.type,
+                    config.c_experimentId: str(experiment.uid),
+                    config.c_fileName: f_obj.name,
+                }, f) == config.request_failed:
+                    req = {"state": "ERROR", 'info': "保存实验文件"}
+                    return HttpResponse(json.dumps(req), content_type='application/json')
+            cnt += 1
+            req = {"state": "OK", "trueFileName": f_obj.name, "fileId": ff.uid.__str__()}
+            return HttpResponse(json.dumps(req), content_type='application/json')
+
+        if cnt == len(f_objs):  # TODO make this useful
+            req = {"state": "OK", 'info': "文件上传成功"}
+            return HttpResponse(json.dumps(req), content_type='application/json')
+        else:
+            req = {"state": "ERROR", 'info': "文件上传失败"}
+            return HttpResponse(json.dumps(req), content_type='application/json')
+
+    req = {"state": "ERROR", 'info': "非法请求"}
+    return HttpResponse(json.dumps(req), content_type='application/json')
+
+
+def delete_homework(request):
+    if request.method == "POST":
+        user = User.objects.get(uid=request.session["u_uid"])
+        experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
+        file = File.objects.get(uid=request.POST["classFileId"])
+        try:
+            file.delete()
+            if fh.delete_experiment({
+                config.c_userId: str(user.uid),
+                config.c_experimentType: experiment.type,
+                config.c_experimentId: str(experiment.uid),
+                config.c_fileName: file.file_name,
+            }) == config.request_failed:
+                req = {"state": "ERROR", 'info': "删除文件失败"}
+                return HttpResponse(json.dumps(req), content_type='application/json')
+        except Exception as e:
+            data = {"state": "ERROR", "info": e}
+        else:
+            data = {"state": "OK"}
+        return HttpResponse(json.dumps(data), content_type='application/json')
     data = {"state": "ERROR", 'info': "未知的错误，请尝试刷新"}
     return HttpResponse(json.dumps(data), content_type='application/json')

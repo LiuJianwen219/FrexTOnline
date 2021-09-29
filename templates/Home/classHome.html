@@ -19,7 +19,7 @@
             <li><a href="/home/studenthome/downloadcourse/{{ item.expId }}">
                 下载课件</a>
             </li>
-            <li><a href="#" data-toggle="modal" data-target="#uploadClassFile{{ item.expId }}">
+            <li><a href="#" data-toggle="modal" data-target="#uploadClassFile_{{ item.expId }}">
               上传</a>
             </li>
             <li style="display:none;"><a href="#" data-toggle="modal" data-target="#newClassFile{{ item.expId }}">
@@ -41,6 +41,31 @@
     </nav>
 
     <div>
+      <div class="modal fade" id="uploadClassFile_{{ item.expId }}" tabindex="-1" role="dialog"
+           aria-labelledby="myUpLoadFile" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myUpLoadFile">上传文件</h4>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              <input id="upClassFileDoc_{{ item.expId }}" type="file"  multiple="multiple" >
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+              </button>
+              <button type="submit" name="uploadFile_id" value="{{i.id}}" class="btn btn-primary"
+                      onclick="uploadClassFile('{{ item.expId }}',
+                              'upClassFileDoc_{{ item.expId }}',
+                              'classFileList{{ item.expId }}')">
+                上传
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="modal fade" id="newClassFile{{ item.expId }}" tabindex="-1" role="dialog"
          aria-labelledby="newExpFileLabel" aria-hidden="true">
         <div class="modal-dialog">

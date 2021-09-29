@@ -41,13 +41,3 @@ class CourseFile(models.Model):
     content = models.TextField()
     upload_time = models.DateTimeField(auto_now_add=True)
 
-
-class HomeworkFile(models.Model):
-    uid = models.UUIDField(primary_key=True, default=uuid.uuid1, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    class_homework = models.ForeignKey(ClassHomework, on_delete=models.CASCADE)
-    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
-    create_time = models.DateTimeField(auto_now_add=True)
-    file_name = models.CharField(max_length=256)
-    file_path = models.CharField(max_length=512)        # 临时存放位置
-    content = models.TextField()

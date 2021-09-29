@@ -30,3 +30,11 @@ class ClassHomework(models.Model):
     name = models.CharField(max_length=512)  # 作业名字，目前可以等于课程模板实验名字
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+
+
+class HomeworkExperiment(models.Model):
+    uid = models.UUIDField(primary_key=True, default=uuid.uuid1, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    class_homework = models.ForeignKey(ClassHomework, on_delete=models.CASCADE)
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
+

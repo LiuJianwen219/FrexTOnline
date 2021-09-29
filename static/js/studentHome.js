@@ -67,7 +67,7 @@ function uploadClassFile(homeworkId, doc, docChange) {
         data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
 
         $.ajax({
-            url: '/home/studenthome/uploadclassexpfile/',
+            url: '/file/upload_homework/',
             type: 'POST',
             data: data,
             cache: false,                                               //上传文件无需缓存
@@ -149,7 +149,7 @@ function deleteClassFile(homeworkId, classFileId, docChange) {
     data.append("classFileId", classFileId);
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
     $.ajax({
-        url: 'deleteclassfile/',
+        url: '/file/delete_homework/',
         type: 'POST',
         data: data,
         cache: false,                                               //上传文件无需缓存

@@ -84,7 +84,7 @@ def free_compile(request):
         topModuleName = request.POST["topModuleName"]
         # experiment = Experiment.objects.get(uid=request.POST["freeExpId"])
         experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
-        files = File.objects.filter(experiment_id=experiment)
+        files = File.objects.filter(experiment=experiment)
         compile = CompileRecord(user=user, experiment=experiment)
         compile.save()
 
@@ -97,7 +97,7 @@ def free_compile(request):
             'experimentType': experiment.type,
             'experimentId': str(experiment.uid),
             'compileId': str(compile.uid),
-            'fileNames': fileNames,
+            'fileNames': json.dumps(fileNames),
             'topModuleName': topModuleName,
         }
         print("free_compile")
@@ -203,6 +203,12 @@ def compile_result(request):
         }
         print(values)
         print(values["status"])
+
+        if values['status'] != "编译成功":  # from FrexTCompiler final result
+            data = {"state": "ERROR", 'trueFileName': "",
+                    'fileId': "", 'info': "编译失败"}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+
         submit = CompileRecord.objects.get(uid=values["compileId"])
         submit.status = values["status"]
         submit.message = submit.message + values["message"] + "\n"

@@ -1,9 +1,22 @@
 import json
+import os
+import uuid
+
 import requests
 import logging
 import config
 
 logger = logging.getLogger(__name__)
+
+# write file interface, maybe DFS future
+def file_writer(fire_dir, file_name, file_content):
+    if not os.path.exists(fire_dir):
+        os.makedirs(fire_dir)
+    with open(os.path.join(fire_dir, file_name), 'wb+') as destination:
+        destination.write(file_content)
+    if len(file_content)<1:
+        return None
+    return 1
 
 
 def post_experiment(values, file):
@@ -65,6 +78,29 @@ def post_course(values, file):
         logger.error("Post Experiment failed: request status not health: " + r.headers.__str__())
         return config.request_failed
     return config.request_success
+
+
+def get_course(values):
+    url = config.file_server_url + config.COURSE_API + "/"
+    values = {
+        config.c_userId: values[config.c_userId],
+        config.c_courseId: values[config.c_courseId],
+        config.c_courseTemplateId: values[config.c_courseTemplateId],
+        config.c_courseTemplateExperimentId: values[config.c_courseTemplateExperimentId],
+        config.c_fileName: values[config.c_fileName],
+    }
+    r = requests.get(url, params=values)
+    if r.status_code.__str__() != "200":
+        logger.error("Request SRC failed: " + r.headers.__str__())
+        return config.request_failed
+
+    if r.headers['content-type'] == "application/octet-stream" and r.content:
+        dest_direction = config.work_dir
+        dest_filename = values[config.c_fileName]
+        if not file_writer(dest_direction, dest_filename, r.content):
+            return config.request_failed
+        return config.request_success
+    return config.request_failed
 
 
 def delete_experiment(values):

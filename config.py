@@ -20,3 +20,6 @@ c_courseTemplateExperimentId = "courseTemplateExperimentId"
 # -----------------------
 request_success = "Success"
 request_failed = "Failed"
+
+
+work_dir = "/tmp/"

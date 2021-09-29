@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, StreamingHttpResponse
 from django.shortcuts import render
 
 import config
@@ -9,6 +9,7 @@ from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Experiment.models import Experiment, experiment_course
 from File.models import File, file_src, CourseFile
 import File.utils as fh
+from .ZipUtilities import ZipUtilities
 
 
 # Create your views here.
@@ -226,6 +227,36 @@ def delete_course(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
+def download_course(request, homeworkId):
+    print(homeworkId)
+    user = User.objects.get(uid=request.session["u_uid"])
+    homework = ClassHomework.objects.get(uid=homeworkId)
+    courseTemplateExperiment = homework.course_template_experiment
+    courseTemplate = homework.course_template_experiment.course_template
+    course = homework.course_template_experiment.course_template.course
+    fileClassExp = CourseFile.objects.filter(course_template_experiment=homework.course_template_experiment)
+
+    if fileClassExp:
+        utilities = ZipUtilities()
+        for f in fileClassExp:
+            if fh.get_course({
+                config.c_userId: str(user.uid),
+                config.c_courseId: str(course.uid),
+                config.c_courseTemplateId: str(courseTemplate.uid),
+                config.c_courseTemplateExperimentId: str(courseTemplateExperiment.uid),
+                config.c_fileName: f.file_name,
+            }) == config.request_failed:
+                break
+            utilities.toZip(config.work_dir, f.file_name)
+
+        response = StreamingHttpResponse(utilities.zip_file, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment;filename="{0}"'.format("下载.zip")
+        return response
+
+    req = {"state": "ERROR", 'info': "没有可用的文件"}
+    return HttpResponse(json.dumps(req), content_type='application/json')
+
+
 def upload_homework(request):
     if request.method == "POST":
         print(request.POST.get('homeworkId'))
@@ -315,9 +346,10 @@ def download_homework_file(request, f_uid):
     file = File.objects.get(uid=f_uid)
     try:
         response = FileResponse(file.content)
-        response['Content-Type'] = 'application/zip'
+        response['Content-Type'] = 'application/stream'
         response['Content-Disposition'] = 'attachment;filename={0}'.format(file.file_name)
         return response
     except Exception:
         data = {"state": "ERROR", 'info': "未知的错误1，请尝试刷新"}
         return HttpResponse(json.dumps(data), content_type='application/json')
+

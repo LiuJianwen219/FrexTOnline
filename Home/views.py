@@ -30,7 +30,7 @@ def experiment(request):
                                                    start_time__lte=date.today(),
                                                    end_time__gte=date.today())
     course_file = CourseFile.objects.filter(course_template_experiment__in=class_homework.values_list('course_template_experiment'))
-    homework_experiment = HomeworkExperiment.objects.filter(class_homework__in=class_homework)
+    homework_experiment = HomeworkExperiment.objects.filter(user=user, class_homework__in=class_homework)
     userExpHomeworkFiles =File.objects.filter(experiment__in=homework_experiment.values_list('experiment'))
 
     print("class_student")

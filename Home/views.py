@@ -51,6 +51,7 @@ def experiment(request):
 
     classHomeworkItem = []
     for c_t_experiment in class_homework:
+        print(c_t_experiment.uid)
         cou_file = []
         for c_file in course_file:
             if str(c_file.course_template_experiment.uid) == str(c_t_experiment.course_template_experiment.uid):
@@ -67,8 +68,8 @@ def experiment(request):
                     "fileList": [],
                     "expCourseware": cou_file,
                 })
-
-    print(json.dumps(classHomeworkItem))
+        print(json.dumps(classHomeworkItem))
+        print(c_t_experiment.uid)
 
     for f in userExpHomeworkFiles:
         for c in classHomeworkItem:

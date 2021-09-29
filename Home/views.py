@@ -67,20 +67,17 @@ def experiment(request):
                     "fileList": [],
                     "expCourseware": cou_file,
                 })
-                break
 
     print(json.dumps(classHomeworkItem))
 
-    for h in homework_experiment:
-        for f in userExpHomeworkFiles:
-            for c in classHomeworkItem:
-                print(str(f.experiment.uid), c['expId'])
-                if str(f.experiment.uid) == c['expId']:
-                    c['fileList'].append({
-                        "fileId": str(f.uid),
-                        "fileName": f.file_name,
-                    })
-                    break
+    for f in userExpHomeworkFiles:
+        for c in classHomeworkItem:
+            print(str(f.experiment.uid), c['expId'])
+            if str(f.experiment.uid) == c['expId']:
+                c['fileList'].append({
+                    "fileId": str(f.uid),
+                    "fileName": f.file_name,
+                })
 
     print(json.dumps(classHomeworkItem))
 
@@ -96,7 +93,6 @@ def experiment(request):
         for c_i in classItem:
             if c_h_i['theClass'] == c_i['id']:
                 c_i['expItems'].append(c_h_i)
-                break
 
     print(json.dumps(classItem))
 

@@ -122,9 +122,10 @@
         <h2>{{ item.expName }}</h2>
         <hr/>
 
-        <h3>文件</h3>
+        <h3>源文件</h3>
         <div id="freeFileList{{ item.expId }}">
           {% for file in item.fileList %}
+              {% if file.type == "src" %}
             <div class="input-group" id="freeFile_{{file.fileName}}">
               <span id="lineInfo">{{ file.fileName }}</span>
               <div class="input-group-btn">
@@ -139,6 +140,29 @@
                 </button>
               </div>
             </div>
+              {% endif %}
+          {% endfor %}
+        </div>
+
+        <h3>编译文件</h3>
+        <div id="freeFileList{{ item.expId }}">
+          {% for file in item.fileList %}
+              {% if file.type == "bit" or file.type == "log" %}
+            <div class="input-group" id="freeFile_{{file.fileName}}">
+              <span id="lineInfo">{{ file.fileName }}</span>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default">
+                  <a href="/file/downloadfreefile/{{ file.fileId }}">
+                  下载</a>
+                </button>
+                <button type="button" class="btn btn-default"
+                        onclick="deleteFreeFile('{{ item.expId }}',
+                                '{{ file.fileId }}', 'freeFile_{{file.fileName}}')">
+                  删除
+                </button>
+              </div>
+            </div>
+              {% endif %}
           {% endfor %}
         </div>
 

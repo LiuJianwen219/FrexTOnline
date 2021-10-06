@@ -33,21 +33,21 @@ def experiment(request):
     homework_experiment = HomeworkExperiment.objects.filter(user=user, class_homework__in=class_homework)
     userExpHomeworkFiles =File.objects.filter(experiment__in=homework_experiment.values_list('experiment'))
 
-    print("class_student")
-    for c in class_student:
-        print(c.uid)
-
-    print("class_homework")
-    for c in class_homework:
-        print(c.uid)
-
-    print("course_file")
-    for c in course_file:
-        print(c.uid)
-
-    print("userExpHomeworkFiles")
-    for c in userExpHomeworkFiles:
-        print(c.uid)
+    # print("class_student")
+    # for c in class_student:
+    #     print(c.uid)
+    #
+    # print("class_homework")
+    # for c in class_homework:
+    #     print(c.uid)
+    #
+    # print("course_file")
+    # for c in course_file:
+    #     print(c.uid)
+    #
+    # print("userExpHomeworkFiles")
+    # for c in userExpHomeworkFiles:
+    #     print(c.uid)
 
     classHomeworkItem = []
     for c_t_experiment in class_homework:
@@ -80,6 +80,7 @@ def experiment(request):
                 c['fileList'].append({
                     "fileId": str(f.uid),
                     "fileName": f.file_name,
+                    "fileType": f.type,
                 })
 
     print(json.dumps(classHomeworkItem))

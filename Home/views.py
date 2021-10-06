@@ -59,6 +59,7 @@ def experiment(request):
                 cou_file.append({
                     "fileId": str(c_file.uid),
                     "fileName": c_file.file_name,
+                    "fileType": c_file.type,
                 })
         for t in homework_experiment:
             print( str(t.class_homework.uid), str(c_t_experiment.uid))
@@ -148,7 +149,7 @@ def getFreeExpDrawer(user: User):
     # 之后对作业文件、作业也是类似的操作
     freeExpFilesDict = {freeExp.uid: [] for freeExp in freeExps}
     for file in freeExpFiles:
-        freeExpFilesDict[file.experiment.uid].append({"fileId": file.uid, "fileName": file.file_name})
+        freeExpFilesDict[file.experiment.uid].append({"fileId": file.uid, "fileName": file.file_name, "fileType": file.type})
     expItems = [
         {
             "expId": freeExp.uid,

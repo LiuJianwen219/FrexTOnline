@@ -47,8 +47,8 @@ def upload_free_file(request):
             ff.type = file_src
             ff.file_name = f_obj.name
             ff.file_path = "/tmp/"+f_obj.name
-            with open(ff.file_path, "r", encoding='gbk') as tf:
-                ff.content = tf.read()
+            # with open(ff.file_path, "rb") as tf:
+            #     ff.content = tf.read()
             ff.save()
 
             with open(ff.file_path, 'rb') as f:
@@ -104,12 +104,21 @@ def delete_free_file(request):
 def download_free_file(request, f_uid):
     file = File.objects.get(uid=f_uid)
     try:
-        response = FileResponse(file.content)
-        response['Content-Type'] = 'application/zip'
-        response['Content-Disposition'] = 'attachment;filename={0}'.format(file.file_name)
-        return response
+        file_content = fh.get_experiment({
+            config.c_userId: str(file.user.uid),
+            config.c_experimentType: file.experiment.type,
+            config.c_experimentId: str(file.experiment.uid),
+            config.c_fileName: file.file_name,
+        })
+        if file_content:
+            response = FileResponse(file_content)
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename={0}'.format(file.file_name)
+            return response
+        data = {"state": "ERROR", 'info': "unknown error"}
+        return HttpResponse(json.dumps(data), content_type='application/json')
     except Exception:
-        data = {"state": "ERROR", 'info': "未知的错误1，请尝试刷新"}
+        data = {"state": "ERROR", 'info': "internal error"}
         return HttpResponse(json.dumps(data), content_type='application/json')
 
 

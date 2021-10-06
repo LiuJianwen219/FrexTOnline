@@ -39,6 +39,28 @@ def post_experiment(values, file):
     return config.request_success
 
 
+def get_experiment(values):
+    logger.info("Try to get EXPERIMENT with values: " + json.dumps(values))
+
+    url = config.file_server_url + config.experiment_API + "/"
+    values = {
+        config.c_userId: values[config.c_userId],
+        config.c_experimentType: values[config.c_experimentType],
+        config.c_experimentId: values[config.c_experimentId],
+        config.c_fileName: values[config.c_fileName],
+    }
+    print(values)
+
+    r = requests.get(url, params=values)
+    if r.status_code.__str__() != "200":
+        logger.error("Request SRC failed: " + r.headers.__str__())
+        return None
+
+    if r.headers['content-type'] == "application/octet-stream" and r.content:
+        return r.content
+    return None
+
+
 def post_bit(values, file):
     logger.info("Try to post online BIT with values: " + json.dumps(values))
 

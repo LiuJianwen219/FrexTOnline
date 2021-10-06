@@ -194,7 +194,8 @@ def course(request):
             if str(file.course_template_experiment.uid) == exp['templateExpId']:
                 exp['expFile'].append({
                     "fileId": str(file.uid),
-                    "fileName": file.file_name
+                    "fileName": file.file_name,
+                    "fileType": file.type,
                 })
                 break
 

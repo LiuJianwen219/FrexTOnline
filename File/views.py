@@ -1,7 +1,7 @@
 import json
 import os
 
-from django.http import HttpResponse, FileResponse, StreamingHttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import render
 
 import config
@@ -369,7 +369,7 @@ def delete_homework(request):
 def download_homework_file(request, f_uid):
     file = File.objects.get(uid=f_uid)
     try:
-        response = FileResponse(file.content)
+        response = HttpResponse(file.content)
         response['Content-Type'] = 'application/stream'
         response['Content-Disposition'] = 'attachment;filename={0}'.format(file.file_name)
         return response

@@ -79,17 +79,17 @@ function uploadClassFile(homeworkId, doc, docChange) {
                     //location.reload();
                     var text = "<div class=\"input-group\" id=\"classFile_"+req.trueFileName+"\">\n" +
                         "            <span id=\"lineInfo\">" + req.trueFileName + "</span>\n" +
-                        "            <div class=\"input-group-btn\">\n" +
-                        "              <button type=\"button\" class=\"btn btn-default\">\n" +
-                        "                <a href=\"/home/downloadclassfile/"+req.fileId+"\">\n" +
-                        "                下载</a>\n" +
-                        "              </button>\n" +
-                        "              <button type=\"button\" class=\"btn btn-default\"\n" +
-                        "                      onclick=\"deleteClassFile(\'"+homeworkId+"\', \'"+req.fileId+"\',\n" +
-                        "                              'classFile_"+req.trueFileName+"\')\">\n" +
-                        "                删除\n" +
-                        "              </button>\n" +
-                        "            </div>\n" +
+                        // "            <div class=\"input-group-btn\">\n" +
+                        // "              <button type=\"button\" class=\"btn btn-default\">\n" +
+                        // "                <a href=\"/home/downloadclassfile/"+req.fileId+"\">\n" +
+                        // "                下载</a>\n" +
+                        // "              </button>\n" +
+                        // "              <button type=\"button\" class=\"btn btn-default\"\n" +
+                        // "                      onclick=\"deleteClassFile(\'"+homeworkId+"\', \'"+req.fileId+"\',\n" +
+                        // "                              'classFile_"+req.trueFileName+"\')\">\n" +
+                        // "                删除\n" +
+                        // "              </button>\n" +
+                        // "            </div>\n" +
                         "          </div>"
                     $("#" + docChange).append(text);
                 } else {
@@ -120,17 +120,17 @@ function classCompile(homeworkId, doc, docChange) {
                 alert("文件编译成功！");
                 var text = "<div class=\"input-group\" id=\"classFile_"+req.trueFileName+"\">\n" +
                         "            <span id=\"lineInfo\">" + req.trueFileName + "</span>\n" +
-                        "            <div class=\"input-group-btn\">\n" +
-                        "              <button type=\"button\" class=\"btn btn-default\">\n" +
-                        "                <a href=\"/home/downloadclassfile/"+req.fileId+"\">\n" +
-                        "                下载</a>\n" +
-                        "              </button>\n" +
-                        "              <button type=\"button\" class=\"btn btn-default\"\n" +
-                        "                      onclick=\"deleteClassFile(\'"+homeworkId+"\', \'"+req.fileId+"\',\n" +
-                        "                              'classFile_"+req.trueFileName+"\')\">\n" +
-                        "                删除\n" +
-                        "              </button>\n" +
-                        "            </div>\n" +
+                        // "            <div class=\"input-group-btn\">\n" +
+                        // "              <button type=\"button\" class=\"btn btn-default\">\n" +
+                        // "                <a href=\"/home/downloadclassfile/"+req.fileId+"\">\n" +
+                        // "                下载</a>\n" +
+                        // "              </button>\n" +
+                        // "              <button type=\"button\" class=\"btn btn-default\"\n" +
+                        // "                      onclick=\"deleteClassFile(\'"+homeworkId+"\', \'"+req.fileId+"\',\n" +
+                        // "                              'classFile_"+req.trueFileName+"\')\">\n" +
+                        // "                删除\n" +
+                        // "              </button>\n" +
+                        // "            </div>\n" +
                         "          </div>"
                     $("#" + docChange).append(text);
             } else{

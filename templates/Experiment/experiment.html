@@ -73,7 +73,7 @@
                       {% csrf_token %}
                       <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                       <button type="submit" class="btn btn-primary"
-                              onclick="upBitFile()">
+                              onclick="upBitFile('selectBitFileName_{{ userId }}_{{ type }}_{{ expId }}')">
                         上传
                       </button>
                     </div>
@@ -487,7 +487,7 @@
   }
 
   // 上传文件到 web
-  function upBitFile() {
+  function upBitFile(docChange) {
     let obj = $("#upBitFile");
     if (obj.get(0).files.length !== 0) {
       let data = new FormData()                            //创建formdata对象，便于将文件传输到后端
@@ -518,6 +518,8 @@
             alert("文件已经上传成功");
             isUpLoad = true; // now it's nothing
             changeBitFile(req.trueFileName);
+            let text = "<option>req.trueFileName</option>"
+            $("#" + docChange).append(text);
           } else {
             alert(req.info)
           }

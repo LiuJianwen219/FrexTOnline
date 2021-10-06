@@ -8,7 +8,7 @@ import config
 from Class.models import ClassHomework, HomeworkExperiment
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Experiment.models import Experiment, experiment_course
-from File.models import File, file_src, CourseFile
+from File.models import File, file_src, CourseFile, file_bit
 import File.utils as fh
 from .ZipUtilities import ZipUtilities
 
@@ -101,7 +101,7 @@ def delete_free_file(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
-def download_free_file(request, f_uid):
+def download_file(request, f_uid):
     file = File.objects.get(uid=f_uid)
     try:
         values = {
@@ -149,7 +149,7 @@ def upload_bit(request):
         ff = File()
         ff.user = user
         ff.experiment = experiment
-        ff.type = file_src
+        ff.type = file_bit
         ff.file_name = f_obj.name
         ff.file_path = "/tmp/"+f_obj.name
         # with open(ff.file_path, "r") as tf:
@@ -364,16 +364,3 @@ def delete_homework(request):
         return HttpResponse(json.dumps(data), content_type='application/json')
     data = {"state": "ERROR", 'info': "未知的错误，请尝试刷新"}
     return HttpResponse(json.dumps(data), content_type='application/json')
-
-
-def download_homework_file(request, f_uid):
-    file = File.objects.get(uid=f_uid)
-    try:
-        response = HttpResponse(file.content)
-        response['Content-Type'] = 'application/stream'
-        response['Content-Disposition'] = 'attachment;filename={0}'.format(file.file_name)
-        return response
-    except Exception:
-        data = {"state": "ERROR", 'info': "未知的错误1，请尝试刷新"}
-        return HttpResponse(json.dumps(data), content_type='application/json')
-

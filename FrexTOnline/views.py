@@ -4,7 +4,16 @@ from django.shortcuts import render, redirect
 from Login.models import User
 from Course.models import Course
 
+
 # Create your views here.
+def response_ok():
+    return {"state": "OK"}
+
+
+def response_error(info):
+    return {"state": "ERROR", "info": info}
+
+
 def test(request):
     user = User.objects.get(uid=request.session["u_uid"])
     c = Course(user=user, name="数字逻辑")

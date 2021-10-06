@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from Class.models import TheClass
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from FrexTOnline.views import response_ok, response_error
+from File.models import CourseFile
 
 
 # Create your views here.
@@ -52,5 +53,8 @@ def delete_experiment(request):
     if len(classExp) == 0:
         return HttpResponse(json.dumps(response_error("实验已删除，请刷新")), content_type='application/json')
     else:
+        courseFiles = CourseFile.objects.filter(course_template_experiment=classExp[0])
+        for file in courseFiles:
+            file.delete()
         classExp[0].delete()
     return HttpResponse(json.dumps(response_ok()), content_type='application/json')

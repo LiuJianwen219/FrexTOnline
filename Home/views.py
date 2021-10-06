@@ -195,7 +195,6 @@ def course(request):
                 exp['expFile'].append({
                     "fileId": str(file.uid),
                     "fileName": file.file_name,
-                    "fileType": file.type,
                 })
                 break
 

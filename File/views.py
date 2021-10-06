@@ -121,7 +121,7 @@ def download_free_file(request, f_uid):
         else:
             file_content = None
         if file_content:
-            response = FileResponse(file_content)
+            response = HttpResponse(file_content)
             response['Content-Type'] = 'application/octet-stream'
             response['Content-Disposition'] = 'attachment;filename={0}'.format(file.file_name)
             return response

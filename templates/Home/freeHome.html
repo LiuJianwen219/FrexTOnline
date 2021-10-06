@@ -145,9 +145,9 @@
         </div>
 
         <h3>编译文件</h3>
-        <div id="freeFileList{{ item.expId }}">
+        <div id="freeFileList2{{ item.expId }}">
           {% for file in item.fileList %}
-              {% if file.fileType == "bit" or file.type == "log" %}
+              {% if file.fileType == "bit" or file.fileType == "log" %}
             <div class="input-group" id="freeFile_{{file.fileName}}">
               <span id="lineInfo">{{ file.fileName }}</span>
               <div class="input-group-btn">

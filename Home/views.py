@@ -59,7 +59,6 @@ def experiment(request):
                 cou_file.append({
                     "fileId": str(c_file.uid),
                     "fileName": c_file.file_name,
-                    "fileType": c_file.type,
                 })
         for t in homework_experiment:
             print( str(t.class_homework.uid), str(c_t_experiment.uid))

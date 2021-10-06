@@ -477,13 +477,13 @@
                         "              <div style=\"float: left\">\n" +
                         "                <div>"+ req.fileName +"</div>\n" +
                         "              </div>\n" +
-                        "              <div style=\"float: right\">\n" +
-                        "                <button onclick=\"deleteCourseFile(\'"+ courseId +"\', \'"+ templateId +"\',\n" +
-                        "                                        ,\'"+ templateExpId +"\'," + "\'"+ docChangeId +"\',\n" +
-                        "                                        \'"+ req.fileName +"\')\">\n" +
-                        "                  删除文件\n" +
-                        "                </button>\n" +
-                        "              </div>\n" +
+                        {#"              <div style=\"float: right\">\n" +#}
+                        {#"                <button onclick=\"deleteCourseFile(\'"+ courseId +"\', \'"+ templateId +"\',\n" +#}
+                        {#"                                        ,\'"+ templateExpId +"\'," + "\'"+ docChangeId +"\',\n" +#}
+                        {#"                                        \'"+ req.fileName +"\')\">\n" +#}
+                        {#"                  删除文件\n" +#}
+                        {#"                </button>\n" +#}
+                        {#"              </div>\n" +#}
                         "              <div style=\"clear: both\"></div>\n" +
                         "            </div>"
                     $("#" + docChangeId).children(0).append(text2);

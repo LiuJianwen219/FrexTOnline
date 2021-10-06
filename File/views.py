@@ -190,7 +190,7 @@ def upload_course(request):
                 req = {"state": "ERROR", 'info': "保存课件失败"}
                 return HttpResponse(json.dumps(req), content_type='application/json')
 
-        req = {"state": "OK", "trueFileName": f_obj.name, "fileId": ff.uid.__str__()}
+        req = {"state": "OK", "fileName": f_obj.name, "fileId": ff.uid.__str__()}
         return HttpResponse(json.dumps(req), content_type='application/json')
 
     req = {"state": "ERROR", 'info': "非法请求"}
@@ -234,7 +234,7 @@ def delete_course(request):
 def download_course(request, homeworkId):
     print(homeworkId)
     user = User.objects.get(uid=request.session["u_uid"])
-    homework = ClassHomework.objects.get(uid=homeworkId)
+    homework = HomeworkExperiment.objects.get(experiment__uid=homeworkId).class_homework
     courseTemplateExperiment = homework.course_template_experiment
     courseTemplate = homework.course_template_experiment.course_template
     course = homework.course_template_experiment.course_template.course
@@ -257,7 +257,7 @@ def download_course(request, homeworkId):
         response['Content-Disposition'] = 'attachment;filename="{0}"'.format("下载.zip")
         return response
 
-    req = {"state": "ERROR", 'info': "没有可用的文件"}
+    req = {"state": "ERROR", 'info': "no file of this experiment"}
     return HttpResponse(json.dumps(req), content_type='application/json')
 
 

@@ -66,22 +66,23 @@ def create_free_project(request):
 @csrf_exempt
 def delete_free_project(request):
     if request.method == "POST":
-        experiment_name = request.POST["expId"]
+        expId = request.POST["expId"]
         user = User.objects.get(uid=request.session["u_uid"])
-        experiment = Experiment.objects.filter(user=user, name=experiment_name)
-        if len(experiment) != 0:
-            files = File.objects.filter(experiment=experiment)
-            for file in files:
-                file.delete()
-                if fh.delete_experiment({
-                    config.c_userId: str(user.uid),
-                    config.c_experimentType: experiment.type,
-                    config.c_experimentId: str(experiment.uid),
-                    config.c_fileName: file.file_name,
-                }) == config.request_failed:
-                    req = {"state": "ERROR", 'info': "删除文件失败"}
-                    return HttpResponse(json.dumps(req), content_type='application/json')
-            experiment.delete()
+        experiments = Experiment.objects.filter(user=user, uid=expId)
+        if len(experiments) != 0:
+            for experiment in experiments:
+                files = File.objects.filter(experiment=experiment)
+                for file in files:
+                    file.delete()
+                    if fh.delete_experiment({
+                        config.c_userId: str(user.uid),
+                        config.c_experimentType: experiment.type,
+                        config.c_experimentId: str(experiment.uid),
+                        config.c_fileName: file.file_name,
+                    }) == config.request_failed:
+                        req = {"state": "ERROR", 'info': "删除文件失败"}
+                        return HttpResponse(json.dumps(req), content_type='application/json')
+                experiment.delete()
             data = {"state": "OK", "info": "删除成功"}
             return HttpResponse(json.dumps(data), content_type='application/json')
         data = {"state": "ERROR", 'info': "实验不存在，请确认"}

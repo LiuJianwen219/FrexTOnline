@@ -117,6 +117,29 @@ function deleteFreeFile(freeExpId, freeFileId, docChange) {
     })
 }
 
+function deleteFreeExp(freeExpId) {
+    let data = new FormData();
+    data.append("expId", freeExpId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+    $.ajax({
+        url: '/experiment/deleteFreeExpProject/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            console.log(req)
+            if(req.state !== "ERROR") {
+                alert("实验删除成功！");
+                location.reload();
+            } else{
+                alert(req.info);
+            }
+        }
+    })
+}
+
 function startToExp(t, id, btnDoc) {
   document.getElementById(btnDoc).setAttribute('disabled', 'disabled')
   setTimeout(function () {

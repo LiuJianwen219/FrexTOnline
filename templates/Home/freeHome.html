@@ -120,6 +120,10 @@
     <div id="freeFiles">
       <div class="freeFileGroup" id="{{ item.expId }}" style="display: block">
         <h2>{{ item.expName }}</h2>
+            <button type="button" class="btn btn-default"
+                            onclick="deleteFreeExp('{{ item.expId }}')">
+                      删除实验及文件
+            </button>
         <hr/>
 
         <h3>源文件</h3>

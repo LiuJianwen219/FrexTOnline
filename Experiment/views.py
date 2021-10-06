@@ -16,6 +16,8 @@ from File.models import File, file_bit, file_log
 from Login.models import User
 from Experiment.models import Experiment, experiment_free, CompileRecord
 from FrexTOnline.settings import Compile_MAX_Thread, Compile_MAX_Time, Judge_MAX_Time
+import File.utils as fh
+import config
 
 # Create your views here.
 logger = logging.getLogger(__name__)
@@ -68,7 +70,17 @@ def delete_free_project(request):
         user = User.objects.get(uid=request.session["u_uid"])
         experiment = Experiment.objects.filter(user=user, name=experiment_name)
         if len(experiment) != 0:
-            # TODO you need to delete files first
+            files = File.objects.filter(experiment=experiment)
+            for file in files:
+                file.delete()
+                if fh.delete_experiment({
+                    config.c_userId: str(user.uid),
+                    config.c_experimentType: experiment.type,
+                    config.c_experimentId: str(experiment.uid),
+                    config.c_fileName: file.file_name,
+                }) == config.request_failed:
+                    req = {"state": "ERROR", 'info': "删除文件失败"}
+                    return HttpResponse(json.dumps(req), content_type='application/json')
             experiment.delete()
             data = {"state": "OK", "info": "删除成功"}
             return HttpResponse(json.dumps(data), content_type='application/json')

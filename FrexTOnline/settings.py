@@ -145,7 +145,7 @@ STATICFILES_DIRS = [
 ]
 
 
-Rabbit_MQ_IP = "47.96.95.218"
+Rabbit_MQ_IP = "rabbit-mq"
 Rabbit_MQ_Port = 5672
 Rabbit_MQ_USER = "frext"
 Rabbit_MQ_PASS = "zetong103!"

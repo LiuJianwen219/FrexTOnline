@@ -4,6 +4,7 @@
 file_server_url = "http://frext-file-svc:8010/"
 experiment_API = "experiment"
 online_BIT_API = "online_bits"
+online_LOG_API = "online_logs"
 COURSE_API = "course"
 
 

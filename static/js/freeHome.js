@@ -19,22 +19,22 @@ function freeCompile(freeExpId, doc, docChange) {
         success: function (req) {
             console.log(req)
             if(req.state !== "ERROR") {
-                alert("文件编译成功！");
-                let text = "<div class=\"input-group\" id=\"freeFile_"+req.trueFileName+"\">\n" +
-                        "              <span id=\"lineInfo\">" + req.trueFileName + "</span>\n" +
-                        "              <div class=\"input-group-btn\">\n" +
-                        "                <button type=\"button\" class=\"btn btn-default\">\n" +
-                        "                  <a href=\"/home/downloadfreefile/"+req.fileId+"\">\n" +
-                        "                  下载</a>\n" +
-                        "                </button>"+
-                        "                <button type=\"button\" class=\"btn btn-default\"\n" +
-                        "                        onclick=\"deleteFreeFile(\'"+freeExpId+"\', \'"+req.fileId+"\'," +
-                        "                                    \'freeFile_"+req.trueFileName+"\')\">\n" +
-                        "                  删除\n" +
-                        "                </button>\n" +
-                        "              </div>\n" +
-                        "            </div>"
-                $("#" + docChange).append(text);
+                alert("编译提交成功！请等待编译（5分钟）");
+                // let text = "<div class=\"input-group\" id=\"freeFile_"+req.trueFileName+"\">\n" +
+                //         "              <span id=\"lineInfo\">" + req.trueFileName + "</span>\n" +
+                //         "              <div class=\"input-group-btn\">\n" +
+                //         "                <button type=\"button\" class=\"btn btn-default\">\n" +
+                //         "                  <a href=\"/home/downloadfreefile/"+req.fileId+"\">\n" +
+                //         "                  下载</a>\n" +
+                //         "                </button>"+
+                //         "                <button type=\"button\" class=\"btn btn-default\"\n" +
+                //         "                        onclick=\"deleteFreeFile(\'"+freeExpId+"\', \'"+req.fileId+"\'," +
+                //         "                                    \'freeFile_"+req.trueFileName+"\')\">\n" +
+                //         "                  删除\n" +
+                //         "                </button>\n" +
+                //         "              </div>\n" +
+                //         "            </div>"
+                // $("#" + docChange).append(text);
             } else{
                 alert(req.info);
             }

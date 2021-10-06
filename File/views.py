@@ -104,12 +104,22 @@ def delete_free_file(request):
 def download_free_file(request, f_uid):
     file = File.objects.get(uid=f_uid)
     try:
-        file_content = fh.get_experiment({
+        values = {
             config.c_userId: str(file.user.uid),
             config.c_experimentType: file.experiment.type,
             config.c_experimentId: str(file.experiment.uid),
             config.c_fileName: file.file_name,
-        })
+        }
+        if file.type == "src":
+            file_content = fh.get_experiment(values)
+        elif file.type == "log":
+            values[config.c_compileId] = file.file_name.split('.')[0]
+            file_content = fh.get_log(values)
+        elif file.type == "bit":
+            values[config.c_compileId] = file.file_name.split('.')[0]
+            file_content = fh.get_bit(values)
+        else:
+            file_content = None
         if file_content:
             response = FileResponse(file_content)
             response['Content-Type'] = 'application/octet-stream'

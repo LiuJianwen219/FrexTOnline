@@ -81,6 +81,44 @@ def post_bit(values, file):
     return config.request_success
 
 
+def get_bit(values):
+    logger.info("Try to get online BIT with values: " + json.dumps(values))
+    url = config.file_server_url + config.online_BIT_API + "/"
+    values = {
+        config.c_userId: values[config.c_userId],
+        config.c_experimentType: values[config.c_experimentType],
+        config.c_experimentId: values[config.c_experimentId],
+        config.c_compileId: values[config.c_compileId],
+    }
+    r = requests.get(url, params=values)
+    if r.status_code.__str__() != "200":
+        logger.error("Request BIT failed: " + r.headers.__str__())
+        return None
+
+    if r.headers['content-type'] == "application/octet-stream" and r.content:
+        return r.content
+    return None
+
+
+def get_log(values):
+    logger.info("Try to get online Log with values: " + json.dumps(values))
+    url = config.file_server_url + config.online_LOG_API + "/"
+    values = {
+        config.c_userId: values[config.c_userId],
+        config.c_experimentType: values[config.c_experimentType],
+        config.c_experimentId: values[config.c_experimentId],
+        config.c_compileId: values[config.c_compileId],
+    }
+    r = requests.get(url, params=values)
+    if r.status_code.__str__() != "200":
+        logger.error("Request LOG failed: " + r.headers.__str__())
+        return None
+
+    if r.headers['content-type'] == "application/octet-stream" and r.content:
+        return r.content
+    return None
+
+
 def post_course(values, file):
     logger.info("Try to post online COURSE with values: " + json.dumps(values))
 

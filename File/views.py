@@ -314,8 +314,8 @@ def upload_homework(request):
             ff.type = file_src
             ff.file_name = f_obj.name
             ff.file_path = "/tmp/" + f_obj.name
-            with open(ff.file_path, "r", encoding='gbk') as tf:
-                ff.content = tf.read()
+            # with open(ff.file_path, "r", encoding='gbk') as tf:
+            #     ff.content = tf.read()
             ff.save()
 
             with open(ff.file_path, 'rb') as f:

@@ -6,6 +6,7 @@ from django.shortcuts import render
 from Class.models import TheClass, ClassStudent, ClassHomework, HomeworkExperiment
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Experiment.models import Experiment, experiment_course
+from FrexTOnline.views import response_ok
 from Login.models import User
 
 
@@ -26,9 +27,14 @@ def create_class(request):
     the_class = TheClass(course=course, course_template=courseTemplate, name=request.POST["newClassName"],
                          start_time=start, end_time=end)
     the_class.save()
+    return HttpResponse(json.dumps(response_ok()), content_type='application/json')
 
-    data = {"state": "OK"}
-    return HttpResponse(json.dumps(data), content_type='application/json')
+
+def delete_class(request):
+    print(request.POST["classId"])
+    the_class = TheClass.objects.get(uid=request.POST["classId"])
+    the_class.delete()
+    return HttpResponse(json.dumps(response_ok()), content_type='application/json')
 
 
 def add_student(request):
@@ -46,9 +52,7 @@ def add_student(request):
         else:
             cs = ClassStudent(user=user, the_class=theClass)
             cs.save()
-
-    data = {"state": "OK"}
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse(json.dumps(response_ok()), content_type='application/json')
 
 
 def get_template_class(request):
@@ -93,6 +97,4 @@ def dispatch_experiment(request):
         experiment.save()
         homework_experiment = HomeworkExperiment(user=n.user, class_homework=classExpHomework, experiment=experiment)
         homework_experiment.save()
-
-    data = {"state": "OK"}
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse(json.dumps(response_ok()), content_type='application/json')

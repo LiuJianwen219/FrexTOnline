@@ -96,7 +96,7 @@ def get_bit(values):
         return None
 
     if r.headers['content-type'] == "application/octet-stream" and r.content:
-        return r.content.decode(encoding="utf-8")
+        return r.content
     return None
 
 

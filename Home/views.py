@@ -33,7 +33,7 @@ def experiment(request):
                                             values_list('course_template_experiment')).order_by('upload_time')
     homework_experiment = HomeworkExperiment.objects.filter(user=user, class_homework__in=class_homework)
     userExpHomeworkFiles =File.objects.filter(experiment__in=homework_experiment.
-                                              values_list('experiment')).order_by('upload_time')
+                                              values_list('experiment')).order_by('create_time')
 
     # print("class_student")
     # for c in class_student:

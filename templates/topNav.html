@@ -26,11 +26,11 @@
           <li class="navItem"><a href="/home/course">课程</a></li>
           <li class="navItem"><a href="/home/experiment/">实验</a></li>
           <li class="navItem"><a href="/resource/">资源</a></li>
-          <li class="navItem"><a href="http://47.96.95.218:30080/">测试</a></li>
+{#          <li class="navItem"><a href="http://47.96.95.218:30080/">测试</a></li>#}
         {% elif request.session.role == "student" %}
           <li class="navItem"><a href="/home/experiment/">实验</a></li>
           <li class="navItem"><a href="/resource/">资源</a></li>
-          <li class="navItem"><a href="http://47.96.95.218:30080/">测试</a></li>
+{#          <li class="navItem"><a href="http://47.96.95.218:30080/">测试</a></li>#}
         {% elif request.session.role == "admin" %}
           <li class="navItem"><a href="/home/experiment/">实验</a></li>
           <li class="navItem"><a href="/home/course">课程</a></li>

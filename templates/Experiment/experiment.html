@@ -486,9 +486,11 @@
 
   function selectExistBit(doc) {
     selectBitName = $('#'+doc).val();
-    console.log(selectBitName)
+    console.log(selectBitName);
+    selectBitNameOther = $('#'+doc).innerText;
+    console.log(selectBitNameOther);
     isUpLoad = false;
-    changeBitFile(selectBitName)
+    changeBitFile(selectBitName, selectBitNameOther)
   }
 
   // 上传文件到 web
@@ -533,10 +535,13 @@
     }
   }
 
-  function changeBitFile(fileName) {
+  function changeBitFile(fileName, fileNameOther) {
     bitFileName = fileName;
     isUpLoad = false;
-    document.getElementById('currentBit').innerHTML = fileName
+    if(fileName === "")
+        document.getElementById('currentBit').innerHTML = fileNameOther;
+    else
+        document.getElementById('currentBit').innerHTML = fileName;
     document.getElementById('burnState').innerHTML = "未烧录"
   }
 

@@ -37,7 +37,11 @@
                         <select id="selectBitFileName_{{ userId }}_{{ type }}_{{ expId }}"
                                 class="form-control">
                           {% for bitFile in bitFileList %}
-                          <option>{{ bitFile }}</option>
+                              {% if bitFile.fileNameOther == "" %}
+                                  <option value="{{ bitFile.fileName }}">{{ bitFile.fileName }}</option>
+                              {% else %}
+                                  <option value="{{ bitFile.fileName }}">{{ bitFile.fileNameOther }}</option>
+                              {% endif %}
                           {% endfor %}
                         </select>
                     </div>
@@ -482,6 +486,7 @@
 
   function selectExistBit(doc) {
     selectBitName = $('#'+doc).val();
+    print(selectBitName)
     isUpLoad = false;
     changeBitFile(selectBitName)
   }

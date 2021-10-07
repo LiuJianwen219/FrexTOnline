@@ -4,10 +4,11 @@ var nReady = null;
 var nBusy = null;
 var nError = null;
 
-function freeCompile(freeExpId, doc, docChange) {
+function freeCompile(freeExpId, doc, other_file_name, docChange) {
     let data = new FormData();
     data.append("freeExpId", freeExpId);
     data.append("topModuleName", $("#"+doc).val());
+    data.append("fileNameOther", $("#"+other_file_name).val())
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
     $.ajax({
         url: '/experiment/free_compile/',

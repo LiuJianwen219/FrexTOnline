@@ -167,7 +167,11 @@
         {% for file in item.fileList %}
             {% if file.fileType == "src" %}
           <div class="input-group" id="classFile_{{ file.fileName }}">
-            <span id="lineInfo">{{ file.fileName }}</span>
+            {% if file.fileNameOther == "" %}
+                <span id="lineInfo">{{ file.fileName }}</span>
+            {% else %}
+                <span id="lineInfo">{{ file.fileNameOther }}</span>
+            {% endif %}
             <div class="input-group-btn">
               <button type="button" class="btn btn-default">
                 <a href="/file/download_homework/{{ file.fileId }}">
@@ -189,7 +193,11 @@
         {% for file in item.fileList %}
             {% if file.fileType == "bit" or file.fileType == "log" %}
           <div class="input-group" id="classFile_{{ file.fileName }}">
-            <span id="lineInfo">{{ file.fileName }}</span>
+            {% if file.fileNameOther == "" %}
+                <span id="lineInfo">{{ file.fileName }}</span>
+            {% else %}
+                <span id="lineInfo">{{ file.fileNameOther }}</span>
+            {% endif %}
             <div class="input-group-btn">
               <button type="button" class="btn btn-default">
                 <a href="/file/download_homework/{{ file.fileId }}">

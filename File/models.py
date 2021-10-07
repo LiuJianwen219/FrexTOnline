@@ -30,6 +30,7 @@ class File(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     file_name = models.CharField(max_length=256)
     file_path = models.CharField(max_length=512)        # 临时存放位置
+    file_name_other = models.CharField(max_length=256, default="")
     content = models.TextField()
 
 

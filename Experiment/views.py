@@ -106,6 +106,7 @@ def compile_all(request, experiment):
     if request.method == "POST":
         user = User.objects.get(uid=request.session["u_uid"])
         topModuleName = request.POST["topModuleName"]
+        fileNameOther = request.POST["fileNameOther"]
         # experiment = Experiment.objects.get(uid=request.POST["freeExpId"])
         # experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
         files = File.objects.filter(experiment=experiment)
@@ -123,6 +124,7 @@ def compile_all(request, experiment):
             'compileId': str(compile.uid),
             'fileNames': fileNames,
             'topModuleName': topModuleName,
+            'file_name_other': fileNameOther,
         }
         print("free_compile")
         print(content)
@@ -235,6 +237,7 @@ def compile_result(request):
         global threadList
         submit.comTime = threadList[values["threadIndex"]].get_time()
         submit.save()
+        file_name_other = threadList[values["threadIndex"]].get_content('file_name_other')
         threadList[values["threadIndex"]].task_thread.set_over()
 
         # print(request.session['u_uid'])
@@ -247,6 +250,7 @@ def compile_result(request):
         logFile.experiment = exp
         logFile.type = file_log
         logFile.file_name = values["compileId"] + ".log"
+        logFile.file_name_other = file_name_other + ".log"
         # logFile.content =
         logFile.save()
 
@@ -260,6 +264,7 @@ def compile_result(request):
         bitFile.experiment = exp
         bitFile.type = file_bit
         bitFile.file_name = values["compileId"] + ".bit"
+        bitFile.file_name_other = file_name_other + ".bit"
         # bitFile.content =
         bitFile.save()
 
@@ -296,7 +301,10 @@ def experiment(request):
     files = File.objects.filter(experiment=experiment)
     for f in files:
         if f.file_name.split('.')[-1] == "bit":
-            bitFileList.append(f.file_name)
+            bitFileList.append({
+                'fileName': f.file_name,
+                'fileNameOther': f.file_name_other,
+            })
 
     context = {
         "expName": experiment.name,

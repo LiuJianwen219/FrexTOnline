@@ -1,6 +1,6 @@
 
 ifLocal = true
-ifDebugex = true
+ifDebugex = false
 
 // const types = [
 // 	'ACT_ACQUIRE', // 0
@@ -160,28 +160,28 @@ function testLJW() {
 				break
 			}
 			case typelist.AUTH_SUCC_USER: {
-				console.log(data.content)
+				if (ifDebugex) console.log(data.content)
 				remote.sync();
 				break
 			}
 			case typelist.SYNC_DEVICE: {
-				console.log(data.content)
+				if (ifDebugex) console.log(data.content)
 				nReady = data.content.nReady;
 				nBusy = data.content.nBusy;
 				nError = data.content.nError;
 				break
 			}
 			case typelist.AUTH_FAIL_USER: {
-				console.log("error in auth: " + data.content)
+				if (ifDebugex) console.log("error in auth: " + data.content)
 				break
 			}
 			case typelist.ACQUIRE_SUCC: {
-				console.log("成功获取设备: " + data.content)
+				if (ifDebugex) console.log("成功获取设备: " + data.content)
 				device_id = data.content.device
 				break
 			}
 			case typelist.ACT_RELEASE: {
-				console.log("设备掉线，请重新连接: " + data.content)
+				if (ifDebugex) console.log("设备掉线，请重新连接: " + data.content)
 				socketMy.close()
 				break
 			}
@@ -202,7 +202,7 @@ function testLJW() {
 				break
 			}
 			case typelist.OP_PS2_SEND_SUCC: {
-				console.log("PS2 send ok")
+				if (ifDebugex) console.log("PS2 send ok")
 				break
 			}
 			case typelist.ACT_SYNC_SW_BTN_SUCC: {

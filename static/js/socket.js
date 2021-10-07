@@ -237,7 +237,7 @@ function testLJW() {
 				// console.log(data)
 				changeSegMent(data.seg)
 				changeLedState(data.led)
-				setTimeout(function(){remote.req_SEG_LED();}, 2000);
+				setTimeout(function(){remote.req_SEG_LED();}, 1999);
 				break;
 			}
 		}

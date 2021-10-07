@@ -86,13 +86,19 @@ def dispatch_experiment(request):
     classExp = CourseTemplateExperiment.objects.get(uid=request.POST["templateExpId"])
     start = datetime.strptime(request.POST["startTime"], '%Y-%m-%d')
     end = datetime.strptime(request.POST["endTime"], '%Y-%m-%d')
-    classExpHomework = ClassHomework(the_class=theClass, course_template_experiment=classExp,
-                                     start_time=start, end_time=end)
-    classExpHomework.save()
+    if len(ClassHomework.objects.filter(the_class=theClass, course_template_experiment=classExp)) == 0:
+        classExpHomework = ClassHomework(the_class=theClass, course_template_experiment=classExp,
+                                         start_time=start, end_time=end, name=classExp.name)
+        classExpHomework.save()
+    else:
+        classExpHomework = ClassHomework.objects.get(the_class=theClass, course_template_experiment=classExp)
+        classExpHomework.start_time = start
+        classExpHomework.end_time = end
 
     class_students = ClassStudent.objects.filter(the_class=theClass)
     for n in class_students:
-        # TODO 重复的情况
+        if len(Experiment.objects.filter(user=n.user, type=experiment_course, name=classExpHomework.name)) > 0:
+            continue
         experiment = Experiment(user=n.user, type=experiment_course, name=classExpHomework.name)
         experiment.save()
         homework_experiment = HomeworkExperiment(user=n.user, class_homework=classExpHomework, experiment=experiment)

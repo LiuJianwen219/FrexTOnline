@@ -483,11 +483,15 @@
   // 保存用户选择的文件数据
   var bitFileName = null;
   {#var bitFileData = null;#}
+  var bitFileName_FileNameOther = [];
+    {% for bitFile in bitFileList %}
+        bitFileName_FileNameOther['{{ bitFile.fileName }}']= '{{ bitFile.fileNameOther }}'
+    {% endfor %}
 
   function selectExistBit(doc) {
     selectBitName = $('#'+doc).val();
     console.log(selectBitName);
-    selectBitNameOther = document.getElementById(doc).innerHTML;
+    selectBitNameOther = bitFileName_FileNameOther[selectBitName]
     console.log(selectBitNameOther);
     isUpLoad = false;
     changeBitFile(selectBitName, selectBitNameOther)

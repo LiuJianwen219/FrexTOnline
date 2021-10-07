@@ -325,7 +325,7 @@
         const end = videoElement.buffered.end(0);//获取缓冲区end
         const current = videoElement.currentTime;//当前播放time
         const diff = end - current;
-        console.log('diff='+diff);
+        {#console.log('diff='+diff);#}
         if (diff > 0.8) { // 设定超过0.8秒以上就进行跳帧
           videoElement.currentTime = end - 0.2
           //设置到end前0.2s
@@ -339,7 +339,7 @@
   function init_flv_player(deviceid) {
      if (flvjs.isSupported()) {//检查flvjs能否正常使用
         var videoElement = document.getElementById('videoBox');//使用id选择器找到第二步设置的dom元素
-        console.log('diviceid in function is'+deviceid);
+        {#console.log('diviceid in function is'+deviceid);#}
         var flv_url = 'http://47.96.95.218:8080/live/device'+deviceid+'.flv';
         // 增加config参数
         // let player = flv.createPlayer(mediaDataSource: MediaDataSource, config?: Config);
@@ -357,7 +357,7 @@
          });
         flvPlayer.attachMediaElement(videoElement);//将flv视频装载进video元素内
         flvPlayer.load();//载入视频
-        console.log('playing');
+        {#console.log('playing');#}
         if (videoElement.paused) flvPlayer.play()//播放视频，如果不想要自动播放，去掉本行
       }
   }
@@ -385,7 +385,7 @@
 }
   function changeSW2(index) {
     var start = new Date()
-    console.log("start: " + start.getTime())
+    {#console.log("start: " + start.getTime())#}
     let elements = document.getElementsByName("SWItem");
     let changeTo = (elements[index].className === "swOff")?1:0;
     if(changeTo === 1){
@@ -394,8 +394,8 @@
         remote.closeSwitch(index)
     }
     var end = new Date()
-    console.log("end: " + end.getTime())
-    console.log((end-start)/1000 + " s")
+    {#console.log("end: " + end.getTime())#}
+    {#console.log((end-start)/1000 + " s")#}
   }
 
   // 控制 按钮
@@ -415,13 +415,13 @@
 
     let changeTo = 0;
     if(operation === "press"){
-      console.log("press");
+      {#console.log("press");#}
       changeTo = 1;
     } else if(operation === "release"){
-        console.log("release");
+        {#console.log("release");#}
       changeTo = 0;
     } else if(operation === "duration"){
-        console.log("duration");
+        {#console.log("duration");#}
       if(elements[index].className === "btnOff"){changeTo = 1;}
       else {changeTo = 1;}
     } else{
@@ -439,7 +439,7 @@
   // 发送 PS2的控制信号
   function inputPS2() {
     let inputLine = document.getElementsByClassName("expPS2Input");
-    console.log(inputLine[0].value);
+    {#console.log(inputLine[0].value);#}
     {#let result = sendPS2(inputLine[0].value);#}
     remote.sendPS2(inputLine[0].value)
     inputLine[0].value = "";
@@ -490,9 +490,9 @@
 
   function selectExistBit(doc) {
     selectBitName = $('#'+doc).val();
-    console.log(selectBitName);
+    {#console.log(selectBitName);#}
     selectBitNameOther = bitFileName_FileNameOther[selectBitName]
-    console.log(selectBitNameOther);
+    {#console.log(selectBitNameOther);#}
     isUpLoad = false;
     changeBitFile(selectBitName, selectBitNameOther)
   }
@@ -503,9 +503,9 @@
     if (obj.get(0).files.length !== 0) {
       let data = new FormData()                            //创建formdata对象，便于将文件传输到后端
       let f_obj = obj.get(0).files[0]                      //获取上传文件信息
-      console.log("文件对象：", f_obj)
-      console.log("文件名称是：", f_obj.name)
-      console.log("文件大小是：", f_obj.size)
+      {#console.log("文件对象：", f_obj)#}
+      {#console.log("文件名称是：", f_obj.name)#}
+      {#console.log("文件大小是：", f_obj.size)#}
 
       {#var file_reader = new FileReader();#}
       {#file_reader.onload = function (e){#}
@@ -627,7 +627,7 @@
         data: {PS2Data: JSON.stringify(PS2Data),
                 csrfmiddlewaretoken: '{{ csrf_token }}'},
         success: function (response) {
-          console.log(response);
+          {#console.log(response);#}
           if(response !== "ERROR")
               result = "OK";
         }
@@ -647,7 +647,7 @@
   }
   function changeSW(index) {
       var start = new Date()
-      console.log("start: " + start.getTime())
+      {#console.log("start: " + start.getTime())#}
     let elements = document.getElementsByName("SWItem");
     let changeTo = (elements[index].className === "swOff")?"1":"0";
     var data = {"index": index, "newState": changeTo}
@@ -659,7 +659,7 @@
       data:{data: JSON.stringify(data),
             csrfmiddlewaretoken: '{{ csrf_token }}'},
       success: function (response) {
-        console.log(response);
+        {#console.log(response);#}
         if(response.state === "SUCCESS" || response.state === "OK") {
             n_SW = response.lengthOfSW;
             for (let i = 0; i < n_SW; i += 1) {
@@ -694,13 +694,13 @@
 
     let changeTo = "0";
     if(operation === "press"){
-      console.log("press");
+      {#console.log("press");#}
       changeTo = "1";
     } else if(operation === "release"){
-        console.log("release");
+        {#console.log("release");#}
       changeTo = "0";
     } else if(operation === "duration"){
-        console.log("duration");
+        {#console.log("duration");#}
       if(elements[index].className === "BTNOFF"){changeTo = "1";}
       else {changeTo = "0";}
     } else{
@@ -717,7 +717,7 @@
       data:{data: JSON.stringify(data),
             csrfmiddlewaretoken: '{{ csrf_token }}'},
       success: function (response) {
-          console.log(response);
+          {#console.log(response);#}
           if(response.state === "SUCCESS" || response.state === "OK") {
               n_BTN = response.BTNLength;
               for(let i=0; i<n_BTN; i++){

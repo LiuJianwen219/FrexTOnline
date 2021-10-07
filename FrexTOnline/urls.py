@@ -14,9 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.generic import RedirectView
 
 from FrexTOnline import views
+
+favicon_view = RedirectView.as_view(url='/static/favicon.png', permanent=True)
 
 urlpatterns = [
     path('', views.home),
@@ -34,5 +37,5 @@ urlpatterns = [
     # path('test/', include('Test.urls')),
 
     path('test/', views.test),
-    path('favicon.ico/',views.favicon),
+    re_path(r'^favicon\.ico$', favicon_view),
 ]

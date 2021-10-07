@@ -542,7 +542,7 @@
   function changeBitFile(fileName, fileNameOther) {
     bitFileName = fileName;
     isUpLoad = false;
-    if(fileName === "")
+    if(fileNameOther !== "")
         document.getElementById('currentBit').innerHTML = fileNameOther;
     else
         document.getElementById('currentBit').innerHTML = fileName;

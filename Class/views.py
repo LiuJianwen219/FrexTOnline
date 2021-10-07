@@ -94,6 +94,7 @@ def dispatch_experiment(request):
         classExpHomework = ClassHomework.objects.get(the_class=theClass, course_template_experiment=classExp)
         classExpHomework.start_time = start
         classExpHomework.end_time = end
+        classExpHomework.save()
 
     class_students = ClassStudent.objects.filter(the_class=theClass)
     for n in class_students:

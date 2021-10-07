@@ -28,10 +28,12 @@ def experiment(request):
     # theClasses = user.classes.all().only('id', 'course').select_related('course')
     class_homework = ClassHomework.objects.filter(the_class__in=class_student.values_list('the_class'),
                                                    start_time__lte=date.today(),
-                                                   end_time__gte=date.today())
-    course_file = CourseFile.objects.filter(course_template_experiment__in=class_homework.values_list('course_template_experiment'))
+                                                   end_time__gte=date.today()).order_by('start_time')
+    course_file = CourseFile.objects.filter(course_template_experiment__in=class_homework.
+                                            values_list('course_template_experiment')).order_by('upload_time')
     homework_experiment = HomeworkExperiment.objects.filter(user=user, class_homework__in=class_homework)
-    userExpHomeworkFiles =File.objects.filter(experiment__in=homework_experiment.values_list('experiment'))
+    userExpHomeworkFiles =File.objects.filter(experiment__in=homework_experiment.
+                                              values_list('experiment')).order_by('upload_time')
 
     # print("class_student")
     # for c in class_student:
@@ -141,9 +143,9 @@ def experiment(request):
 
 def getFreeExpDrawer(user: User):
     # 按用户名获得自由实验信息
-    freeExps = Experiment.objects.filter(user=user, type=experiment_free)
+    freeExps = Experiment.objects.filter(user=user, type=experiment_free).order_by('create_time')
     # 一次取回了所有实验文件
-    freeExpFiles = File.objects.filter(experiment__in=freeExps)  # .only('id', 'file_name', 'free_exp')
+    freeExpFiles = File.objects.filter(experiment__in=freeExps).order_by('create_time')  # .only('id', 'file_name', 'free_exp')
     # 建立一个字典，键依次为所有的自由实验id，值为一个列表，列表中是储存各个文件信息的字典。扫描刚刚的文件列表以分类存放
     # 之后对作业文件、作业也是类似的操作
     freeExpFilesDict = {freeExp.uid: [] for freeExp in freeExps}
@@ -167,12 +169,13 @@ def course(request):
     context = {"experiments": getFreeExpDrawer(user)}
 
     courses = Course.objects.filter(user=user)
-    course_templates = CourseTemplate.objects.filter(course__in=courses)
-    course_template_exp = CourseTemplateExperiment.objects.filter(course_template__in=course_templates)  # .distinct()
-    c_t_e_files = CourseFile.objects.filter(course_template_experiment__in=course_template_exp)
+    course_templates = CourseTemplate.objects.filter(course__in=courses).order_by('create_time')
+    course_template_exp = CourseTemplateExperiment.objects.\
+        filter(course_template__in=course_templates).order_by('create_time')  # .distinct()
+    c_t_e_files = CourseFile.objects.filter(course_template_experiment__in=course_template_exp).order_by('upload_time')
 
-    the_classes = TheClass.objects.filter(course__in=courses)
-    students = ClassStudent.objects.filter(the_class__in=the_classes)
+    the_classes = TheClass.objects.filter(course__in=courses).order_by('name')
+    students = ClassStudent.objects.filter(the_class__in=the_classes).order_by('enter_time')
 
     # exps = ClassExp.objects.filter(templatecontent__in=templateContents).distinct()
     # expFiles = FileClassExp.objects.filter(class_exp__in=exps)

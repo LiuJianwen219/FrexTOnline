@@ -37,6 +37,7 @@ class Experiment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
     type = models.CharField(max_length=8, choices=experiment_enum)
+    create_time = models.DateTimeField(auto_now_add=True)
 
 
 class CompileRecord(models.Model):

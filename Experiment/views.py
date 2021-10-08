@@ -115,7 +115,8 @@ def compile_all(request, experiment):
 
         fileNames = []
         for file in files:
-            fileNames.append(file.file_name)
+            if file.type == "src":
+                fileNames.append(file.file_name)
 
         content = {
             'userId': request.session['u_uid'],

@@ -33,7 +33,7 @@
     导入学生
   </button>
   <div class="modal fade" id="addStudent_{{ classItem.classId }}" tabindex="-1" role="dialog"
-       aria-labelledby="myUpLoadFile" aria-hidden="true">
+       aria-labelledby="myAddStudent" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -59,9 +59,61 @@
     </div>
   </div>
 
-  {% for student in classItem.classStudent %}
-    <p>{{ student }}</p>
-  {% endfor %}
+  <button data-toggle="modal" data-target="#deleteStudent_{{ classItem.classId }}">
+    移除学生
+  </button>
+  <div class="modal fade" id="deleteStudent_{{ classItem.classId }}" tabindex="-1" role="dialog"
+       aria-labelledby="myDeleteStudent" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">从班级中移除学生</h4>
+        </div>
+        <div class="modal-body">
+          {% csrf_token %}
+          <label>学生学号（用英文的,分隔）：</label>
+          <input type="text" class="form-control" id="deleteStudentNumber_{{ classItem.classId }}"
+            placeholder="new template" required pattern="[0-9,]*[0-9]*">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+          </button>
+          <button name="uploadFile_id" class="btn btn-primary"
+                  onclick="deleteStudentNumber('{{ classItem.classId }}',
+                          'deleteStudentNumber_{{ classItem.classId }}')">
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button data-toggle="modal" data-target="#seeStudent_{{ classItem.classId }}">
+    查看学生
+  </button>
+  <div class="modal fade" id="seeStudent_{{ classItem.classId }}" tabindex="-1" role="dialog"
+       aria-labelledby="myDeleteStudent" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">{{ classItem.classId }}</h4>
+        </div>
+        <div class="modal-body">
+          {% for student in classItem.classStudent %}
+            <p>{{ student }}</p>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <h2>已布置作业</h2>
+
 </div>
 
 <script>
@@ -87,7 +139,30 @@
         }
     })
   }
-  
+
+  function deleteStudentNumber(classId, doc) {
+    let data = new FormData();
+    data.append('classId', classId);
+    data.append('studentNumbers', $('#'+doc).val())
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/class/delete_student/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("学生移除成功，点击确定刷新页面");
+                location.reload();
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+
   function deleteClass(classId) {
     let data = new FormData();
     data.append('classId', classId);

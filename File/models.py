@@ -12,11 +12,13 @@ file_bit = "bit"
 file_log = "log"
 file_other = "other"
 file_unknown = "unknown"
+file_report = "report"
 
 file_enum = [
     (file_src, file_src),
     (file_bit, file_bit),
     (file_log, file_log),
+    (file_report, file_report),
     (file_other, file_other),
     (file_unknown, file_unknown),
 ]

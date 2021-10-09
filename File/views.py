@@ -283,6 +283,8 @@ def download_course(request, homeworkId):
 def upload_homework(request):
     if request.method == "POST":
         print(request.POST.get('homeworkId'))
+        print(request.POST.get('homeworkFileType'))
+        fileType = request.POST.get('homeworkFileType')
         f_objs = request.FILES.getlist('uploadFile')  # 暂时考虑只能上传一个文件
         user = User.objects.get(uid=request.session["u_uid"])
         experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
@@ -311,7 +313,10 @@ def upload_homework(request):
             ff = File()
             ff.user = user
             ff.experiment = experiment
-            ff.type = file_src
+            if fileType:
+                ff.type = fileType
+            else:
+                ff.type = file_src
             ff.file_name = f_obj.name
             ff.file_path = "/tmp/" + f_obj.name
             # with open(ff.file_path, "r", encoding='gbk') as tf:

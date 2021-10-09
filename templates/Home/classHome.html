@@ -52,6 +52,12 @@
             <div class="modal-body">
               {% csrf_token %}
               <input id="upClassFileDoc_{{ item.expId }}" type="file"  multiple="multiple" >
+                <label for="upClassFileType_{{ item.expId }}"></label>
+                <select id="upClassFileType_{{ item.expId }}">
+                  <option value="src" selected="selected">源文件</option>
+                  <option value="bit">bit文件</option>
+                  <option value="report">课程报告</option>
+                </select>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">关闭
@@ -59,6 +65,7 @@
               <button type="submit" name="uploadFile_id" value="{{i.id}}" class="btn btn-primary"
                       onclick="uploadClassFile('{{ item.expId }}',
                               'upClassFileDoc_{{ item.expId }}',
+                              'upClassFileType_{{ item.expId }}',
                               'classFileList{{ item.expId }}')">
                 上传
               </button>
@@ -165,7 +172,7 @@
       <h3>源文件</h3>
       <div id="classFileList{{ item.expId }}">
         {% for file in item.fileList %}
-            {% if file.fileType == "src" %}
+            {% if file.fileType == "src" or file.fileType == "other" %}
           <div class="input-group" id="classFile_{{ file.fileName }}">
             {% if file.fileNameOther == "" %}
                 <span id="lineInfo">{{ file.fileName }}</span>
@@ -192,6 +199,32 @@
       <div id="classFileList2{{ item.expId }}">
         {% for file in item.fileList %}
             {% if file.fileType == "bit" or file.fileType == "log" %}
+          <div class="input-group" id="classFile_{{ file.fileName }}">
+            {% if file.fileNameOther == "" %}
+                <span id="lineInfo">{{ file.fileName }}</span>
+            {% else %}
+                <span id="lineInfo">{{ file.fileNameOther }}</span>
+            {% endif %}
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default">
+                <a href="/file/download_homework/{{ file.fileId }}">
+                下载</a>
+              </button>
+              <button type="button" class="btn btn-default"
+                      onclick="deleteClassFile('{{ item.expId }}', '{{ file.fileId }}',
+                              'classFile_{{ file.fileName }}')">
+                删除
+              </button>
+            </div>
+          </div>
+            {% endif %}
+        {% endfor %}
+      </div>
+
+      <h3>课程报告</h3>
+      <div id="classFileList2{{ item.expId }}">
+        {% for file in item.fileList %}
+            {% if file.fileType == "report" %}
           <div class="input-group" id="classFile_{{ file.fileName }}">
             {% if file.fileNameOther == "" %}
                 <span id="lineInfo">{{ file.fileName }}</span>

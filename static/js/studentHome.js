@@ -54,10 +54,11 @@ function createFreeExpProj(doc) {
 
 function uploadClassFile(homeworkId, doc, fileType, docChange) {
     let obj = $("#"+doc);
+    let fileTypeValue = $("#"+fileType).val()
     if (obj.get(0).files.length !== 0) {
         let data = new FormData();                                      //创建formdata对象，便于将文件传输到后端
         data.append('homeworkId', homeworkId);
-        data.append('homeworkFileType', $("#"+fileType).val())
+        data.append('homeworkFileType', fileTypeValue)
         for(let i = 0; i<obj.get(0).files.length; i+=1){
           let f_obj = obj.get(0).files[i];                       //获取上传文件信息
           console.log("文件对象：", f_obj);
@@ -92,9 +93,9 @@ function uploadClassFile(homeworkId, doc, fileType, docChange) {
                         // "              </button>\n" +
                         // "            </div>\n" +
                         "          </div>"
-                    if(fileType === "bit")
+                    if(fileTypeValue === "bit")
                         $("#" + docChange+"bit").append(text);
-                    else if(fileType === "report")
+                    else if(fileTypeValue === "report")
                         $("#" + docChange+"report").append(text);
                     else
                         $("#" + docChange).append(text);

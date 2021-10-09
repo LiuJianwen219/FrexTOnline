@@ -92,7 +92,12 @@ function uploadClassFile(homeworkId, doc, fileType, docChange) {
                         // "              </button>\n" +
                         // "            </div>\n" +
                         "          </div>"
-                    $("#" + docChange).append(text);
+                    if(fileType === "bit")
+                        $("#" + docChange+"bit").append(text);
+                    else if(fileType === "report")
+                        $("#" + docChange+"report").append(text);
+                    else
+                        $("#" + docChange).append(text);
                 } else {
                     alert(req.info);
                 }

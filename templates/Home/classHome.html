@@ -52,11 +52,12 @@
             <div class="modal-body">
               {% csrf_token %}
               <input id="upClassFileDoc_{{ item.expId }}" type="file"  multiple="multiple" >
-                <label for="upClassFileType_{{ item.expId }}"></label>
+                <label for="upClassFileType_{{ item.expId }}">文件类型</label>
                 <select id="upClassFileType_{{ item.expId }}">
                   <option value="src" selected="selected">源文件</option>
                   <option value="bit">bit文件</option>
                   <option value="report">课程报告</option>
+                  <option value="other">其他文件</option>
                 </select>
             </div>
             <div class="modal-footer">
@@ -196,7 +197,7 @@
       </div>
 
       <h3>编译文件</h3>
-      <div id="classFileList2{{ item.expId }}">
+      <div id="classFileList{{ item.expId }}bit">
         {% for file in item.fileList %}
             {% if file.fileType == "bit" or file.fileType == "log" %}
           <div class="input-group" id="classFile_{{ file.fileName }}">
@@ -222,7 +223,7 @@
       </div>
 
       <h3>课程报告</h3>
-      <div id="classFileList2{{ item.expId }}">
+      <div id="classFileList{{ item.expId }}report">
         {% for file in item.fileList %}
             {% if file.fileType == "report" %}
           <div class="input-group" id="classFile_{{ file.fileName }}">

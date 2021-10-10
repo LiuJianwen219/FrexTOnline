@@ -260,9 +260,12 @@
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
             if(req.state !== "ERROR") {
-                $("#" + docChange).cleanData();
+                $("#" + docChange).empty();
                 for(let i=0; i<req.report_status.length; i=i+1){
-                    let text = "<tr><td>"+req.report_status[i].name+"</td><td>"+req.report_status[i].status+"</td></tr>"
+                    report_style = ' style="color: green"'
+                    if(req.report_status[i] === "未交")
+                        report_style = ' style="color: originred"'
+                    let text = "<tr><td>"+req.report_status[i].name+"</td><td"+report_style+">"+req.report_status[i].status+"</td></tr>"
                     $("#" + docChange).append(text);
                 }
             } else {

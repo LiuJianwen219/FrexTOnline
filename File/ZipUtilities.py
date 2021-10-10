@@ -24,6 +24,11 @@ class ZipUtilities(object):
             elif os.path.isdir(full_path):
                 self.addFolderToZip(full_path, os.path.join(name, os.path.basename(full_path)))
 
+    def toLocal(self, path):
+        with open(path, 'wb') as f:
+            for data in self.zip_file:
+                f.write(data)
+
     def close(self):
         if self.zip_file:
             self.zip_file.close()

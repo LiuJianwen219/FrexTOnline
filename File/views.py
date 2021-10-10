@@ -369,13 +369,25 @@ def download_homework_report(request, h_uid, file_type):
     class_homework = ClassHomework.objects.get(uid=h_uid)
     if file_type == "report":
         report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework,
-                                           type=file_type)
+                                           type=file_type).order_by(user)
     else:
-        report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework)
+        report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework
+                                           ).order_by(user)
 
     if report_files:
-        utilities = ZipUtilities()
+        allZip = ZipUtilities()
+        userZip = ZipUtilities()
+        userId = ""
+        newZipFileName = ""
         for f in report_files:
+            if str(f.user.uid) != userId:
+                if userId != "":
+                    userZip.toLocal(os.path.join(config.work_dir, newZipFileName))
+                    allZip.toZip(os.path.join(config.work_dir, newZipFileName), "")
+                    userZip = ZipUtilities()
+                userId = str(f.user.uid)
+                newZipFileName = userId + ".zip"
+
             newFileName = f.user.name + "_" + f.file_name
             if fh.get_experiment({
                 config.c_userId: str(f.user.uid),
@@ -384,9 +396,12 @@ def download_homework_report(request, h_uid, file_type):
                 config.c_fileName: f.file_name,
             }, newFileName) == config.request_failed:
                 break
-            utilities.toZip(os.path.join(config.work_dir, newFileName), "")
+            userZip.toZip(os.path.join(config.work_dir, newFileName), "")
+        if userId != "":
+            userZip.toLocal(os.path.join(config.work_dir, newZipFileName))
+            allZip.toZip(os.path.join(config.work_dir, newZipFileName), "")
 
-        response = StreamingHttpResponse(utilities.zip_file, content_type='application/zip')
+        response = StreamingHttpResponse(allZip.zip_file, content_type='application/zip')
         response['Content-Disposition'] = 'attachment;filename="{0}"'.format("作业报告.zip")
         return response
 

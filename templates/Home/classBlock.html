@@ -126,6 +126,7 @@
     </thead>
     <tbody>
       {% for homework in classItem.classHomework %}
+        <tr class="testDatas">
           <td>
             {% if homework.homeworkState == "ing" %}
                 <span id="lineInfo" style="color: green">{{ homework.homeworkName }}</span>
@@ -138,6 +139,7 @@
           <td><a href="/seg/{{ T.upId }}/">提交情况</a></td>
           <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/">下载报告</a></td>
           <td><a href="/file/download_homework_allFile/{{ homework.homeworkId }}/">下载备份</a></td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>

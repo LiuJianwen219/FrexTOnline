@@ -261,9 +261,6 @@ def course(request):
                     "homeworkState": "ing" if homework.start_time < datetime.today() < homework.end_time else "over"
                 })
 
-    print(datetime.today())
-    print(datetime.now())
-
     for cla in classItem:
         for cou in courseItem:
             if cla['courseId'] == cou['classTypeId']:

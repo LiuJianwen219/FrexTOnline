@@ -118,12 +118,12 @@ def see_homework_status(request, h_uid):
     for stu in students:
         report_status.append({
             "name": stu.user.name,
-            "status": "false"
+            "status": "未交"
         })
 
     for report in report_files:
         for status in report_status:
             if status["name"] == report.user.name:
-                status["status"] = "true"
+                status["status"] = "已交"
 
     return HttpResponse(json.dumps(report_status), content_type='application/json')

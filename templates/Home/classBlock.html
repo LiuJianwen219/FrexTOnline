@@ -137,7 +137,9 @@
           <td>{{ homework.homeworkStartTime }}</td>
           <td>{{ homework.homeworkEndTime }}</td>
 {#          <td><a href="/class/see_homework_status/{{ homework.homeworkId }}/">提交情况</a></td>#}
-          <td><button data-toggle="modal" data-target="#seeStudentReport_{{ classItem.classId }}">提交情况</button></td>
+          <td><button data-toggle="modal" data-target="#seeStudentReport_{{ classItem.classId }}"
+                      onclick="seeStudentReport('{{ homework.homeworkId }}',
+                              'classHomeworkReportData_{{ classItem.classId }}')">提交情况</button></td>
           <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/report/">下载报告</a></td>
           <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/all/">下载备份</a></td>
         </tr>
@@ -154,8 +156,6 @@
           <h4 class="modal-title">{{ classItem.classNumber }}</h4>
         </div>
         <div class="modal-body">
-            <button onclick="seeStudentReport('{{ homework.homeworkId }}',
-                              'classHomeworkReportData_{{ classItem.classId }}')">刷新</button>
           <table class="table" id="classHomeworkReport_{{ classItem.classId }}">
             <thead class="thead-light">
               <tr>
@@ -247,6 +247,7 @@
   }
 
   function seeStudentReport(homeworkId, docChange) {
+      console.log("in here")
     let data = new FormData();
     data.append('homeworkId', homeworkId);
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
@@ -259,7 +260,6 @@
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
             if(req.state !== "ERROR") {
-                console.log(req.report_status)
                 $("#" + docChange).cleanData();
                 for(let i=0; i<req.report_status.length; i=i+1){
                     let text = "<tr><td>"+req.report_status[i].name+"</td><td>"+req.report_status[i].status+"</td></tr>"

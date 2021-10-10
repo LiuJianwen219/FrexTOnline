@@ -39,7 +39,7 @@ def post_experiment(values, file):
     return config.request_success
 
 
-def get_experiment(values):
+def get_experiment(values, newFileName):
     logger.info("Try to get EXPERIMENT with values: " + json.dumps(values))
 
     url = config.file_server_url + config.experiment_API + "/"
@@ -57,6 +57,10 @@ def get_experiment(values):
         return None
 
     if r.headers['content-type'] == "application/octet-stream" and r.content:
+        dest_direction = config.work_dir
+        dest_filename = newFileName
+        if not file_writer(dest_direction, dest_filename, r.content):
+            return None
         return r.content
     return None
 

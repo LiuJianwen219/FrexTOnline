@@ -1,5 +1,6 @@
 import json
 import os
+import uuid
 
 from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import render
@@ -111,7 +112,7 @@ def download_file(request, f_uid):
             config.c_fileName: file.file_name,
         }
         if file.type == "src":
-            file_content = fh.get_experiment(values)
+            file_content = fh.get_experiment(values, str(uuid.uuid1()))
         elif file.type == "log":
             values[config.c_compileId] = file.file_name.split('.')[0]
             file_content = fh.get_log(values)
@@ -375,15 +376,15 @@ def download_homework_report(request, h_uid, file_type):
     if report_files:
         utilities = ZipUtilities()
         for f in report_files:
+            newFileName = f.user.name + "_" + f.file_name
             if fh.get_experiment({
                 config.c_userId: str(f.user.uid),
-                config.c_courseId: str(class_homework.course_template_experiment.course_template.course.uid),
-                config.c_courseTemplateId: str(class_homework.course_template_experiment.course_template.uid),
-                config.c_courseTemplateExperimentId: str(class_homework.course_template_experiment.uid),
+                config.c_experimentType: f.experiment.type,
+                config.c_experimentId: str(f.experiment.uid),
                 config.c_fileName: f.file_name,
-            }) == config.request_failed:
+            }, newFileName) == config.request_failed:
                 break
-            utilities.toZip(os.path.join(config.work_dir, f.file_name), "")
+            utilities.toZip(os.path.join(config.work_dir, newFileName), "")
 
         response = StreamingHttpResponse(utilities.zip_file, content_type='application/zip')
         response['Content-Disposition'] = 'attachment;filename="{0}"'.format("作业报告.zip")

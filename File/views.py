@@ -360,12 +360,12 @@ def delete_homework(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
-def download_homework_report(request, homeworkId, file_type):
+def download_homework_report(request, h_uid, file_type):
     user = User.objects.get(uid=request.session["u_uid"])
     if user.role != 'teacher':
         req = {"state": "ERROR", 'info': "Wrong role, please login correctly first."}
         return HttpResponse(json.dumps(req), content_type='application/json')
-    class_homework = ClassHomework.objects.get(uid=homeworkId)
+    class_homework = ClassHomework.objects.get(uid=h_uid)
     if file_type:
         report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework,
                                            type=file_type)

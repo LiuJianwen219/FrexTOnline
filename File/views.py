@@ -367,7 +367,7 @@ def download_homework_report(request, h_uid, file_type):
         req = {"state": "ERROR", 'info': "Wrong role, please login correctly first."}
         return HttpResponse(json.dumps(req), content_type='application/json')
     class_homework = ClassHomework.objects.get(uid=h_uid)
-    if file_type:
+    if file_type == "report":
         report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework,
                                            type=file_type)
     else:

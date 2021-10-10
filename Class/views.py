@@ -108,8 +108,8 @@ def dispatch_experiment(request):
     return HttpResponse(json.dumps(response_ok()), content_type='application/json')
 
 
-def see_homework_status(request, h_uid):
-    class_homework = ClassHomework.objects.get(uid=h_uid)
+def see_homework_status(request):
+    class_homework = ClassHomework.objects.get(uid=request.POST["homeworkId"])
     students = ClassStudent.objects.filter(the_class=class_homework.the_class).order_by('enter_time')
     report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework,
                                        type=file_report).order_by("user")
@@ -126,4 +126,5 @@ def see_homework_status(request, h_uid):
             if status["name"] == report.user.name:
                 status["status"] = "已交"
 
-    return HttpResponse(json.dumps(report_status), content_type='application/json')
+    req = {"state": "OK", "report_status": report_status}
+    return HttpResponse(json.dumps(req), content_type='application/json')

@@ -9,6 +9,6 @@ urlpatterns = [
     path('add_student/', views.add_student),
     path('get_template_class/', views.get_template_class),
     path('dispatch_experiment/', views.dispatch_experiment),
-    url(r'see_homework_status/(?P<h_uid>.+)/', views.see_homework_status),
+    path('see_homework_status/', views.see_homework_status),
 ]
 

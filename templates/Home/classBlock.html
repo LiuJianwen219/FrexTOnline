@@ -137,7 +137,9 @@
           <td>{{ homework.homeworkStartTime }}</td>
           <td>{{ homework.homeworkEndTime }}</td>
 {#          <td><a href="/class/see_homework_status/{{ homework.homeworkId }}/">提交情况</a></td>#}
-          <td><button data-toggle="modal" data-target="#seeStudentReport_{{ classItem.classId }}">提交情况</button></td>
+          <td><button data-toggle="modal" data-target="#seeStudentReport_{{ classItem.classId }}"
+                      onclick="seeStudentReport('{{ homework.homeworkId }}',
+                              'classHomeworkReportData_{{ classItem.classId }}')">提交情况</button></td>
           <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/report/">下载报告</a></td>
           <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/all/">下载备份</a></td>
         </tr>
@@ -161,11 +163,9 @@
                 <th scope="col">状态</th>
               </tr>
             </thead>
-            <tbody>
-              <tr class="testDatas" id="classHomeworkReportData_{{ classItem.classId }}">
-                <td>name</td>
-                <td>status</td>
-              </tr>
+            <tbody id="classHomeworkReportData_{{ classItem.classId }}">
+              <tr><td>name</td>
+                  <td>status</td></tr>
             </tbody>
           </table>
         </div>
@@ -239,6 +239,31 @@
             if(req.state !== "ERROR") {
                 alert("班级删除成功，点击确定刷新页面");
                 location.reload();
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+  }
+
+  function seeStudentReport(homeworkId, docChange) {
+    let data = new FormData();
+    data.append('homeworkId', homeworkId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
+    $.ajax({
+        url: '/class/see_homework_status/',
+        type: 'POST',
+        data: data,
+        cache: false,                                               //上传文件无需缓存
+        processData: false,                                          //不对数据做序列化操作
+        contentType: false,                                          //不定义特殊连接类型
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                $("#" + docChange).cleanData();
+                for(let i=0; i<req.report_status.length; i=i+1){
+                    let text = "<tr><td>"+req.report_status[i].name+"</td><td>"+req.report_status[i].status+"</td></tr>"
+                    $("#" + docChange).append(text);
+                }
             } else {
                 alert(req.info);
             }

@@ -1,4 +1,5 @@
 import json
+import time
 
 from django.shortcuts import render
 from Login.models import User
@@ -182,11 +183,7 @@ def course(request):
 
     the_classes = TheClass.objects.filter(course__in=courses).order_by('name')
     students = ClassStudent.objects.filter(the_class__in=the_classes).order_by('enter_time')
-
-    # exps = ClassExp.objects.filter(templatecontent__in=templateContents).distinct()
-    # expFiles = FileClassExp.objects.filter(class_exp__in=exps)
-    # theClasses = TheClass.objects.filter(course__in=courses)
-    # students = User2.objects.filter(classes__in=theClasses).distinct()
+    class_homework = ClassHomework.objects.filter(the_class__in=the_classes).order_by("end_time", "start_time")
 
     # 实验部分
     expItem = []
@@ -222,57 +219,7 @@ def course(request):
                 tem['templateExp'].append(exp)
                 break
 
-    # templateItems = {}
-    # for template in course_templates:
-    #     if str(template.course.uid) in templateItems.keys():
-    #         templateItems[str(template.course.uid)]['templateExp'].append(template)
-    #     else:
-    #         templateItems[str(template.course.uid)] = {
-    #             'courseId': template.course.uid,
-    #             'templateId': template.uid,
-    #             'templateName': template.name,
-    #             'templateExp': [template],
-    #         }
-
-    # expFileDict = {exp.uid: [] for exp in course_template_exp}
-    # for file in c_t_e_files:
-    #     expFileDict[str(file.experiment.uid)].append({"fileId": str(file.uid), "fileName": file.file_name})
-    # expItems = [
-    #     {
-    #         # 'templateId': list(exp.templatecontent_set.values_list('id', flat=True)),
-    #         'templateId': exp.course_template.uid,
-    #         'templateExpId': exp.uid,
-    #         'expName': exp.name,
-    #         'expFile': expFileDict[str(exp.uid)]
-    #     }
-    #     for exp in course_template_exp
-    # ]
-
-    # expDict = {}
-    # for expItem in expItems:
-    #     for id in expItem['templateId']:
-    #         expDict[id] = expItem
-
-    # templateItems = [
-    #     {
-    #         # 'courseId': list(template.courses.values_list('id', flat=True)),
-    #         'courseId': template.course.uid,
-    #         'templateId': template.uid,
-    #         'templateName': template.name,
-    #         # 'templateExp': [expDict[i] for i in template.course_set.values_list('uid', falt=True)],
-    #     }
-    #     for template in course_templates
-    # ]
-    #
-    #
-    # templateDict = {course.uid: [] for course in courses}
-    # for templateItem in templateItems:
-    #     for id in templateItem['courseId']:
-    #         if id in templateDict.keys():
-    #             templateDict[id].append(templateItem)
-
     # 班级部分
-
     courseItem = []
     for c in courses:
         courseItem.append({
@@ -294,6 +241,7 @@ def course(request):
             'classStudent': [],
             'classStartTime': the.start_time,
             'classEndTime': the.end_time,
+            'classHomework': [],
         })
 
     for stu in students:
@@ -301,6 +249,17 @@ def course(request):
             if str(stu.the_class.uid) == cla['classId']:
                 cla["classStudent"].append(stu.user.name)
                 break
+
+    for homework in class_homework:
+        for cla in classItem:
+            if str(homework.the_class.uid) == cla['classId']:
+                cla["classHomework"].append({
+                    "homeworkName": homework.course_template_experiment.name,
+                    "homeworkId": str(homework.course_template_experiment.uid),
+                    "homeworkStartTime": homework.start_time,
+                    "homeworkEndTime": homework.end_time,
+                    "homeworkState": "ing" if homework.start_time < date.today() < homework.end_time else "over"
+                })
 
     for cla in classItem:
         for cou in courseItem:
@@ -314,40 +273,5 @@ def course(request):
                 cou['classTemplate'].append(tem)
 
     context["classContent"] = courseItem
-
-    # studentDict = {theClass.uid: [] for theClass in the_classes}
-    # for student in students:
-    #     for theClass in student.classes.all():
-    #         studentDict[theClass.uid].append(student.name)
-
-    # theClassItems = [
-    #     {
-    #         'courseId': theClass.course.uid,
-    #         'classId': theClass.uid,
-    #         'classNumber': "99999",
-    #         'className': theClass.name,
-    #         'templateId': theClass.course_template.uid,
-    #         'templateName': theClass.course_template.name,
-    #         'classStudent': studentDict[theClass.uid],
-    #         'classStartTime': theClass.start_time,
-    #         'classEndTime': theClass.end_time,
-    #     }
-    #     for theClass in the_classes
-    # ]
-
-    # theClassDict = {course.uid: [] for course in courses}
-    # for theClassItem in theClassItems:
-    #     theClassDict[theClassItem['courseId']].append(theClassItem)
-
-    # context["classContent"] = [
-    #     {
-    #         'classTypeId': str(course.uid),
-    #         'classType': course.name,
-    #         'classTemplate': templateDict[str(course.uid)],
-    #         'classList': theClassDict[str(course.uid)]
-    #     }
-    #     for course in courses
-    # ]
     context["role"] = user.role
-    print(user.role)
     return render(request, "Home/teacherHome.html", context=context)

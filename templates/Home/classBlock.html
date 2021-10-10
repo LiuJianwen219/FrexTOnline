@@ -98,7 +98,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">{{ classItem.classId }}</h4>
+          <h4 class="modal-title">{{ classItem.classNumber }}</h4>
         </div>
         <div class="modal-body">
           {% for student in classItem.classStudent %}
@@ -112,7 +112,35 @@
     </div>
   </div>
 
-    <h2>已布置作业</h2>
+  <h3>已布置作业</h3>
+  <table class="table" id="classHomeworkList_{{ classItem.classId }}">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">名称</th>
+        <th scope="col">开始</th>
+        <th scope="col">结束</th>
+        <th scope="col">查看</th>
+        <th scope="col">报告</th>
+        <th scope="col">备份</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for homework in classItem.classHomework %}
+          <td>
+            {% if homework.homeworkState == "ing" %}
+                <span id="lineInfo" style="color: green">{{ homework.homeworkName }}</span>
+            {% else %}
+                <span id="lineInfo" style="color: orangered">{{ homework.homeworkName }}</span>
+            {% endif %}
+          </td>
+          <td>{{ homework.homeworkStartTime }}</td>
+          <td>{{ homework.homeworkEndTime }}</td>
+          <td><a href="/seg/{{ T.upId }}/">提交情况</a></td>
+          <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/">下载报告</a></td>
+          <td><a href="/file/download_homework_allFile/{{ homework.homeworkId }}/">下载备份</a></td>
+      {% endfor %}
+    </tbody>
+  </table>
 
 </div>
 

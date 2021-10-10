@@ -369,10 +369,10 @@ def download_homework_report(request, h_uid, file_type):
     class_homework = ClassHomework.objects.get(uid=h_uid)
     if file_type == "report":
         report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework,
-                                           type=file_type).order_by(user)
+                                           type=file_type).order_by("user")
     else:
         report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework
-                                           ).order_by(user)
+                                           ).order_by("user")
 
     if report_files:
         allZip = ZipUtilities()
@@ -386,7 +386,7 @@ def download_homework_report(request, h_uid, file_type):
                     allZip.toZip(os.path.join(config.work_dir, newZipFileName), "")
                     userZip = ZipUtilities()
                 userId = str(f.user.uid)
-                newZipFileName = userId + ".zip"
+                newZipFileName = f.user.name + ".zip"
 
             newFileName = f.user.name + "_" + f.file_name
             if fh.get_experiment({

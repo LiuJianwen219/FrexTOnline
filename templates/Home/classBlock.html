@@ -137,8 +137,8 @@
           <td>{{ homework.homeworkStartTime }}</td>
           <td>{{ homework.homeworkEndTime }}</td>
           <td><a href="/seg/{{ T.upId }}/">提交情况</a></td>
-          <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/">下载报告</a></td>
-          <td><a href="/file/download_homework_allFile/{{ homework.homeworkId }}/">下载备份</a></td>
+          <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/report/">下载报告</a></td>
+          <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/">下载备份</a></td>
         </tr>
       {% endfor %}
     </tbody>

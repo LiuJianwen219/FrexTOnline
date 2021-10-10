@@ -8,7 +8,7 @@ import config
 from Class.models import ClassHomework, HomeworkExperiment
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Experiment.models import Experiment, experiment_course
-from File.models import File, file_src, CourseFile, file_bit
+from File.models import File, file_src, CourseFile, file_bit, file_report
 import File.utils as fh
 from .ZipUtilities import ZipUtilities
 
@@ -250,10 +250,9 @@ def delete_course(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
-def download_course(request, homeworkId):
-    print(homeworkId)
+def download_course(request, experimentId):
     user = User.objects.get(uid=request.session["u_uid"])
-    homework = HomeworkExperiment.objects.get(experiment__uid=homeworkId).class_homework
+    homework = HomeworkExperiment.objects.get(experiment__uid=experimentId).class_homework
     courseTemplateExperiment = homework.course_template_experiment
     courseTemplate = homework.course_template_experiment.course_template
     course = homework.course_template_experiment.course_template.course
@@ -288,16 +287,6 @@ def upload_homework(request):
         f_objs = request.FILES.getlist('uploadFile')  # 暂时考虑只能上传一个文件
         user = User.objects.get(uid=request.session["u_uid"])
         experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
-        # homework = ClassHomework.objects.get(uid=request.POST.get('homeworkId'))
-        # homework_experiments = HomeworkExperiment.objects.filter(user=user, class_homework=homework)
-        # if len(homework_experiments) == 0:
-        #     experiment = Experiment(user=user, name=homework.name, type=experiment_course)
-        #     experiment.save()
-        #     homework_experiment = HomeworkExperiment(user=user, class_homework=homework, experiment=experiment)
-        #     homework_experiment.save()
-        # else:
-        #     homework_experiment = homework_experiments[0]
-        #     experiment = homework_experiment.experiment
 
         if len(f_objs) == 0:
             req = {"state": "OK", 'info': "没有文件上传，请检查"}
@@ -369,3 +358,37 @@ def delete_homework(request):
         return HttpResponse(json.dumps(data), content_type='application/json')
     data = {"state": "ERROR", 'info': "未知的错误，请尝试刷新"}
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def download_homework_report(request, homeworkId, file_type):
+    user = User.objects.get(uid=request.session["u_uid"])
+    if user.role != 'teacher':
+        req = {"state": "ERROR", 'info': "Wrong role, please login correctly first."}
+        return HttpResponse(json.dumps(req), content_type='application/json')
+    class_homework = ClassHomework.objects.get(uid=homeworkId)
+    if file_type:
+        report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework,
+                                           type=file_type)
+    else:
+        report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework)
+
+    if report_files:
+        utilities = ZipUtilities()
+        for f in report_files:
+            if fh.get_experiment({
+                config.c_userId: str(f.user.uid),
+                config.c_courseId: str(class_homework.course_template_experiment.course_template.course.uid),
+                config.c_courseTemplateId: str(class_homework.course_template_experiment.course_template.uid),
+                config.c_courseTemplateExperimentId: str(class_homework.course_template_experiment.uid),
+                config.c_fileName: f.file_name,
+            }) == config.request_failed:
+                break
+            utilities.toZip(os.path.join(config.work_dir, f.file_name), "")
+
+        response = StreamingHttpResponse(utilities.zip_file, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment;filename="{0}"'.format("作业报告.zip")
+        return response
+
+    req = {"state": "ERROR", 'info': "No report files of this homework, please check first."}
+    return HttpResponse(json.dumps(req), content_type='application/json')
+

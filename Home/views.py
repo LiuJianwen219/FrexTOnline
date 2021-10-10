@@ -255,7 +255,7 @@ def course(request):
             if str(homework.the_class.uid) == cla['classId']:
                 cla["classHomework"].append({
                     "homeworkName": homework.course_template_experiment.name,
-                    "homeworkId": str(homework.course_template_experiment.uid),
+                    "homeworkId": str(homework.uid),
                     "homeworkStartTime": homework.start_time.__str__(),
                     "homeworkEndTime": homework.end_time.__str__(),
                     "homeworkState": "ing" if homework.start_time < datetime.today() < homework.end_time else "over"

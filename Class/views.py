@@ -6,6 +6,7 @@ from django.shortcuts import render
 from Class.models import TheClass, ClassStudent, ClassHomework, HomeworkExperiment
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Experiment.models import Experiment, experiment_course
+from File.models import file_report, File
 from FrexTOnline.views import response_ok
 from Login.models import User
 
@@ -105,3 +106,24 @@ def dispatch_experiment(request):
         homework_experiment = HomeworkExperiment(user=n.user, class_homework=classExpHomework, experiment=experiment)
         homework_experiment.save()
     return HttpResponse(json.dumps(response_ok()), content_type='application/json')
+
+
+def see_homework_status(request, h_uid):
+    class_homework = ClassHomework.objects.get(uid=h_uid)
+    students = ClassStudent.objects.filter(the_class=class_homework.the_class).order_by('enter_time')
+    report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework,
+                                       type=file_report).order_by("user")
+
+    report_status = []
+    for stu in students:
+        report_status.append({
+            "name": stu.user.name,
+            "status": "false"
+        })
+
+    for report in report_files:
+        for status in report_status:
+            if status["name"] == report.user.name:
+                status["status"] = "true"
+
+    return HttpResponse(json.dumps(report_status), content_type='application/json')

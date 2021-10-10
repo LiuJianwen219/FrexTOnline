@@ -263,7 +263,7 @@
                 $("#" + docChange).empty();
                 for(let i=0; i<req.report_status.length; i=i+1){
                     report_style = ' style="color: green"'
-                    if(req.report_status[i] === "未交")
+                    if(req.report_status[i].status === "未交")
                         report_style = ' style="color: originred"'
                     let text = "<tr><td>"+req.report_status[i].name+"</td><td"+report_style+">"+req.report_status[i].status+"</td></tr>"
                     $("#" + docChange).append(text);

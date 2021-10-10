@@ -136,13 +136,44 @@
           </td>
           <td>{{ homework.homeworkStartTime }}</td>
           <td>{{ homework.homeworkEndTime }}</td>
-          <td><a href="/class/see_homework_status/{{ homework.homeworkId }}/">提交情况</a></td>
+{#          <td><a href="/class/see_homework_status/{{ homework.homeworkId }}/">提交情况</a></td>#}
+          <td><button data-toggle="modal" data-target="#seeStudentReport_{{ classItem.classId }}">提交情况</button></td>
           <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/report/">下载报告</a></td>
           <td><a href="/file/download_homework_report/{{ homework.homeworkId }}/all/">下载备份</a></td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
+  <div class="modal fade" id="seeStudentReport_{{ classItem.classId }}" tabindex="-1" role="dialog"
+       aria-labelledby="myStudentReport" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">{{ classItem.classNumber }}</h4>
+        </div>
+        <div class="modal-body">
+          <table class="table" id="classHomeworkReport_{{ classItem.classId }}">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">学生</th>
+                <th scope="col">状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="testDatas" id="classHomeworkReportData_{{ classItem.classId }}">
+                <td>name</td>
+                <td>status</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button></div>
+      </div>
+    </div>
+  </div>
 
 </div>
 

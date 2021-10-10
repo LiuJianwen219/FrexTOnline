@@ -256,10 +256,13 @@ def course(request):
                 cla["classHomework"].append({
                     "homeworkName": homework.course_template_experiment.name,
                     "homeworkId": str(homework.course_template_experiment.uid),
-                    "homeworkStartTime": homework.start_time,
-                    "homeworkEndTime": homework.end_time,
-                    "homeworkState": "ing" if homework.start_time < date.today() < homework.end_time else "over"
+                    "homeworkStartTime": homework.start_time.__str__(),
+                    "homeworkEndTime": homework.end_time.__str__(),
+                    "homeworkState": "ing" if homework.start_time < datetime.today() < homework.end_time else "over"
                 })
+
+    print(datetime.today())
+    print(datetime.now())
 
     for cla in classItem:
         for cou in courseItem:

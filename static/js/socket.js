@@ -218,7 +218,7 @@ function testLJW() {
 			}
 			case typelist.OP_PROGRAM_SUCC: {
 				burnBit2_succ()
-				upDate_SEG_LED()
+				// upDate_SEG_LED()
 				break
 			}
 			case typelist.REQ_SEG_SUCC: {

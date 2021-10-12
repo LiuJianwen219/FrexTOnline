@@ -310,6 +310,7 @@
             //在acquire获得分配的设备后进行流媒体服务器的初始化
             console.log(device_id);
             init_flv_player(device_id);
+            upDate_SEG_LED();
             setTimeout(function () {
               init_SW_BT()
               changeBitFile("未选择")

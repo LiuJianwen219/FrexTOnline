@@ -134,6 +134,7 @@ USE_L10N = True
 
 USE_TZ = False
 
+SESSION_COOKIE_NAME = "fpga"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

@@ -1,7 +1,7 @@
 import json
 import time
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from Login.models import User
 from Experiment.models import Experiment, experiment_free, experiment_course
 from File.models import File, CourseFile
@@ -22,7 +22,11 @@ def introduce(request):
 
 
 def experiment(request):
-    user = User.objects.get(uid=request.session["u_uid"])
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
+    user = User.objects.get(uid=u_uid)
     context = {"freeExperiment": getFreeExpDrawer(user)}
     # 用户 -> 课程实验作业 -> 文件
     class_student = ClassStudent.objects.filter(user=user)
@@ -171,7 +175,11 @@ def getFreeExpDrawer(user: User):
 
 
 def course(request):
-    user = User.objects.get(uid=request.session["u_uid"])
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
+    user = User.objects.get(uid=u_uid)
 
     context = {"experiments": getFreeExpDrawer(user)}
 

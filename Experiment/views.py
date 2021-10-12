@@ -3,7 +3,7 @@ import logging
 import requests
 
 from datetime import datetime
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import FileResponse, HttpResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -42,13 +42,17 @@ def introduce(request):
 
 @csrf_exempt
 def create_free_project(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
         experiment_name = request.POST["freeExpName"]
         if len(experiment_name) > 100 or len(experiment_name) == 0:
             data = {"state": "ERROR", "info": "实验名称过长 100"}
             return HttpResponse(json.dumps(data), content_type='application/json')
         else:
-            user = User.objects.get(uid=request.session["u_uid"])
+            user = User.objects.get(uid=u_uid)
             redundancy = Experiment.objects.filter(user=user, name=experiment_name)
             if len(redundancy) != 0:
                 data = {"state": "ERROR", 'info': "同名实验已存在"}
@@ -65,9 +69,13 @@ def create_free_project(request):
 
 @csrf_exempt
 def delete_free_project(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
         expId = request.POST["expId"]
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         experiments = Experiment.objects.filter(user=user, uid=expId)
         if len(experiments) != 0:
             for experiment in experiments:
@@ -103,8 +111,12 @@ def course_compile(request):
 
 
 def compile_all(request, experiment):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         topModuleName = request.POST["topModuleName"]
         fileNameOther = request.POST["fileNameOther"]
         # experiment = Experiment.objects.get(uid=request.POST["freeExpId"])

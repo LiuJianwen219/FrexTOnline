@@ -3,7 +3,7 @@ import os
 import uuid
 
 from django.http import HttpResponse, StreamingHttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 import config
 from Class.models import ClassHomework, HomeworkExperiment
@@ -25,10 +25,14 @@ def handle_uploaded_file(p, f):
 
 
 def upload_free_file(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
         print(request.POST.get('freeExpId'))
         f_objs = request.FILES.getlist('uploadFile')  # 暂时考虑只能上传一个文件
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         experiment = Experiment.objects.get(uid=request.POST.get('freeExpId'))
 
         if len(f_objs) == 0:
@@ -77,8 +81,12 @@ def upload_free_file(request):
 
 
 def delete_free_file(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         experiment = Experiment.objects.get(uid=request.POST.get('freeExpId'))
         f_uid = request.POST["freeFileId"]
         file = File.objects.get(uid=f_uid)
@@ -134,9 +142,13 @@ def download_file(request, f_uid):
 
 
 def upload_bit(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
         f_obj = request.FILES.get('upBitFile')  # 暂时考虑只能上传一个文件
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         try:
             experiment = Experiment.objects.get(uid=request.POST.get('expId'))
         except Experiment.DoesNotExist:
@@ -175,13 +187,17 @@ def upload_bit(request):
 
 
 def upload_course(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
         print(request.POST["courseId"])
         print(request.POST["templateId"])
         print(request.POST['templateExpId'])
 
         f_obj = request.FILES.getlist('courseFiles')[0]  # 暂时考虑只能上传一个文件
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         course = Course.objects.get(uid=request.POST["courseId"])
         courseTemplate = CourseTemplate.objects.get(uid=request.POST["templateId"])
         courseTemplateExperiment = CourseTemplateExperiment.objects.get(uid=request.POST['templateExpId'])
@@ -218,13 +234,17 @@ def upload_course(request):
 
 
 def delete_course(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
         print(request.POST["courseId"])
         print(request.POST["templateId"])
         print(request.POST['templateExpId'])
         print(request.POST["fileId"])
 
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         course = Course.objects.get(uid=request.POST["courseId"])
         courseTemplate = CourseTemplate.objects.get(uid=request.POST["templateId"])
         courseTemplateExperiment = CourseTemplateExperiment.objects.get(uid=request.POST['templateExpId'])
@@ -252,7 +272,11 @@ def delete_course(request):
 
 
 def download_course(request, experimentId):
-    user = User.objects.get(uid=request.session["u_uid"])
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
+    user = User.objects.get(uid=u_uid)
     homework = HomeworkExperiment.objects.get(experiment__uid=experimentId).class_homework
     courseTemplateExperiment = homework.course_template_experiment
     courseTemplate = homework.course_template_experiment.course_template
@@ -281,12 +305,16 @@ def download_course(request, experimentId):
 
 
 def upload_homework(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
         print(request.POST.get('homeworkId'))
         print(request.POST.get('homeworkFileType'))
         fileType = request.POST.get('homeworkFileType')
         f_objs = request.FILES.getlist('uploadFile')  # 暂时考虑只能上传一个文件
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
 
         if len(f_objs) == 0:
@@ -338,8 +366,12 @@ def upload_homework(request):
 
 
 def delete_homework(request):
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
     if request.method == "POST":
-        user = User.objects.get(uid=request.session["u_uid"])
+        user = User.objects.get(uid=u_uid)
         experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
         file = File.objects.get(uid=request.POST["classFileId"])
         try:
@@ -362,7 +394,11 @@ def delete_homework(request):
 
 
 def download_homework_report(request, h_uid, file_type):
-    user = User.objects.get(uid=request.session["u_uid"])
+    u_uid = request.session["u_uid"]
+    if not u_uid:
+        return redirect('/login/')
+
+    user = User.objects.get(uid=u_uid)
     if user.role != 'teacher' and user.role != 'admin':
         req = {"state": "ERROR", 'info': "Wrong role, please login correctly first."}
         return HttpResponse(json.dumps(req), content_type='application/json')

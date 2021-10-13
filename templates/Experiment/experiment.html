@@ -285,6 +285,7 @@
   debug = 1;
   product = 1;
   isUpLoad = null;
+  bit_selected = false;
 
   var n_SW = 16;
   {#var SWState = ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"];#}
@@ -313,7 +314,7 @@
             upDate_SEG_LED();
             setTimeout(function () {
               init_SW_BT()
-              changeBitFile("未选择")
+              document.getElementById('currentBit').innerHTML = "未选择";
           }, 30)
         }, 3000) // 延迟，为了能够准确得到device_id
       }, 30)
@@ -494,7 +495,6 @@
     {#console.log(selectBitName);#}
     selectBitNameOther = bitFileName_FileNameOther[selectBitName]
     {#console.log(selectBitNameOther);#}
-    isUpLoad = false;
     changeBitFile(selectBitName, selectBitNameOther)
   }
 
@@ -528,8 +528,7 @@
         success: function (req) {
           if(req.state !== "ERROR") {
             alert("文件已经上传成功");
-            isUpLoad = true; // now it's nothing
-            changeBitFile(req.trueFileName);
+            changeBitFile(req.trueFileName, "");
             let text = "<option>"+req.trueFileName+"</option>"
             $("#" + docChange).append(text);
           } else {
@@ -542,6 +541,7 @@
 
   function changeBitFile(fileName, fileNameOther) {
     bitFileName = fileName;
+    bit_selected = true;
     isUpLoad = false;
     if(fileNameOther !== "")
         document.getElementById('currentBit').innerHTML = fileNameOther;
@@ -551,7 +551,7 @@
   }
 
   function burnBit3() {
-    if(isUpLoad != null){
+    if(bit_selected){
         remote.program('{{ userId }}', '{{ type }}', '{{ expId }}', isUpLoad, bitFileName)
     }
   }

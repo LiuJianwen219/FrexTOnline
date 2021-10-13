@@ -128,6 +128,7 @@
           </div>
         </div>
       </div>
+
       <div class="modal fade" id="compileClassFile_{{ item.expId }}" tabindex="-1" role="dialog"
            aria-labelledby="myStartClassCompile" aria-hidden="true">
         <div class="modal-dialog">
@@ -141,13 +142,17 @@
               <label>输入顶层模块的名称（注意不是顶层文件名，并区分大小写，无多余空格）</label>
               <input type="text" class="form-control" id="classTopModule_{{ item.expId }}"
                      placeholder="top module name" required pattern="[a-zA-Z][a-zA-Z0-9]*.[a-zA-Z]*">
+              <label id="other_file_name">编译bit文件名(不需要后缀.bit)，不可重复</label>
+              <input type="text" class="form-control" id="other_file_name_{{ item.expId }}"
+                     placeholder="bit name" required pattern="[a-zA-Z][a-zA-Z0-9]*">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">关闭
               </button>
               <button type="submit" name="classCompileSubmit" class="btn btn-primary"
-                      onclick="classCompile('{{ item.expId }}',
+                      onclick="freeCompile('{{ item.expId }}',
                               'classTopModule_{{ item.expId }}',
+                              'other_file_name_{{ item.expId }}',
                               'classFileList{{ item.expId }}')">
                 编译
               </button>
@@ -155,6 +160,8 @@
           </div>
         </div>
       </div>
+
+
     </div>
 
     <div class="classFileGroup" style="display:block;" id="{{ item.expId }}">

@@ -9,7 +9,7 @@ import config
 from Class.models import ClassHomework, HomeworkExperiment
 from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Experiment.models import Experiment, experiment_course
-from File.models import File, file_src, CourseFile, file_bit, file_report
+from File.models import File, file_src, CourseFile, file_bit, file_report, file_log
 import File.utils as fh
 from .ZipUtilities import ZipUtilities
 
@@ -119,12 +119,12 @@ def download_file(request, f_uid):
             config.c_experimentId: str(file.experiment.uid),
             config.c_fileName: file.file_name,
         }
-        if file.type == "src":
+        if file.type == file_src or file.type == file_report :
             file_content = fh.get_experiment(values, str(uuid.uuid1()))
-        elif file.type == "log":
+        elif file.type == file_log:
             values[config.c_compileId] = file.file_name.split('.')[0]
             file_content = fh.get_log(values)
-        elif file.type == "bit":
+        elif file.type == file_bit:
             values[config.c_compileId] = file.file_name.split('.')[0]
             file_content = fh.get_bit(values)
         else:

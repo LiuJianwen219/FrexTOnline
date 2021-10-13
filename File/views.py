@@ -13,7 +13,6 @@ from File.models import File, file_src, CourseFile, file_bit, file_report, file_
 import File.utils as fh
 from .ZipUtilities import ZipUtilities
 
-
 # Create your views here.
 from Login.models import User
 
@@ -22,6 +21,14 @@ def handle_uploaded_file(p, f):
     with open(p, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
+
+# 是否包含中文
+def is_contains_chinese(strs):
+    for _char in strs:
+        if '\u4e00' <= _char <= '\u9fa5':
+            return True
+    return False
 
 
 def upload_free_file(request):
@@ -45,13 +52,13 @@ def upload_free_file(request):
                 req = {"state": "ERROR", "info": "文件名超出限定长度 100"}
                 return HttpResponse(json.dumps(req), content_type='application/json')
 
-            handle_uploaded_file("/tmp/"+f_obj.name, f_obj)
+            handle_uploaded_file("/tmp/" + f_obj.name, f_obj)
             ff = File()
             ff.user = user
             ff.experiment = experiment
             ff.type = file_src
             ff.file_name = f_obj.name
-            ff.file_path = "/tmp/"+f_obj.name
+            ff.file_path = "/tmp/" + f_obj.name
             # with open(ff.file_path, "rb") as tf:
             #     ff.content = tf.read()
             ff.save()
@@ -119,7 +126,7 @@ def download_file(request, f_uid):
             config.c_experimentId: str(file.experiment.uid),
             config.c_fileName: file.file_name,
         }
-        if file.type == file_src or file.type == file_report :
+        if file.type == file_src or file.type == file_report:
             file_content = fh.get_experiment(values, str(uuid.uuid1()))
         elif file.type == file_log:
             values[config.c_compileId] = file.file_name.split('.')[0]
@@ -130,9 +137,12 @@ def download_file(request, f_uid):
         else:
             file_content = None
         if file_content:
+            file_name = file.file_name
+            if is_contains_chinese(file.file_name):
+                file_name = str(uuid.uuid1()) + file.file_name.split('.')[-1]
             response = HttpResponse(file_content)
             response['Content-Type'] = 'application/octet-stream'
-            response['Content-Disposition'] = 'attachment;filename={0}'.format(file.file_name)
+            response['Content-Disposition'] = 'attachment;filename={0}'.format(file_name)
             return response
         data = {"state": "ERROR", 'info': "unknown error"}
         return HttpResponse(json.dumps(data), content_type='application/json')
@@ -158,13 +168,13 @@ def upload_bit(request):
             req = {"state": "ERROR", "info": "文件名超出限定长度 100"}
             return HttpResponse(json.dumps(req), content_type='application/json')
 
-        handle_uploaded_file("/tmp/"+f_obj.name, f_obj)
+        handle_uploaded_file("/tmp/" + f_obj.name, f_obj)
         ff = File()
         ff.user = user
         ff.experiment = experiment
         ff.type = file_bit
         ff.file_name = f_obj.name
-        ff.file_path = "/tmp/"+f_obj.name
+        ff.file_path = "/tmp/" + f_obj.name
         # with open(ff.file_path, "r") as tf:
         #     ff.content = tf.read()
         ff.save()
@@ -206,11 +216,11 @@ def upload_course(request):
             req = {"state": "ERROR", "info": "文件名超出限定长度 100"}
             return HttpResponse(json.dumps(req), content_type='application/json')
 
-        handle_uploaded_file("/tmp/"+f_obj.name, f_obj)
+        handle_uploaded_file("/tmp/" + f_obj.name, f_obj)
         ff = CourseFile()
         ff.course_template_experiment = courseTemplateExperiment
         ff.file_name = f_obj.name
-        ff.file_path = "/tmp/"+f_obj.name
+        ff.file_path = "/tmp/" + f_obj.name
         # with open(ff.file_path, "r") as tf:
         #     ff.content = tf.read()
         ff.save()
@@ -443,4 +453,3 @@ def download_homework_report(request, h_uid, file_type):
 
     req = {"state": "ERROR", 'info': "No report files of this homework, please check first."}
     return HttpResponse(json.dumps(req), content_type='application/json')
-

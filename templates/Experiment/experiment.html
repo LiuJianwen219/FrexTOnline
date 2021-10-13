@@ -552,7 +552,10 @@
 
   function burnBit3() {
     if(bit_selected){
+        document.getElementById('burnState').innerHTML = "烧录中......"
         remote.program('{{ userId }}', '{{ type }}', '{{ expId }}', isUpLoad, bitFileName)
+    } else{
+        alert("未选择bit文件")
     }
   }
   function burnBit2_succ() {

@@ -669,8 +669,8 @@
                 }
             }
             var end = new Date()
-            console.log("end: " + end.getTime())
-            console.log((end-start)/1000 + " s")
+            if (ifDebugex) console.log("end: " + end.getTime())
+            if (ifDebugex) console.log((end-start)/1000 + " s")
             showSW()
         } else{
             alert("开关SW操作失败："+response.info);

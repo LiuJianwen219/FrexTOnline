@@ -299,7 +299,7 @@
         if(req.state !== "ERROR") {
           $("#" + docChangeId).empty();
           for(let i=0; i<req.classesName.length; i=i+1) {
-              console.log(req.classesName[i])
+              if (ifDebugex) console.log(req.classesName[i])
               let text2 = "<option value=\'"+ req.classesId[i] +"\'>"+ req.classesName[i] +"</option>"
               $("#" + docChangeId).append(text2);
           }
@@ -431,7 +431,7 @@
                 alert("文件删除成功，点击确定刷新页面");
                 //location.reload();
                 let cs = document.getElementById(docChangeId).children[0]
-                console.log(cs.children)
+                if (ifDebugex) console.log(cs.children)
                 for(let i=0; i<cs.children.length; i=i+1){
                     if(cs.children[i].id === tag){
                         cs.children[i].remove();
@@ -455,9 +455,9 @@
 
         for(let i = 0; i<obj.get(0).files.length; i+=1){
           let f_obj = obj.get(0).files[i];                       //获取上传文件信息
-          console.log("文件对象：", f_obj);
-          console.log("文件名称是：", f_obj.name);
-          console.log("文件大小是：", f_obj.size);
+          if (ifDebugex) console.log("文件对象：", f_obj);
+          if (ifDebugex) console.log("文件名称是：", f_obj.name);
+          if (ifDebugex) console.log("文件大小是：", f_obj.size);
           data.append('courseFiles', f_obj);
         }
         data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象

@@ -27,7 +27,7 @@ function showClassExpFile(ind, tp) {
 
 
 function createFreeExpProj(doc) {
-    console.log("createFreeExpProj")
+    if (ifDebugex) console.log("createFreeExpProj")
     let data = new FormData();
     data.append("freeExpName", $("#"+doc).val());
     data.append("csrfmiddlewaretoken", getCookie('csrfToken'));
@@ -39,7 +39,7 @@ function createFreeExpProj(doc) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("实验创建成功，点击关闭刷新");
                 location.reload();
@@ -61,9 +61,9 @@ function uploadClassFile(homeworkId, doc, fileType, docChange) {
         data.append('homeworkFileType', fileTypeValue)
         for(let i = 0; i<obj.get(0).files.length; i+=1){
           let f_obj = obj.get(0).files[i];                       //获取上传文件信息
-          console.log("文件对象：", f_obj);
-          console.log("文件名称是：", f_obj.name);
-          console.log("文件大小是：", f_obj.size);
+          if (ifDebugex) console.log("文件对象：", f_obj);
+          if (ifDebugex) console.log("文件名称是：", f_obj.name);
+          if (ifDebugex) console.log("文件大小是：", f_obj.size);
           data.append('uploadFile', f_obj);
         }
         data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
@@ -122,7 +122,7 @@ function classCompile(homeworkId, doc, docChange) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("编译提交成功！请等待编译（5分钟）");
                 // var text = "<div class=\"input-group\" id=\"classFile_"+req.trueFileName+"\">\n" +
@@ -163,12 +163,12 @@ function deleteClassFile(homeworkId, classFileId, docChange) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("文件删除成功！");
                 var idObject = document.getElementById(docChange);
                 if (idObject != null) {
-                    console.log("delete");
+                    if (ifDebugex) console.log("delete");
                     idObject.parentNode.removeChild(idObject);
                 }
             } else{
@@ -222,8 +222,8 @@ function createExpFile(expId, expType, fileList) {
          newFileName = $("#newFreeFileName"+expId).val();
     else if(expType === 'class')
         newFileName = $("#newClassFileName"+expId).val();
-    console.log(expId);
-    console.log(newFileName);
+    if (ifDebugex) console.log(expId);
+    if (ifDebugex) console.log(newFileName);
     let data = new FormData();
     data.append("newFileName", newFileName);
     data.append("expType", expType);
@@ -237,7 +237,7 @@ function createExpFile(expId, expType, fileList) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("文件创建成功");
                 var txt2="<div class=\"input-group\">\n" +
@@ -255,9 +255,9 @@ function createExpFile(expId, expType, fileList) {
     })
 }
 function modifyFile(expId, fileName, expType) {
-    console.log(expId);
-    console.log(fileName);
-    console.log(expType);
+    if (ifDebugex) console.log(expId);
+    if (ifDebugex) console.log(fileName);
+    if (ifDebugex) console.log(expType);
     let data = new FormData();
     data.append("expId", expId);
     data.append("fileName", fileName);
@@ -271,7 +271,7 @@ function modifyFile(expId, fileName, expType) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("文件修改成功！");
             } else{

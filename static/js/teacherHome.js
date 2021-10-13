@@ -23,7 +23,7 @@ function showExpFile(index){
   openOrCloseByClassNameAndId("fileGroup", index);
 }
 function showClass(index){
-  console.log(index);
+  if (ifDebugex) console.log(index);
 
   // 隐藏欢迎界面、课件列表、学生列表
   document.getElementById("teacherDefaultInfo").style.display = "none";
@@ -73,7 +73,7 @@ function createFreeExpProj(doc) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("实验创建成功，点击关闭刷新");
                 location.reload();

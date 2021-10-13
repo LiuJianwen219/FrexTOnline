@@ -1,7 +1,7 @@
 function showTestList(testTypeId){
-    console.log(testTypeId);
+    if (ifDebugex) console.log(testTypeId);
 }
 
 function showTestFile(testId, testTypeId) {
-    console.log(testTypeId, testId);
+    if (ifDebugex) console.log(testTypeId, testId);
 }

@@ -18,7 +18,7 @@ function freeCompile(freeExpId, doc, other_file_name, docChange) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("编译提交成功！请等待编译（5分钟）");
                 // let text = "<div class=\"input-group\" id=\"freeFile_"+req.trueFileName+"\">\n" +
@@ -50,9 +50,9 @@ function uploadFreeFile(freeExpId, doc, docChange) {
         data.append('freeExpId', freeExpId);
         for(let i = 0; i<obj.get(0).files.length; i+=1){
           let f_obj = obj.get(0).files[i];                       //获取上传文件信息
-          console.log("文件对象：", f_obj);
-          console.log("文件名称是：", f_obj.name);
-          console.log("文件大小是：", f_obj.size);
+          if (ifDebugex) console.log("文件对象：", f_obj);
+          if (ifDebugex) console.log("文件名称是：", f_obj.name);
+          if (ifDebugex) console.log("文件大小是：", f_obj.size);
           data.append('uploadFile', f_obj);
         }
         data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());//在formdata对象中添加(封装)文件对象
@@ -103,12 +103,12 @@ function deleteFreeFile(freeExpId, freeFileId, docChange) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("文件删除成功！");
                 var idObject = document.getElementById(docChange);
                 if (idObject != null) {
-                    console.log("delete");
+                    if (ifDebugex) console.log("delete");
                     idObject.parentNode.removeChild(idObject);
                 }
             } else{
@@ -130,7 +130,7 @@ function deleteFreeExp(freeExpId) {
         processData: false,                                          //不对数据做序列化操作
         contentType: false,                                          //不定义特殊连接类型
         success: function (req) {
-            console.log(req)
+            if (ifDebugex) console.log(req)
             if(req.state !== "ERROR") {
                 alert("实验删除成功！");
                 location.reload();

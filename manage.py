@@ -1,7 +1,23 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
+import logging
 import os
+import socket
 import sys
+
+
+rootPath = "/data/FrexT"
+log_path = os.path.join(rootPath, "FrexTOnlineServer_" + socket.gethostname() + ".log")
+
+# encoding='utf-8'
+logging.basicConfig(filename=log_path, level=logging.WARNING,
+                    filemode='w', format='%(levelname)s:%(asctime)s:%(message)s',
+                    datefmt='%Y-%d-%m %H:%M:%S')
+logging.debug('Welcome to use FPGA Online System!')
+logging.info('This component a sub component of FPGA project.')
+logging.warning('Providing online service,')
+logging.error('Current version is v1.0.0,')
+logging.critical("For helping, please see localhost:8080/help/")
 
 
 def main():

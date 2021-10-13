@@ -7,10 +7,12 @@ RUN ["pip", "install", "-r", "/tmp/requirements.txt"]
 COPY ./ /FrexT
 
 # create workspace
-WORKDIR /FrexT/Compile
+#WORKDIR /FrexT/server
+WORKDIR /FrexT
 
 # start
-ENTRYPOINT ["python", "RabbitMQCompileServer.py"]
+# ENTRYPOINT ["python", "RabbitMQCompileServer.py"]
+ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8080", "--insecure"]
 
 ## make environment
 #RUN ["pip", "install", "-r", "requirements.txt"]

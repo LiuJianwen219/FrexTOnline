@@ -343,7 +343,8 @@ const remote = {
 	},
 	sync: () => {
 		send({
-			type: typelist.ACT_SYNC
+			type: typelist.ACT_SYNC,
+			using: "EXPERIMENT",
 		})
 	},
 	sync_SW_BTN: () => {
@@ -355,7 +356,7 @@ const remote = {
 		if (ifDebugex) console.log('acquire')
 		send({
 			type: typelist.ACT_ACQUIRE,
-			using: "exp"
+			using: "EXPERIMENT"
 		})
 	},
 	release: () => {

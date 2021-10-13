@@ -139,7 +139,7 @@ def download_file(request, f_uid):
         if file_content:
             file_name = file.file_name
             if is_contains_chinese(file.file_name):
-                file_name = str(uuid.uuid1()) + file.file_name.split('.')[-1]
+                file_name = str(uuid.uuid1()) + '.' + file.file_name.split('.')[-1]
             response = HttpResponse(file_content)
             response['Content-Type'] = 'application/octet-stream'
             response['Content-Disposition'] = 'attachment;filename={0}'.format(file_name)

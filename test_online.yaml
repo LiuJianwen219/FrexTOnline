@@ -55,7 +55,7 @@ spec:
         - mountPath: /tmp/FrexT
           name: frext-job
         ports:
-          - containerPort: 8030
+          - containerPort: 8080
       volumes:
         - name: frext-job
           hostPath:

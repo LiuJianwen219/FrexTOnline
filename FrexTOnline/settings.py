@@ -164,3 +164,5 @@ Judge_MAX_Time = 1200  # 秒
 Judge_Time_Unit = 5  # 秒
 Judge_MAX_Thread = 4  # 最多的评测线程
 
+ROOT_PATH_PRODUCT = "/data/FrexT"
+ROOT_PATH_DEVELOP = "./tmp"

@@ -474,11 +474,14 @@ def get_experiment_file_content(request):
         }, new_file_name)
         if not content:
             return HttpResponse(json.dumps(response_error("获取文件数据错误")), content_type='application/json')
-        data = response_ok()
-        with open(os.path.join(config.work_dir, new_file_name), mode="r", newline="\n") as f:
-            data['fileContent'] = f.read()
-        return HttpResponse(json.dumps(data), content_type='application/json')
 
+        try:
+            data = response_ok()
+            with open(os.path.join(config.work_dir, new_file_name), mode="r", newline="\n") as f:
+                data['fileContent'] = f.read()
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        except Exception:
+            return HttpResponse(json.dumps(response_error("edit not support")), content_type='application/json')
 
 
 def edit_experiment_file(request):

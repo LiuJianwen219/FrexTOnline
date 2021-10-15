@@ -57,3 +57,5 @@ websocket-client==0.57.0
 websockets==8.1
 zipstream==1.1.4
 zope.interface==5.1.0
+
+chardet~=4.0.0

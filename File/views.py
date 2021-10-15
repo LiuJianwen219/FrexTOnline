@@ -1,7 +1,10 @@
+import io
 import json
 import os
 import uuid
 
+from chardet import UniversalDetector
+from chardet.enums import LanguageFilter
 from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import render, redirect
 
@@ -27,6 +30,17 @@ def handle_uploaded_file(p, f):
 def handle_uploaded_file_str(p, f):
     with open(p, 'w+') as destination:
         destination.write(f)
+
+
+def reading_unknown_encoding_file(filename):
+    detector = UniversalDetector(LanguageFilter.CHINESE)
+    with open(filename, 'rb') as f:
+        detector.feed(f.read())
+        detector.close()
+        encoding = detector.result['encoding']
+        f = io.TextIOWrapper(f, encoding=encoding)
+        f.seek(0)
+        return f.read()
 
 
 # 是否包含中文
@@ -477,8 +491,7 @@ def get_experiment_file_content(request):
 
         try:
             data = response_ok()
-            with open(os.path.join(config.work_dir, new_file_name), mode="r", newline="\n") as f:
-                data['fileContent'] = f.read()
+            data['fileContent'] = reading_unknown_encoding_file(os.path.join(config.work_dir, new_file_name))
             return HttpResponse(json.dumps(data), content_type='application/json')
         except Exception:
             return HttpResponse(json.dumps(response_error("edit not support")), content_type='application/json')

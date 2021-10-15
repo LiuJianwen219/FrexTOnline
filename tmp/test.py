@@ -1,20 +1,18 @@
+import io
 import os
 
+from chardet.enums import LanguageFilter
+from chardet.universaldetector import UniversalDetector
 
-def handle_uploaded_file(p, f):
-    with open(p, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-
-def handle_uploaded_file_str(p, f):
-    with open(p, 'w+') as destination:
-        destination.write(f)
+def reading_unknown_encoding_file(filename):
+    detector = UniversalDetector(LanguageFilter.CHINESE)
+    with open(filename, 'rb') as f:
+        detector.feed(f.read())
+        detector.close()
+        encoding = detector.result['encoding']
+        f = io.TextIOWrapper(f, encoding=encoding)
+        f.seek(0)
+        print(f.read())
 
 if __name__ == "__main__":
-    print(os.getcwd())
-    handle_uploaded_file_str("asd.txt", 'fsjalsdf'
-                                        'sdfasd'
-                                        'fdsa'
-                                        '123'
-                                        '中文'
-                                        'a')
+    reading_unknown_encoding_file("test.py")

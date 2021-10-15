@@ -113,7 +113,7 @@ function getFileContent(fileId, doc){
     })
 }
 
-function editClassFile(fileId, doc){
+function editFile(fileId, doc){
     let data = new FormData();
     data.append('type', "class");
     data.append('fileId', fileId);

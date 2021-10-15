@@ -142,6 +142,10 @@
                 {% endif %}
               <div class="input-group-btn">
                 <button type="button" class="btn btn-default">
+                    <a href="#" data-toggle="modal" data-target="#editFile{{ file.fileId }}">
+                    编辑</a>
+                </button>
+                <button type="button" class="btn btn-default">
                   <a href="/file/download_free_file/{{ file.fileId }}">
                   下载</a>
                 </button>
@@ -150,6 +154,31 @@
                                 '{{ file.fileId }}', 'freeFile_{{file.fileName}}')">
                   删除
                 </button>
+              </div>
+              <div class="modal fade" id="editFile{{ file.fileId }}" tabindex="-1" role="dialog"
+                   aria-labelledby="editFileLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="editFileLabel">编辑</h4>
+                    </div>
+                    <div class="modal-body">
+                      {% csrf_token %}
+                      <button class="btn btn-default"
+                              onclick="getFileContent('{{ file.fileId }}', 'editFileTextarea{{ file.fileId }}')">
+                          获取最新的文件内容</button>
+                      <textarea id="editFileTextarea{{ file.fileId }}" style="resize:none; height: 500px; width: 100%;" placeholder="empty file"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                      <button type="submit" name="edit_confirmed" class="btn btn-primary"
+                            onclick="editFile('{{ file.fileId }}', 'editFileTextarea{{ file.fileId }}')">
+                        修改
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
               {% endif %}

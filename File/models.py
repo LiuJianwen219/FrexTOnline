@@ -30,6 +30,7 @@ class File(models.Model):
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     type = models.CharField(max_length=8, choices=file_enum)
     create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
     file_name = models.CharField(max_length=256)
     file_path = models.CharField(max_length=512)        # 临时存放位置
     file_name_other = models.CharField(max_length=256, default="")

@@ -16,5 +16,8 @@ urlpatterns = [
     path('delete_homework/', views.delete_homework),
     url(r'download_homework/(?P<f_uid>.+)/', views.download_file),
     url(r'download_homework_report/(?P<h_uid>.+)/(?P<file_type>.+)/', views.download_homework_report),
+
+    path('get_experiment_file_content/', views.get_experiment_file_content),
+    path('edit_experiment_file/', views.edit_experiment_file),
 ]
 

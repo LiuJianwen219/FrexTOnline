@@ -90,6 +90,51 @@ function uploadFreeFile(freeExpId, doc, docChange) {
         })
     }
 }
+
+function getFileContent(fileId, doc){
+    let data = new FormData();
+    data.append('fileId', fileId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+    $.ajax({
+        url: '/file/get_experiment_file_content/',
+        type: 'POST',
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("OK");
+                // document.getElementById(doc).innerText = req.fileContent
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+}
+
+function editFreeFile(fileId, doc){
+    let data = new FormData();
+    data.append('fileId', fileId);
+    data.append('fileContent', $("#"+doc).val());
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+    $.ajax({
+        url: '/file/edit_experiment_file/',
+        type: 'POST',
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                alert("文件已经修改");
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+}
+
 function deleteFreeFile(freeExpId, freeFileId, docChange) {
     let data = new FormData();
     data.append("freeExpId", freeExpId);

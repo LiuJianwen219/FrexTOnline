@@ -11,6 +11,7 @@ from Course.models import Course, CourseTemplate, CourseTemplateExperiment
 from Experiment.models import Experiment, experiment_course
 from File.models import File, file_src, CourseFile, file_bit, file_report, file_log
 import File.utils as fh
+from FrexTOnline.views import response_ok, response_error
 from .ZipUtilities import ZipUtilities
 
 # Create your views here.
@@ -21,6 +22,11 @@ def handle_uploaded_file(p, f):
     with open(p, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
+
+def handle_uploaded_file_str(p, f):
+    with open(p, 'w+') as destination:
+        destination.write(f)
 
 
 # 是否包含中文
@@ -453,3 +459,39 @@ def download_homework_report(request, h_uid, file_type):
 
     req = {"state": "ERROR", 'info': "No report files of this homework, please check first."}
     return HttpResponse(json.dumps(req), content_type='application/json')
+
+
+def get_experiment_file_content(request):
+    if request.method == "POST":
+        file_id = request.POST.get('fileId')
+        file = File.objects.get(uid=file_id)
+        new_file_name = str(uuid.uuid1()) + ".tmp"
+        content = fh.get_experiment({
+            config.c_userId: str(file.user.uid),
+            config.c_experimentType: file.experiment.type,
+            config.c_experimentId: str(file.experiment.uid),
+            config.c_fileName: file.file_name,
+        }, new_file_name)
+        if not content:
+            return HttpResponse(json.dumps(response_error("获取文件数据错误")), content_type='application/json')
+        data = response_ok()
+        data['fileContent'] = content
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+
+def edit_experiment_file(request):
+    if request.method == "POST":
+        file_id = request.POST.get('fileId')
+        file_content = request.POST.get('fileContent')
+        print(file_id)
+        print(file_content)
+
+        file = File.objects.get(uid=file_id)
+        file.content = file_content
+        file.save()
+
+        handle_uploaded_file_str("/tmp/" + file.file_name, file_content)
+
+
+        return HttpResponse(json.dumps(response_ok()), content_type='application/json')

@@ -475,7 +475,8 @@ def get_experiment_file_content(request):
         if not content:
             return HttpResponse(json.dumps(response_error("获取文件数据错误")), content_type='application/json')
         data = response_ok()
-        data['fileContent'] = content
+        with open(os.path.join(config.work_dir, new_file_name), mode="r", newline="\n") as f:
+            data['fileContent'] = f.read()
         return HttpResponse(json.dumps(data), content_type='application/json')
 
 

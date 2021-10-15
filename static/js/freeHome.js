@@ -104,8 +104,8 @@ function getFileContent(fileId, doc){
         contentType: false,
         success: function (req) {
             if(req.state !== "ERROR") {
-                alert("OK");
-                // document.getElementById(doc).innerText = req.fileContent
+                // alert("OK");
+                document.getElementById(doc).innerHTML = req.fileContent
             } else {
                 alert(req.info);
             }

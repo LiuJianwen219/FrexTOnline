@@ -57,6 +57,10 @@ def get_experiment(values, newFileName):
         return None
 
     if r.headers['content-type'] == "application/octet-stream" and r.content:
+        dest_direction = config.work_dir
+        # dest_filename = values[config.c_fileName]
+        if not file_writer(dest_direction, newFileName, r.content):
+            return None
         return r.content
     return None
 

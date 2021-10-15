@@ -281,13 +281,13 @@ def delete_course(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
-def download_course(request, experimentId):
+def download_course(request, homeworkId):
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
 
     user = User.objects.get(uid=u_uid)
-    homework = HomeworkExperiment.objects.get(experiment__uid=experimentId).class_homework
+    homework = HomeworkExperiment.objects.get(experiment__uid=homeworkId).class_homework
     courseTemplateExperiment = homework.course_template_experiment
     courseTemplate = homework.course_template_experiment.course_template
     course = homework.course_template_experiment.course_template.course

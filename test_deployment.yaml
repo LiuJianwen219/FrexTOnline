@@ -53,7 +53,7 @@ spec:
           mountPath: /nexus
       containers:
       - name: frext-online-test
-        image: wxwd14388/frext-online:v0.0.1
+        image: wxwd14388/frext-online:v0.0.2
         volumeMounts:
         - name: fs
           mountPath: /data/FrexT

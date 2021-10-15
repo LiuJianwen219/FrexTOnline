@@ -506,7 +506,7 @@ def edit_experiment_file(request):
                 config.c_experimentId: str(file.experiment.uid),
                 config.c_fileName: file.file_name,
             }, f) == config.request_failed:
-                req = {"state": "ERROR", 'info': "修改free文件失败"}
+                req = {"state": "ERROR", 'info': "修改文件失败"}
                 return HttpResponse(json.dumps(req), content_type='application/json')
 
         return HttpResponse(json.dumps(response_ok()), content_type='application/json')

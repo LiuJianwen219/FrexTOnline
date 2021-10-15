@@ -486,6 +486,7 @@ def get_experiment_file_content(request):
 
 def edit_experiment_file(request):
     if request.method == "POST":
+        op_type = request.POST.get('type')
         file_id = request.POST.get('fileId')
         file_content = request.POST.get('fileContent')
         print(file_id)
@@ -495,7 +496,17 @@ def edit_experiment_file(request):
         file.content = file_content
         file.save()
 
-        handle_uploaded_file_str("/tmp/" + file.file_name, file_content)
+        tmp_file_path = os.path.join("/tmp/", str(uuid.uuid1()) + ".tmp")
+        handle_uploaded_file_str(tmp_file_path, file_content)
 
+        with open(tmp_file_path, 'rb') as f:
+            if fh.post_experiment({
+                config.c_userId: str(file.user.uid),
+                config.c_experimentType: file.experiment.type,
+                config.c_experimentId: str(file.experiment.uid),
+                config.c_fileName: file.file_name,
+            }, f) == config.request_failed:
+                req = {"state": "ERROR", 'info': "修改free文件失败"}
+                return HttpResponse(json.dumps(req), content_type='application/json')
 
         return HttpResponse(json.dumps(response_ok()), content_type='application/json')

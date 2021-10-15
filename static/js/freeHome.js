@@ -113,8 +113,9 @@ function getFileContent(fileId, doc){
     })
 }
 
-function editFreeFile(fileId, doc){
+function editClassFile(fileId, doc){
     let data = new FormData();
+    data.append('type', "class");
     data.append('fileId', fileId);
     data.append('fileContent', $("#"+doc).val());
     data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());

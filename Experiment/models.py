@@ -44,6 +44,7 @@ class CompileRecord(models.Model):
     uid = models.UUIDField(primary_key=True, default=uuid.uuid1, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
+    file_name = models.CharField(max_length=256)
     status = models.CharField(max_length=256)  # compile flow status, refresh in process
     message = models.TextField()  # compile flow message, refresh/append in process
     compile_start_time = models.DateTimeField(null=True)  # start compile time

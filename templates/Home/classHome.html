@@ -28,6 +28,9 @@
             <li><a href="#" data-toggle="modal" data-target="#compileClassFile_{{ item.expId }}">
               编译</a>
             </li>
+            <li><a href="#" data-toggle="modal" data-target="#seeCompile{{ item.expId }}">
+              查看编译</a>
+            </li>
             <li><a data-target="#startExp" onclick="startToExp('course', '{{ item.expId }}', 'startExpButton')"
                    href="#" data-toggle="modal">
               开始实验</a>
@@ -125,6 +128,36 @@
                               'classFileList{{ item.expId }}')">
                 编译
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="seeCompile{{ item.expId }}" tabindex="-1" role="dialog"
+           aria-labelledby="seeClassCompile" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="seeClassCompile">查看编译状态</h4>
+            </div>
+            <div class="modal-body">
+              {% csrf_token %}
+              <button class="btn btn-default"
+                              onclick="getCompileStatus('{{ item.expId }}', 'compileStatus{{ item.expId }}')">
+                          获取最新的编译状态</button>
+              <table class="table">
+                <thead class="thead-light">
+                  <tr><th scope="col">文件名</th>
+                    <th scope="col">提交时间</th>
+                    <th scope="col">编译结束</th>
+                    <th scope="col">最新状态</th></tr></thead>
+                <tbody id="compileStatus{{ item.expId }}">
+                    {# <tr class="testDatas"><td>a</td><td>b</td><td>c</td></tr> #}
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
           </div>
         </div>

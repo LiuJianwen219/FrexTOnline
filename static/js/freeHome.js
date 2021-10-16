@@ -43,6 +43,41 @@ function freeCompile(freeExpId, doc, other_file_name, docChange) {
     })
 }
 
+function getCompileStatus(expId, docChange) {
+    let data = new FormData();
+    data.append('expId', expId);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+    $.ajax({
+        url: '/experiment/get_compile_status/',
+        type: 'POST',
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (req) {
+            if (req.state !== "ERROR") {
+                let table = document.getElementById(docChange)
+                let nodeList = table.childNodes;
+                for(let i=nodeList.length-1; i>=0; i--){
+                    table.removeChild(nodeList[i]);
+                }
+                for (let i = 0; i < req.compileStatus; i += 1) {
+                    let txt2 =
+                        "<tr>" +
+                        "<td>" + req.compileStatus[i].fileName + "</td>" +
+                        "<td>" + req.compileStatus[i].startTime + "</td>" +
+                        "<td>" + req.compileStatus[i].stopTime + "</td>" +
+                        "<td>" + req.compileStatus[i].status + "</td>" +
+                        "</tr>";
+                    $("#"+docChange).append(txt2);
+                }
+            } else {
+                alert(req.info);
+            }
+        }
+    })
+}
+
 function uploadFreeFile(freeExpId, doc, docChange) {
     let obj = $("#"+doc);
     if (obj.get(0).files.length !== 0) {

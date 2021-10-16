@@ -1,5 +1,7 @@
 import json
 import logging
+import time
+
 import requests
 
 from datetime import datetime
@@ -13,6 +15,7 @@ from Class.models import ClassHomework, HomeworkExperiment
 from Compile.thread_handler import TaskHandlerThread, TimeCounter
 from Compile.compile_task import CompileTaskThread, send_task_to_rabbit_mq
 from File.models import File, file_bit, file_log
+from FrexTOnline.views import response_error, response_ok
 from Login.models import User
 from Experiment.models import Experiment, experiment_free, CompileRecord
 from FrexTOnline.settings import Compile_MAX_Thread, Compile_MAX_Time, Judge_MAX_Time
@@ -122,8 +125,8 @@ def compile_all(request, experiment):
         # experiment = Experiment.objects.get(uid=request.POST["freeExpId"])
         # experiment = HomeworkExperiment.objects.get(class_homework_id=request.POST.get('homeworkId')).experiment
         files = File.objects.filter(experiment=experiment)
-        compile = CompileRecord(user=user, experiment=experiment)
-        compile.save()
+        compile_record = CompileRecord(user=user, experiment=experiment, file_name=fileNameOther)
+        compile_record.save()
 
         fileNames = []
         for file in files:
@@ -134,13 +137,11 @@ def compile_all(request, experiment):
             'userId': request.session['u_uid'],
             'experimentType': experiment.type,
             'experimentId': str(experiment.uid),
-            'compileId': str(compile.uid),
+            'compileId': str(compile_record.uid),
             'fileNames': fileNames,
             'topModuleName': topModuleName,
             'file_name_other': fileNameOther,
         }
-        print("free_compile")
-        print(content)
 
         global compile_checker
         if not compile_checker:
@@ -210,8 +211,14 @@ def detect_compile():
                     submit.compile_start_time = datetime.now()
                     submit.save()
                     threadList[key].task_thread.set_sub_over()
-                if threadList[key].task_thread.is_over():
+                elif threadList[key].task_thread.is_over():
                     needToDel.append(key)
+                else:
+                    submit = CompileRecord.objects.get(uid=threadList[key].get_content("compileId"))
+                    submit.status = "提交编译任务成功，编译{0}秒".format(threadList[key].get_time())
+                    submit.message += str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + \
+                                      " Running: compile {0} seconds\n".format(threadList[key].get_time())
+                    submit.save()
             else:
                 submit = CompileRecord.objects.get(uid=threadList[key].get_content("compileId"))
                 submit.status = "提交编译任务失败，请重新提交"
@@ -224,6 +231,24 @@ def detect_compile():
     for k in needToDel:
         print("compile thread delete: " + json.dumps(threadList[k].get_contents()))
         del threadList[k]
+
+
+def get_compile_status(request):
+    if request.method == "POST":
+        e_uid = request.POST["expId"]
+        compiles = CompileRecord.objects.filter(experiment__uid=e_uid)
+        compile_status = []
+        for c in compiles:
+            compile_status.append({
+                'fileName': c.file_name,
+                'startTime': c.compile_start_time.__str__(),
+                'stopTime': c.compile_end_time.__str__(),
+                'status': c.status,
+            })
+        data = response_ok()
+        data['compileStatus'] = compile_status
+        return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse(json.dumps(response_error("非法请求，请登陆")), content_type='application/json')
 
 
 @csrf_exempt

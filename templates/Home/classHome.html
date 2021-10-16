@@ -181,7 +181,7 @@
       <div id="classFileList{{ item.expId }}">
         {% for file in item.fileList %}
             {% if file.fileType == "src" or file.fileType == "other" %}
-          <div class="input-group" id="classFile_{{ file.fileName }}">
+          <div class="input-group" id="classFile_{{ file.fileId }}">
             {% if file.fileNameOther == "" %}
                 <span id="lineInfo">{{ file.fileName }}</span>
             {% else %}
@@ -198,7 +198,7 @@
               </button>
               <button type="button" class="btn btn-default"
                       onclick="deleteClassFile('{{ item.expId }}', '{{ file.fileId }}',
-                              'classFile_{{ file.fileName }}')">
+                              'classFile_{{ file.fileId }}')">
                 <a>删除</a>
               </button>
             </div>

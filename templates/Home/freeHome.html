@@ -167,7 +167,7 @@
         <div id="freeFileList{{ item.expId }}">
           {% for file in item.fileList %}
               {% if file.fileType == "src" %}
-            <div class="input-group" id="freeFile_{{file.fileName}}">
+            <div class="input-group" id="freeFile_{{file.fileId}}">
                 {% if file.fileNameOther == "" %}
                     <span id="lineInfo">{{ file.fileName }}</span>
                 {% else %}
@@ -184,7 +184,7 @@
                 </button>
                 <button type="button" class="btn btn-default"
                         onclick="deleteFreeFile('{{ item.expId }}',
-                                '{{ file.fileId }}', 'freeFile_{{file.fileName}}')">
+                                '{{ file.fileId }}', 'freeFile_{{file.fileId}}')">
                   删除
                 </button>
               </div>
@@ -222,7 +222,7 @@
         <div id="freeFileList2{{ item.expId }}">
           {% for file in item.fileList %}
               {% if file.fileType == "bit" or file.fileType == "log" %}
-            <div class="input-group" id="freeFile_{{file.fileName}}">
+            <div class="input-group" id="freeFile_{{file.fileId}}">
               {% if file.fileNameOther == "" %}
                   <span id="lineInfo">{{ file.fileName }}</span>
               {% else %}
@@ -235,7 +235,7 @@
                 </button>
                 <button type="button" class="btn btn-default"
                         onclick="deleteFreeFile('{{ item.expId }}',
-                                '{{ file.fileId }}', 'freeFile_{{file.fileName}}')">
+                                '{{ file.fileId }}', 'freeFile_{{file.fileId}}')">
                   删除
                 </button>
               </div>

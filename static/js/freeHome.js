@@ -61,8 +61,9 @@ function getCompileStatus(expId, docChange) {
                 for(let i=nodeList.length-1; i>=0; i--){
                     table.removeChild(nodeList[i]);
                 }
-                for (let i = 0; i < req.compileStatus; i += 1) {
-                    let txt2 =
+                console.log(req.compileStatus)
+                for (let i = 0; i < req.compileStatus.length; i += 1) {
+                    var txt2 =
                         "<tr>" +
                         "<td>" + req.compileStatus[i].fileName + "</td>" +
                         "<td>" + req.compileStatus[i].startTime + "</td>" +

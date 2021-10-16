@@ -236,7 +236,7 @@ def detect_compile():
 def get_compile_status(request):
     if request.method == "POST":
         e_uid = request.POST["expId"]
-        compiles = CompileRecord.objects.filter(experiment__uid=e_uid)
+        compiles = CompileRecord.objects.filter(experiment__uid=e_uid).order_by('compile_start_time')[:10]
         compile_status = []
         for c in compiles:
             compile_status.append({

@@ -610,7 +610,32 @@ function burn_bit_status(status) {
     })
 }
 
-
+let time_report = 5000;
+let time_report_cnt = 0;
+let id = setInterval(experiment_status, time_report)
+function experiment_status() {
+    time_report_cnt ++;
+	let data = new FormData();
+    data.append("device_id", device_id)
+	data.append("experiment_record_uid", experiment_record_uid)
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+    $.ajax({
+        url: '/experiment/experiment_status/',
+        type: 'POST',
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (req) {
+        }
+    })
+    if(time_report_cnt > 12){
+        time_report_cnt = 0;
+        time_report *= 2;
+        window.clearInterval(id);
+        id = setInterval(experiment_status, time_report);
+    }
+}
 
 
 

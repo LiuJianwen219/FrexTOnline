@@ -60,7 +60,7 @@ class ExperimentRecord(models.Model):
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     device = models.CharField(max_length=32, default="")
     start_time = models.DateTimeField(auto_now_add=True)
-    stop_time = models.DateTimeField()
+    last_check_time = models.DateTimeField(null=True)
 
 
 class BurnRecord(models.Model):
@@ -69,5 +69,5 @@ class BurnRecord(models.Model):
     experiment_record = models.ForeignKey(ExperimentRecord, on_delete=models.CASCADE)
     file = models.CharField(max_length=256, default="")
     burn_start_time = models.DateTimeField(auto_now_add=True)
-    burn_over_time = models.DateTimeField()
+    burn_over_time = models.DateTimeField(null=True)
     status = models.CharField(max_length=8, choices=burn_enum, default=compile_unknown)

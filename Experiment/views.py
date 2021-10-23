@@ -410,16 +410,16 @@ def experiment_start(request):
     return render(request, "Experiment/experiment.html", context=context)
 
 
-def experiment_stop(request):
+def experiment_status(request):
     if 'is_login' not in request.session:
         return redirect('/')
 
     experiment_record_uid = request.POST.get('experiment_record_uid')
     experiment_record = ExperimentRecord.objects.get(uid=experiment_record_uid)
-    experiment_record.stop_time = datetime.now()
+    experiment_record.last_check_time = datetime.now()
     experiment_record.save()
 
-    access_record(request, "experiment", "结束实验：er/%s e/%s e/%s" % (str(experiment_record.uid),
+    access_record(request, "experiment", "正在实验：er/%s e/%s e/%s" % (str(experiment_record.uid),
                                                                    experiment_record.experiment.name,
                                                                    str(experiment_record.experiment.uid)))
 
@@ -457,8 +457,11 @@ def burn_bit_status(request):
     burn_record_uid = request.POST.get('burn_record_uid')
     burn_record = BurnRecord.objects.get(uid=burn_record_uid)
     experiment_record = burn_record.experiment_record
+    experiment_record.device = request.POST.get('device_id')
+    experiment_record.save()
     status = request.POST.get('status')
     burn_record.status = status
+    burn_record.burn_over_time = datetime.now()
     burn_record.save()
 
     access_record(request, "bit", "下载bit文件状态：%s er/%s e/%s e/%s b/%s" % (status, str(experiment_record.uid),

@@ -2,6 +2,8 @@ import json
 import time
 
 from django.shortcuts import render, redirect
+
+from Home.models import AccessRecord
 from Login.models import User
 from Experiment.models import Experiment, experiment_free, experiment_course
 from File.models import File, CourseFile
@@ -13,6 +15,26 @@ from Class.models import TheClass
 
 # Create your views here.
 
+def access_check_record(request, action, other_info):
+    if 'is_login' not in request.session:
+        return "not_login"
+    access_record(request, action, other_info)
+    return None
+
+
+def access_record(request, action, other_info):
+    record = AccessRecord(user_id=request.session['u_uid'],
+                          login_record_id=request.session['login_record_uid'])
+    record.method = request.method
+    record.url_path = request.path_info
+    record.raw_uri = request.get_raw_uri()
+    record.body = json.dumps(request.POST)
+    record.action = action
+    record.other_info = other_info
+    record.save()
+    return None
+
+
 def home(request):
     return render(request, 'Home/home.html')
 
@@ -22,6 +44,9 @@ def introduce(request):
 
 
 def experiment(request):
+    if access_check_record(request, "see", "进入实验界面"):
+        return redirect("/")
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -175,6 +200,9 @@ def getFreeExpDrawer(user: User):
 
 
 def course(request):
+    if access_check_record(request, "see", "进入课程界面"):
+        return redirect("/")
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')

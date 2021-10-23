@@ -1,6 +1,7 @@
 from django.http import HttpResponse, FileResponse
 from django.shortcuts import render, redirect
 
+from Home.views import access_check_record
 from Login.models import User
 from Course.models import Course
 
@@ -30,5 +31,7 @@ def home(request):
 
 
 def resource(request):
+    if access_check_record(request, "see", "查看资源信息"):
+        return redirect("/")
     with open("resource.txt", "r") as f:
         return HttpResponse(f.read(), content_type="text/plain; charset=utf-8")

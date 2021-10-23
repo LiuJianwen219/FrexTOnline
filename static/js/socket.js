@@ -146,7 +146,7 @@ function testLJW() {
 	// socket = new WebSocket(`ws://${mylocation.host}/socket/device0`)
 	socketMy = new WebSocket(`ws://${mylocation.host}`)
 	socketMy.onopen = (event) => {
-		// remote.sync()
+		remote.sync()
 		//store.dispatch(showOpstatus(platform, ('设备获取成功,设备号: '+String(device_id))))
 		// if (ifDebugex) console.log('设备获取成功,设备号' + device_id)
 		// remote.auth_user()
@@ -314,11 +314,28 @@ function testLJW() {
 	}
 	socketMy.onclose = (event) => {
 		if (ifDebugex) console.log('关闭设备' + device_id)
+		stop_experiment()
 	}
 	socketMy.onerror = (event) =>{
 		if (ifDebugex) console.log("Error: " + event.name + " " + event.number)
 	}
 
+}
+
+function stop_experiment() {
+	let data = new FormData();
+	data.append("experiment_record_uid", experiment_record_uid)
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+    $.ajax({
+        url: '/experiment/experiment_stop/',
+        type: 'POST',
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (req) {
+        }
+    })
 }
 
 function send(obj){

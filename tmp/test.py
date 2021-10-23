@@ -15,4 +15,6 @@ def reading_unknown_encoding_file(filename):
         print(f.read())
 
 if __name__ == "__main__":
-    reading_unknown_encoding_file("test.py")
+    fileName = "asfd.xci"
+    print(fileName.split(".")[-1])
+    # reading_unknown_encoding_file("test.py")

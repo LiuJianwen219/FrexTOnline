@@ -287,16 +287,18 @@
   isUpLoad = null;
   bit_selected = false;
 
-  var n_SW = 16;
+  let n_SW = 16;
   {#var SWState = ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"];#}
   {#var SWState = [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1];#}
-  var SWState = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
+  let SWState = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
 
-  var n_BTN = 16;
+  let n_BTN = 16;
   {#var BTNState = ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"];#}
-  var BTNState = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let BTNState = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  var flvPlayer;
+  let flvPlayer;
+  let experiment_record_uid = '{{ experiment_record }}'
+  let burn_record_uid = null
 
   // TODO
   // 这边的延迟执行，可能造成设备的非正常占用，例如我点进页面，
@@ -553,6 +555,7 @@
   function burnBit3() {
     if(bit_selected){
         document.getElementById('burnState').innerHTML = "烧录中......"
+        burn_bit_record()
         remote.program('{{ userId }}', '{{ type }}', '{{ expId }}', isUpLoad, bitFileName)
     } else{
         alert("未选择bit文件")
@@ -561,13 +564,51 @@
   function burnBit2_succ() {
     {#alert("烧录成功")#}
     document.getElementById('burnState').innerHTML = "烧录成功"
+    burn_bit_status("success")
   }
 
   function returnBack() {
     window.history.back(-1);
   }
 
+function burn_bit_record() {
+	let data = new FormData();
+	data.append("experiment_record_uid", experiment_record_uid);
+    data.append("bit_file_name", bitFileName);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+    $.ajax({
+        url: '/experiment/burn_bit/',
+        type: 'POST',
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (req) {
+            if(req.state !== "ERROR") {
+                burn_record_uid = req.burn_record_uid
+            } else {
+                burn_record_uid = null
+            }
+        }
+    })
+}
 
+function burn_bit_status(status) {
+	let data = new FormData();
+    data.append("burn_record_uid", burn_record_uid);
+    data.append("status", status);
+    data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+    $.ajax({
+        url: '/experiment/burn_bit_status/',
+        type: 'POST',
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (req) {
+        }
+    })
+}
 
 
 

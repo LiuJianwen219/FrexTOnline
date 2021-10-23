@@ -16,8 +16,9 @@ from Compile.thread_handler import TaskHandlerThread, TimeCounter
 from Compile.compile_task import CompileTaskThread, send_task_to_rabbit_mq
 from File.models import File, file_bit, file_log
 from FrexTOnline.views import response_error, response_ok
+from Home.views import access_record
 from Login.models import User
-from Experiment.models import Experiment, experiment_free, CompileRecord
+from Experiment.models import Experiment, experiment_free, CompileRecord, ExperimentRecord, BurnRecord, compile_ing
 from FrexTOnline.settings import Compile_MAX_Thread, Compile_MAX_Time, Judge_MAX_Time
 import File.utils as fh
 import config
@@ -45,6 +46,9 @@ def introduce(request):
 
 @csrf_exempt
 def create_free_project(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -63,6 +67,7 @@ def create_free_project(request):
             else:
                 experiment = Experiment(user=user, name=experiment_name, type=experiment_free)
                 experiment.save()
+                access_record(request, "create", "创建自由实验：%s %s" % (experiment_name, str(experiment.uid)))
                 data = {"state": "OK", "trueExpName": experiment_name, "expId": str(experiment.uid)}
                 return HttpResponse(json.dumps(data), content_type='application/json')
 
@@ -72,6 +77,9 @@ def create_free_project(request):
 
 @csrf_exempt
 def delete_free_project(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -93,6 +101,7 @@ def delete_free_project(request):
                     }) == config.request_failed:
                         req = {"state": "ERROR", 'info': "删除文件失败"}
                         return HttpResponse(json.dumps(req), content_type='application/json')
+                access_record(request, "delete", "删除自由实验：%s %s" % (experiment.name, str(experiment.uid)))
                 experiment.delete()
             data = {"state": "OK", "info": "删除成功"}
             return HttpResponse(json.dumps(data), content_type='application/json')
@@ -104,12 +113,20 @@ def delete_free_project(request):
 
 
 def free_compile(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     experiment = Experiment.objects.get(uid=request.POST["freeExpId"])
+    access_record(request, "compile free", "编译自由实验：%s %s" % (experiment.name, str(experiment.uid)))
     return compile_all(request, experiment)
 
 
 def course_compile(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
+    access_record(request, "compile course", "编译课程实验：%s %s" % (experiment.name, str(experiment.uid)))
     return compile_all(request, experiment)
 
 
@@ -234,10 +251,16 @@ def detect_compile():
 
 
 def get_compile_status(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     if request.method == "POST":
         e_uid = request.POST["expId"]
         compiles = CompileRecord.objects.filter(experiment__uid=e_uid).order_by('-compile_start_time')[:10]
         compile_status = []
+
+        access_record(request, "get", "查看编译结果：%s" % e_uid)
+
         for c in compiles:
             compile_status.append({
                 'fileName': c.file_name,
@@ -322,7 +345,10 @@ segMent = [0, 0, 2, 3, 4, 5, 6, 7]
 ledState = [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
-def experiment(request):
+def experiment_start(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     type = request.GET.get('type')  # 有用
     print(type)
     expId = request.GET.get('expId')
@@ -332,8 +358,12 @@ def experiment(request):
     except Experiment.DoesNotExist:
         experiment = HomeworkExperiment.objects.get(class_homework_id=expId).experiment
 
-
     user = User.objects.get(uid=request.session['u_uid'])
+    experiment_record = ExperimentRecord(user=user, experiment=experiment)
+    experiment_record.save()
+
+    access_record(request, "experiment", "开始实验：er/%s e/%s e/%s" % (str(experiment_record.uid),
+                                                                   experiment.name, str(experiment.uid)))
 
     bitFileList = []
     files = File.objects.filter(experiment=experiment)
@@ -374,6 +404,65 @@ def experiment(request):
         "bitFileList": bitFileList,
         # "bitFile": base64.b64encode(bitFile),
         # "bitFile": bitFile,
+        "experiment_record": str(experiment_record.uid),
     }
     print(request)
     return render(request, "Experiment/experiment.html", context=context)
+
+
+def experiment_stop(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
+    experiment_record_uid = request.POST.get('experiment_record_uid')
+    experiment_record = ExperimentRecord.objects.get(uid=experiment_record_uid)
+    experiment_record.stop_time = datetime.now()
+    experiment_record.save()
+
+    access_record(request, "experiment", "结束实验：er/%s e/%s e/%s" % (str(experiment_record.uid),
+                                                                   experiment_record.experiment.name,
+                                                                   str(experiment_record.experiment.uid)))
+
+    return HttpResponse(json.dumps(response_ok()), content_type='application/json')
+
+
+def burn_bit(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
+    experiment_record_uid = request.POST.get('experiment_record_uid')
+    experiment_record = ExperimentRecord.objects.get(uid=experiment_record_uid)
+    bit_file_name = request.POST.get('bit_file_name')
+    file = File.objects.get(experiment=experiment_record.experiment, file_name=bit_file_name)
+    user = User.objects.get(uid=request.session['u_uid'])
+
+    burn_record = BurnRecord(user=user, experiment_record=experiment_record, file=file, status=compile_ing)
+    burn_record.save()
+
+    access_record(request, "bit", "下载bit文件：er/%s e/%s e/%s f/%s b/%s" % (str(experiment_record.uid),
+                                                                         experiment_record.experiment.name,
+                                                                         str(experiment_record.experiment.uid),
+                                                                         str(file.uid),
+                                                                         str(burn_record.uid)))
+
+    data = response_ok()
+    data['burn_record_uid'] = str(burn_record.uid)
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def burn_bit_status(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
+    burn_record_uid = request.POST.get('burn_record_uid')
+    burn_record = BurnRecord.objects.get(uid=burn_record_uid)
+    experiment_record = burn_record.experiment_record
+    status = request.POST.get('status')
+    burn_record.status = status
+    burn_record.save()
+
+    access_record(request, "bit", "下载bit文件状态：%s er/%s e/%s e/%s b/%s" % (status, str(experiment_record.uid),
+                                                                         experiment_record.experiment.name,
+                                                                         str(experiment_record.experiment.uid),
+                                                                         str(burn_record.uid)))
+    return HttpResponse(json.dumps(response_ok()), content_type='application/json')

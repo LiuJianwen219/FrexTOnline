@@ -15,6 +15,7 @@ from Experiment.models import Experiment, experiment_course
 from File.models import File, file_src, CourseFile, file_bit, file_report, file_log
 import File.utils as fh
 from FrexTOnline.views import response_ok, response_error
+from Home.views import access_record
 from .ZipUtilities import ZipUtilities
 
 # Create your views here.
@@ -52,6 +53,9 @@ def is_contains_chinese(strs):
 
 
 def upload_free_file(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -83,6 +87,8 @@ def upload_free_file(request):
             #     ff.content = tf.read()
             ff.save()
 
+            access_record(request, "upload", "上传自由实验文件：%s %s" % (f_obj.name, str(ff.uid)))
+
             with open(ff.file_path, 'rb') as f:
                 if fh.post_experiment({
                     config.c_userId: str(user.uid),
@@ -108,6 +114,9 @@ def upload_free_file(request):
 
 
 def delete_free_file(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -118,6 +127,7 @@ def delete_free_file(request):
         f_uid = request.POST["freeFileId"]
         file = File.objects.get(uid=f_uid)
         try:
+            access_record(request, "delete", "删除自由实验文件：%s %s" % (file.file_name, str(file.uid)))
             file.delete()
             if fh.delete_experiment({
                 config.c_userId: str(user.uid),
@@ -138,6 +148,9 @@ def delete_free_file(request):
 
 
 def download_file(request, f_uid):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     file = File.objects.get(uid=f_uid)
     try:
         values = {
@@ -146,6 +159,7 @@ def download_file(request, f_uid):
             config.c_experimentId: str(file.experiment.uid),
             config.c_fileName: file.file_name,
         }
+        access_record(request, "download", "下载文件：%s %s" % (file.file_name, str(file.uid)))
         if file.type == file_src or file.type == file_report:
             file_content = fh.get_experiment(values, str(uuid.uuid1()))
         elif file.type == file_log:
@@ -172,6 +186,9 @@ def download_file(request, f_uid):
 
 
 def upload_bit(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -199,6 +216,8 @@ def upload_bit(request):
         #     ff.content = tf.read()
         ff.save()
 
+        access_record(request, "upload", "上传bit文件：%s %s" % (ff.file_name, str(ff.uid)))
+
         with open(ff.file_path, 'rb') as f:
             if fh.post_bit({
                 config.c_userId: str(user.uid),
@@ -217,6 +236,9 @@ def upload_bit(request):
 
 
 def upload_course(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -245,6 +267,8 @@ def upload_course(request):
         #     ff.content = tf.read()
         ff.save()
 
+        access_record(request, "upload", "上传课程文件：%s %s" % (ff.file_name, str(ff.uid)))
+
         with open(ff.file_path, 'rb') as f:
             if fh.post_course({
                 config.c_userId: str(user.uid),
@@ -264,6 +288,9 @@ def upload_course(request):
 
 
 def delete_course(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -281,6 +308,7 @@ def delete_course(request):
         courseFile = CourseFile.objects.get(uid=request.POST["fileId"])
 
         try:
+            access_record(request, "delete", "删除课件文件：%s %s" % (courseFile.file_name, str(courseFile.uid)))
             courseFile.delete()
             if fh.delete_course({
                 config.c_userId: str(user.uid),
@@ -302,6 +330,9 @@ def delete_course(request):
 
 
 def download_course(request, homeworkId):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -312,6 +343,8 @@ def download_course(request, homeworkId):
     courseTemplate = homework.course_template_experiment.course_template
     course = homework.course_template_experiment.course_template.course
     fileClassExp = CourseFile.objects.filter(course_template_experiment=homework.course_template_experiment)
+
+    access_record(request, "download", "下载课件文件：%s %s" % (homework.name, str(homework.uid)))
 
     if fileClassExp:
         utilities = ZipUtilities()
@@ -335,6 +368,9 @@ def download_course(request, homeworkId):
 
 
 def upload_homework(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -371,6 +407,8 @@ def upload_homework(request):
             #     ff.content = tf.read()
             ff.save()
 
+            access_record(request, "upload", "上传课程实验文件：%s %s" % (ff.file_name, str(ff.uid)))
+
             with open(ff.file_path, 'rb') as f:
                 if fh.post_experiment({
                     config.c_userId: str(user.uid),
@@ -396,6 +434,9 @@ def upload_homework(request):
 
 
 def delete_homework(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -405,6 +446,7 @@ def delete_homework(request):
         experiment = Experiment.objects.get(uid=request.POST.get('homeworkId'))
         file = File.objects.get(uid=request.POST["classFileId"])
         try:
+            access_record(request, "delete", "删除课程实验文件：%s %s" % (file.file_name, str(file.uid)))
             file.delete()
             if fh.delete_experiment({
                 config.c_userId: str(user.uid),
@@ -424,6 +466,9 @@ def delete_homework(request):
 
 
 def download_homework_report(request, h_uid, file_type):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     u_uid = request.session["u_uid"]
     if not u_uid:
         return redirect('/login/')
@@ -439,6 +484,8 @@ def download_homework_report(request, h_uid, file_type):
     else:
         report_files = File.objects.filter(experiment__homeworkexperiment__class_homework=class_homework
                                            ).order_by("user")
+
+    access_record(request, "download", "下载学生实验报告：%s %s" % (class_homework.name, str(class_homework.uid)))
 
     if report_files:
         allZip = ZipUtilities()
@@ -476,9 +523,15 @@ def download_homework_report(request, h_uid, file_type):
 
 
 def get_experiment_file_content(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     if request.method == "POST":
         file_id = request.POST.get('fileId')
         file = File.objects.get(uid=file_id)
+
+        access_record(request, "get", "查看最新实验文件内容：%s %s" % (file.file_name, str(file.uid)))
+
         new_file_name = str(uuid.uuid1()) + ".tmp"
         content = fh.get_experiment({
             config.c_userId: str(file.user.uid),
@@ -498,6 +551,9 @@ def get_experiment_file_content(request):
 
 
 def edit_experiment_file(request):
+    if 'is_login' not in request.session:
+        return redirect('/')
+
     if request.method == "POST":
         op_type = request.POST.get('type')
         file_id = request.POST.get('fileId')
@@ -508,6 +564,8 @@ def edit_experiment_file(request):
         file = File.objects.get(uid=file_id)
         file.content = file_content
         file.save()
+
+        access_record(request, "edit", "编辑实验文件内容：%s %s" % (file.file_name, str(file.uid)))
 
         tmp_file_path = os.path.join("/tmp/", str(uuid.uuid1()) + ".tmp")
         handle_uploaded_file_str(tmp_file_path, file_content)

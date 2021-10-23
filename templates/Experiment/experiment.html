@@ -629,9 +629,9 @@ function experiment_status() {
         success: function (req) {
         }
     })
-    if(time_report_cnt > 12){
+    if(time_report_cnt > 6){
         time_report_cnt = 0;
-        time_report *= 2;
+        time_report *= 3;
         window.clearInterval(id);
         id = setInterval(experiment_status, time_report);
     }

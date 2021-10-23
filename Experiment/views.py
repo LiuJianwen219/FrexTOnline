@@ -456,9 +456,8 @@ def burn_bit_status(request):
 
     burn_record_uid = request.POST.get('burn_record_uid')
     burn_record = BurnRecord.objects.get(uid=burn_record_uid)
-    experiment_record = burn_record.experiment_record
+    experiment_record = ExperimentRecord.objects.get(uid=burn_record.experiment_record.uid)
     experiment_record.device = request.POST.get('device_id')
-    experiment_record.save()
     status = request.POST.get('status')
     burn_record.status = status
     burn_record.burn_over_time = datetime.now()

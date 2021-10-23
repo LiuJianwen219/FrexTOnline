@@ -417,6 +417,7 @@ def experiment_status(request):
     experiment_record_uid = request.POST.get('experiment_record_uid')
     experiment_record = ExperimentRecord.objects.get(uid=experiment_record_uid)
     experiment_record.last_check_time = datetime.now()
+    experiment_record.device = request.POST.get('device_id')
     experiment_record.save()
 
     access_record(request, "experiment", "正在实验：er/%s e/%s e/%s" % (str(experiment_record.uid),
@@ -456,8 +457,7 @@ def burn_bit_status(request):
 
     burn_record_uid = request.POST.get('burn_record_uid')
     burn_record = BurnRecord.objects.get(uid=burn_record_uid)
-    experiment_record = ExperimentRecord.objects.get(uid=burn_record.experiment_record.uid)
-    experiment_record.device = request.POST.get('device_id')
+    experiment_record = burn_record.experiment_record
     status = request.POST.get('status')
     burn_record.status = status
     burn_record.burn_over_time = datetime.now()

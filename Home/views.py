@@ -83,17 +83,17 @@ def experiment(request):
 
     classHomeworkItem = []
     for c_t_experiment in class_homework:
-        print(c_t_experiment.uid)
+        # print(c_t_experiment.uid)
         cou_file = []
         for c_file in course_file:
-            print(str(c_file.course_template_experiment.uid), str(c_t_experiment.course_template_experiment.uid))
+            # print(str(c_file.course_template_experiment.uid), str(c_t_experiment.course_template_experiment.uid))
             if str(c_file.course_template_experiment.uid) == str(c_t_experiment.course_template_experiment.uid):
                 cou_file.append({
                     "fileId": str(c_file.uid),
                     "fileName": c_file.file_name,
                 })
         for t in homework_experiment:
-            print( str(t.class_homework.uid), str(c_t_experiment.uid))
+            # print( str(t.class_homework.uid), str(c_t_experiment.uid))
             if str(t.class_homework.uid) == str(c_t_experiment.uid):
                 classHomeworkItem.append({
                     "theClass": str(c_t_experiment.the_class.uid),
@@ -102,12 +102,12 @@ def experiment(request):
                     "fileList": [],
                     "expCourseware": cou_file,
                 })
-        print(json.dumps(classHomeworkItem))
-        print(c_t_experiment.uid)
+        # print(json.dumps(classHomeworkItem))
+        # print(c_t_experiment.uid)
 
     for f in userExpHomeworkFiles:
         for c in classHomeworkItem:
-            print(str(f.experiment.uid), c['expId'])
+            # print(str(f.experiment.uid), c['expId'])
             if str(f.experiment.uid) == c['expId']:
                 c['fileList'].append({
                     "fileId": str(f.uid),
@@ -116,7 +116,7 @@ def experiment(request):
                     "fileNameOther": f.file_name_other,
                 })
 
-    print(json.dumps(classHomeworkItem))
+    # print(json.dumps(classHomeworkItem))
 
     classItem = []
     for the_class in class_student:
@@ -131,7 +131,7 @@ def experiment(request):
             if c_h_i['theClass'] == c_i['id']:
                 c_i['expItems'].append(c_h_i)
 
-    print(json.dumps(classItem))
+    # print(json.dumps(classItem))
 
     # classExpHomeworkFileDict = {homework.uid: [] for homework in course_temp_exp}
     # for file in userExpHomeworkFiles:
@@ -195,7 +195,7 @@ def getFreeExpDrawer(user: User):
         }
         for freeExp in freeExps
     ]
-    print(expItems)
+    # print(expItems)
     return {"id": "0", "expType": "自由实验", "expItems": expItems}
 
 

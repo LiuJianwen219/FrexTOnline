@@ -46,6 +46,13 @@ spec:
     spec:
       serviceAccountName:
         frext
+      initContainers:
+      - name: volume-mount-hack
+        image: debian:stable-slim
+        command: [ "sh", "-c", "chown -R 1001:1001 /nexus" ]
+        volumeMounts:
+        - name: fs
+          mountPath: /nexus
       containers:
       - name: frext-online-test
         image: wxwd14388/frext-testing-test:v0.0.9
@@ -54,12 +61,18 @@ spec:
         volumeMounts:
         - mountPath: /tmp/FrexT
           name: frext-job
+        - mountPath: /data/FrexT
+          name: fs
         ports:
           - containerPort: 8080
       volumes:
         - name: frext-job
           hostPath:
-            path: /mnt/hgfs/0Web
+            path: /root/FrexT
+            type: Directory
+        - name: fs
+          hostPath:
+            path: /root/FrexT_data/frext-file-system/log_online
             type: Directory
       affinity:
         nodeAffinity:

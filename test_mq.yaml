@@ -27,7 +27,7 @@ spec:
       volumes:
         - name: frext-job
           hostPath:
-            path: /mnt/hgfs/0Web
+            path: /root/FrexT
             type: Directory
       affinity:
         nodeAffinity:

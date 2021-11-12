@@ -29,3 +29,12 @@ spec:
           hostPath:
             path: /mnt/hgfs/0Web
             type: Directory
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: frext/role
+                    operator: In
+                    values:
+                      - file-system
